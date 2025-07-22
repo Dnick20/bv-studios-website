@@ -5,7 +5,7 @@ export const mediaUrls = {
     weddings: {
       // Wedding thumbnails
       christianHailee: "/images/weddings/christian-hailee.jpg", // Christian & Hailee (couple in fall setting)
-      kaitlinAndy: "/images/weddings/kaitlin-andy.jpg", // Kaitlin & Andy (couple under green leaves)
+      kaitlinAndy: "/images/weddings/kaitlin-andy.jpg", // Kaitlin & Andy (getting ready)
       nikiMatt: "/images/weddings/niki-matt.jpg", // Niki & Matt (couple under green leaves)
       sarahDavid: "/images/weddings/sarah-david.jpg", // Sarah & David (dress in barn)
     },
