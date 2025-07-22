@@ -6,7 +6,7 @@ export const mediaUrls = {
       // Wedding thumbnails
       christianHailee: "/images/weddings/christian-hailee.jpg",
       kaitlinAndy: "/images/weddings/kaitlin-andy.jpg",
-      nikiMatt: "/images/weddings/nik-matt.jpg",
+      nikiMatt: "/images/weddings/niki-matt.jpg", // Updated to use the green leaves photo
       sarahDavid: "/images/weddings/sarah-david.jpg",
     },
     commercial: {
