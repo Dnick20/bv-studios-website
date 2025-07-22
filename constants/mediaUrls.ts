@@ -4,16 +4,16 @@ export const mediaUrls = {
   images: {
     weddings: {
       // Wedding thumbnails
-      christianHailee: "/images/weddings/christian-hailee.jpg",
-      kaitlinAndy: "/images/weddings/kaitlin-andy.jpg",
-      nikiMatt: "/images/weddings/niki-matt.jpg", // Updated to use the green leaves photo
-      sarahDavid: "/images/weddings/sarah-david.jpg",
+      christianHailee: "/images/weddings/christian-hailee.jpg", // Christian & Hailee (couple in fall setting)
+      kaitlinAndy: "/images/weddings/kaitlin-andy.jpg", // Kaitlin & Andy (couple under green leaves)
+      nikiMatt: "/images/weddings/niki-matt.jpg", // Niki & Matt (couple under green leaves)
+      sarahDavid: "/images/weddings/sarah-david.jpg", // Sarah & David (dress in barn)
     },
     commercial: {
       // Commercial thumbnails
-      lodge: "/images/commercial/lodge.jpg",
-      stuttgart: "/images/commercial/stuttgart.jpg",
-      timRegus: "/images/commercial/tim-regus.jpg",
+      lodge: "/images/commercial/lodge.jpg", // The Lodge (exterior building with flags)
+      stuttgart: "/images/commercial/stuttgart.jpg", // Stuttgart (red classic car interior)
+      timRegus: "/images/commercial/tim-regus.jpg", // Tim Regus (modern living room with blue couch)
     },
   },
   videos: {
