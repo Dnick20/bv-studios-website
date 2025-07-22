@@ -9,4 +9,7 @@ curl -o public/images/weddings/christian-hailee.jpg "https://raw.githubuserconte
 # Save Sarah & David thumbnail (dress in barn)
 curl -o public/images/weddings/sarah-david.jpg "https://raw.githubusercontent.com/Dnick20/bv-studios-website/main/public/images/weddings/sarah-david.jpg"
 
+# Save Kaitlin & Andy thumbnail (couple under green leaves)
+curl -o public/images/weddings/kaitlin-andy.jpg "https://raw.githubusercontent.com/Dnick20/bv-studios-website/main/public/images/weddings/kaitlin-andy.jpg"
+
 echo "Wedding thumbnails saved to public/images/weddings/" 
