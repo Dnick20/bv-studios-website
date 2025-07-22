@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PlayIcon, XMarkIcon } from '@heroicons/react/24/solid'
 import { mediaUrls } from '@/constants/mediaUrls'
+import Image from 'next/image'
 
 const portfolioItems = [
   {
@@ -100,10 +101,12 @@ export default function Portfolio() {
                 whileHover={{ y: -5 }}
               >
                 {/* Thumbnail */}
-                <img 
-                  src={item.thumbnail} 
+                <Image
+                  src={item.thumbnail}
                   alt={item.title}
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                  fill
+                  className="object-cover transform group-hover:scale-105 transition-transform duration-700"
+                  priority={index < 2}
                 />
 
                 {/* Overlay */}
@@ -151,15 +154,16 @@ export default function Portfolio() {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="relative w-full max-w-6xl aspect-video"
+                className="relative w-full max-w-6xl aspect-video bg-black rounded-2xl overflow-hidden"
                 onClick={e => e.stopPropagation()}
               >
                 <iframe
-                  src={`${selectedVideo}?autoplay=1&rel=0&modestbranding=1`}
+                  src={selectedVideo}
                   className="w-full h-full rounded-2xl shadow-glow-strong"
                   frameBorder="0"
                   allowFullScreen
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  loading="lazy"
                 />
                 <motion.button 
                   onClick={(e) => {

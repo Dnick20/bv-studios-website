@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { PlayIcon } from '@heroicons/react/24/solid'
 import { mediaUrls } from '@/constants/mediaUrls'
+import Image from 'next/image'
 
 const weddings = [
   {
@@ -74,10 +75,12 @@ export default function WeddingPortfolio() {
               onMouseLeave={() => setHoveredIndex(null)}
             >
               {/* Thumbnail */}
-              <img
+              <Image
                 src={wedding.thumbnail}
                 alt={`${wedding.couple}'s Wedding at ${wedding.location}`}
-                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                fill
+                className="object-cover transform group-hover:scale-105 transition-transform duration-500"
+                priority={index < 2}
               />
 
               {/* Overlay */}
@@ -142,15 +145,16 @@ export default function WeddingPortfolio() {
           onClick={() => setSelectedVideo(null)}
         >
           <div 
-            className="relative w-full max-w-6xl aspect-video bg-wedding-secondary/10 rounded-lg overflow-hidden"
+            className="relative w-full max-w-6xl aspect-video bg-black rounded-lg overflow-hidden"
             onClick={e => e.stopPropagation()}
           >
             <iframe
-              src={`${selectedVideo}?autoplay=1&rel=0&modestbranding=1`}
+              src={selectedVideo}
               className="w-full h-full"
               frameBorder="0"
               allowFullScreen
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              loading="lazy"
             />
           </div>
         </motion.div>
