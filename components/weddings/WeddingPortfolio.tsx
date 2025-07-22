@@ -3,32 +3,32 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { PlayIcon } from '@heroicons/react/24/solid'
-import Image from 'next/image'
+import { mediaUrls } from '@/constants/mediaUrls'
 
 const weddings = [
   {
     couple: 'Sarah & David',
     location: 'Lexington, KY',
-    thumbnail: '/media/images/weddings/sarah-david.jpg',
-    videoUrl: '/media/videos/weddings/sarah-david.mp4',
+    thumbnail: mediaUrls.images.weddings.sarahDavid,
+    videoUrl: mediaUrls.videos.weddings.sarahDavid,
   },
   {
     couple: 'Christian & Hailee',
     location: 'Kentucky Castle',
-    thumbnail: '/media/images/weddings/christian-hailee.jpg',
-    videoUrl: '/media/videos/weddings/christian-hailee.mp4',
+    thumbnail: mediaUrls.images.weddings.christianHailee,
+    videoUrl: mediaUrls.videos.weddings.christianHailee,
   },
   {
     couple: 'Kaitlin & Andy',
     location: 'The Bell House',
-    thumbnail: '/media/images/weddings/kaitlin-andy.jpg',
-    videoUrl: '/media/videos/weddings/kaitlin-andy.mp4',
+    thumbnail: mediaUrls.images.weddings.kaitlinAndy,
+    videoUrl: mediaUrls.videos.weddings.kaitlinAndy,
   },
   {
     couple: 'Niki & Matt',
     location: 'The Apiary',
-    thumbnail: '/media/images/weddings/niki-matt.jpg',
-    videoUrl: '/media/videos/weddings/niki-matt.mp4',
+    thumbnail: mediaUrls.images.weddings.nikiMatt,
+    videoUrl: mediaUrls.videos.weddings.nikiMatt,
   },
 ]
 
@@ -74,11 +74,10 @@ export default function WeddingPortfolio() {
               onMouseLeave={() => setHoveredIndex(null)}
             >
               {/* Thumbnail */}
-              <Image
+              <img
                 src={wedding.thumbnail}
                 alt={`${wedding.couple}'s Wedding at ${wedding.location}`}
-                fill
-                className="object-cover transform group-hover:scale-105 transition-transform duration-500"
+                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
               />
 
               {/* Overlay */}
@@ -142,13 +141,16 @@ export default function WeddingPortfolio() {
           className="fixed inset-0 z-50 flex items-center justify-center bg-wedding-dark/90 backdrop-blur-sm p-4"
           onClick={() => setSelectedVideo(null)}
         >
-          <div className="relative w-full max-w-6xl aspect-video bg-wedding-secondary/10 rounded-lg overflow-hidden">
-            <video
-              src={selectedVideo}
-              controls
-              autoPlay
+          <div 
+            className="relative w-full max-w-6xl aspect-video bg-wedding-secondary/10 rounded-lg overflow-hidden"
+            onClick={e => e.stopPropagation()}
+          >
+            <iframe
+              src={`${selectedVideo}?autoplay=1&rel=0&modestbranding=1`}
               className="w-full h-full"
-              onClick={e => e.stopPropagation()}
+              frameBorder="0"
+              allowFullScreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             />
           </div>
         </motion.div>

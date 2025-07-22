@@ -25,16 +25,16 @@ export const mediaUrls = {
   },
   videos: {
     commercial: {
-      lodge: "https://drive.google.com/file/d/1B3okMEElXsevvMQO4W14XU6OtNMtxbP9/preview", // The Lodge video
-      loganVineyards: "https://drive.google.com/file/d/1B3okMEElXsevvMQO4W14XU6OtNMtxbP9/preview", // Logan Vineyards video
-      stuttgart: "https://drive.google.com/file/d/1eM2tS9lz4yHicyFemslGrZ8EnPzMycKv/preview", // Stuttgart Commercial video
-      timRegus: "https://drive.google.com/file/d/1hTwoCVz9dxnF1H7BfojgAzLLmZV_vvwD/preview", // Tim Regus video
+      lodge: "https://www.youtube.com/embed/qaGx_Fa9ufE", // The Lodge at Logan video
+      loganVineyards: "https://www.youtube.com/embed/qaGx_Fa9ufE", // Logan Vineyards video
+      stuttgart: "https://www.youtube.com/embed/isO7D5PLyRo", // Stuttgart Motors video
+      timRegus: "https://www.youtube.com/embed/XqX9JotLUb0", // Tim Regus video
     },
     weddings: {
-      christianHailee: "https://drive.google.com/file/d/1FAfEM_v4cnFYSxODBGMFbPfsfWyCjqXg/preview", // Christian & Hailee video
-      kaitlinAndy: "https://drive.google.com/file/d/1M-HzLoJkNVgBPr_fGxGNU0WL27oO3RNu/preview", // Kaitlin & Andy video
-      nikiMatt: "https://drive.google.com/file/d/1sJLnlpzgZjg3S7t_KD6UnNfkUmj-Gm2v/preview", // Niki & Matt video
-      sarahDavid: "https://drive.google.com/file/d/1HWMCg3Ih3fataFEyfYGn7Gh-O2d_xRxP/preview", // Sarah & David video
+      christianHailee: "https://www.youtube.com/embed/nRq4EruDnTA", // Christian & Hailee video
+      kaitlinAndy: "https://www.youtube.com/embed/ad7ZE_e42KE", // Kaitlin & Andy video
+      nikiMatt: "https://www.youtube.com/embed/qPVHKmsbvYo", // Niki & Matt video
+      sarahDavid: "https://www.youtube.com/embed/7KFEwpjIh8k", // Sarah & David video
     },
   },
 }; 

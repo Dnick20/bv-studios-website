@@ -3,25 +3,26 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PlayIcon, XMarkIcon } from '@heroicons/react/24/solid'
+import { mediaUrls } from '@/constants/mediaUrls'
 
 const portfolioItems = [
   {
     title: 'Tim Regus Workspaces',
     description: 'Professional workspace solutions for modern businesses',
-    thumbnail: '/media/images/commercial/tim-regus.jpg',
-    videoUrl: '/media/videos/commercial/tim-regus.mp4',
+    thumbnail: mediaUrls.images.commercial.timRegus,
+    videoUrl: mediaUrls.videos.commercial.timRegus,
   },
   {
     title: 'The Lodge at Logan Vineyards',
     description: 'A stunning wedding venue showcasing elegant spaces and beautiful landscapes',
-    thumbnail: '/media/images/commercial/lodge.png',
-    videoUrl: '/media/videos/commercial/lodge.mp4',
+    thumbnail: mediaUrls.images.commercial.lodge,
+    videoUrl: mediaUrls.videos.commercial.lodge,
   },
   {
     title: 'Stuttgart Exotic Cars',
     description: 'High-end exotic car shop featuring luxury vehicles and premium service',
-    thumbnail: '/media/images/commercial/stuttgart.png',
-    videoUrl: '/media/videos/commercial/stuttgart.mp4',
+    thumbnail: mediaUrls.images.commercial.stuttgart,
+    videoUrl: mediaUrls.videos.commercial.stuttgart,
   },
 ]
 
@@ -151,17 +152,20 @@ export default function Portfolio() {
                 exit={{ scale: 0.9, opacity: 0 }}
                 transition={{ duration: 0.3 }}
                 className="relative w-full max-w-6xl aspect-video"
+                onClick={e => e.stopPropagation()}
               >
-                <video
-                  src={selectedVideo}
-                  controls
-                  autoPlay
+                <iframe
+                  src={`${selectedVideo}?autoplay=1&rel=0&modestbranding=1`}
                   className="w-full h-full rounded-2xl shadow-glow-strong"
-                >
-                  Your browser does not support the video tag.
-                </video>
+                  frameBorder="0"
+                  allowFullScreen
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                />
                 <motion.button 
-                  onClick={() => setSelectedVideo(null)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedVideo(null);
+                  }}
                   className="absolute -top-12 right-0 text-white hover:text-accent transition-colors duration-300"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
