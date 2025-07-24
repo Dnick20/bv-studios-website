@@ -11,8 +11,8 @@ export const mediaUrls = {
     },
     commercial: {
       // Commercial thumbnails
-      lodge: "/images/commercial/lodge.jpg", // The Lodge (exterior building with flags)
-      stuttgart: "/images/commercial/stuttgart.jpg", // Stuttgart (red classic car interior)
+      lodge: "/images/commercial/lodge.png", // The Lodge (exterior building with flags)
+      stuttgart: "/images/commercial/stuttgart.png", // Stuttgart (red classic car interior)
       timRegus: "/images/commercial/tim-regus.jpg", // Tim Regus (modern living room with blue couch)
     },
   },
