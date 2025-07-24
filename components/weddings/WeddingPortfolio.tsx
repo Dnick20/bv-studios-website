@@ -114,25 +114,6 @@ export default function WeddingPortfolio() {
           ))}
         </div>
 
-        {/* View More Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="text-center mt-16"
-        >
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center px-8 py-4 bg-wedding-accent text-wedding-dark rounded-full font-semibold text-lg shadow-lg hover:bg-wedding-accent/90 transition-all hover:shadow-xl"
-          >
-            View More Wedding Films
-            <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </motion.button>
-        </motion.div>
       </div>
 
       {/* Video Modal */}
