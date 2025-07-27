@@ -13,64 +13,64 @@ import {
 export default function WeddingsPage() {
   const packages = [
     {
-      name: 'Essential',
-      price: '$1,200',
+      name: 'Silver Collection',
+      price: '$2,200',
       description: 'Perfect for intimate celebrations',
       features: [
         '4 hours of coverage',
-        'Cinematic highlight film (3-5 min)',
-        'Full ceremony edit',
-        'Online gallery',
-        'USB delivery'
+        'Short Film',
+        'Digital Delivery'
       ]
     },
     {
-      name: 'Classic',
-      price: '$2,200',
+      name: 'Gold Collection',
+      price: '$3,100',
       description: 'Our most popular package',
       features: [
-        '8 hours of coverage',
-        'Cinematic highlight film (5-8 min)',
-        'Full ceremony edit',
-        'Reception highlights',
-        'Engagement session',
-        'Online gallery',
-        'USB delivery'
+        '6 hours of coverage',
+        'Short Film',
+        'Ceremony',
+        'Instagram Trailer',
+        'Digital Delivery'
       ]
     },
     {
-      name: 'Premium',
-      price: '$3,200',
+      name: 'Diamond Collection',
+      price: '$3,750',
       description: 'Complete wedding story',
       featured: true,
       features: [
-        'Full day coverage (12 hours)',
-        'Cinematic highlight film (8-12 min)',
-        'Full ceremony edit',
-        'Reception highlights',
-        'Engagement session',
-        'Getting ready footage',
-        'Online gallery',
-        'USB delivery',
-        'Drone footage',
-        'Same-day edit preview'
+        '8 hours of coverage',
+        'Short Film',
+        'Ceremony and Reception Film',
+        'Drone Coverage',
+        'Instagram Trailer',
+        'Digital Delivery'
       ]
     }
   ]
 
   const extraServices = [
-    'Additional hours of coverage',
-    'Second videographer',
-    'Same-day edit',
-    'Extended highlight film',
-    'Raw footage delivery',
-    'Custom music selection',
-    'Photo slideshow',
-    'Wedding trailer',
-    'Social media clips',
-    'Parent edits',
-    'Ceremony only',
-    'Reception only'
+    {
+      name: 'Ceremony Film',
+      description: 'A 15-20 Minute film of your ceremony with clean recorded audio, color grading, and 2 camera angles',
+      price: '$500'
+    },
+    {
+      name: 'Engagement Film',
+      description: 'A short creative aside from your wedding film that accompanies your wedding film',
+      price: '$500'
+    },
+    {
+      name: 'Additional Hours',
+      description: 'Have a long party? Get additional hours so you don\'t miss a thing!',
+      price: '$200/hour'
+    },
+    {
+      name: 'Drone Footage',
+      description: 'Aerial coverage to capture your venue and special moments from above',
+      price: '$500'
+    }
   ]
 
   const features = [
@@ -221,7 +221,7 @@ export default function WeddingsPage() {
                     ? 'bg-wedding-accent text-wedding-dark hover:bg-wedding-accent/90 shadow-glow' 
                     : 'bg-wedding-accent text-wedding-dark hover:bg-wedding-accent/90 shadow-glow'
                 }`}>
-                  {pkg.featured ? 'Choose Premium' : 'Choose Package'}
+                  {pkg.featured ? 'Choose Diamond' : 'Choose Package'}
                 </button>
               </div>
             ))}
@@ -233,10 +233,14 @@ export default function WeddingsPage() {
               <h3 className="text-2xl font-bold text-wedding-dark mb-4">Additional Services</h3>
               <p className="text-wedding-muted">Customize your package with these add-ons</p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {extraServices.map((service, index) => (
-                <div key={index} className="bg-wedding-overlay backdrop-blur-sm rounded-lg p-4 border border-wedding-accent/20">
-                  <p className="text-wedding-dark text-sm font-medium">{service}</p>
+                <div key={index} className="bg-wedding-overlay backdrop-blur-sm rounded-lg p-6 border border-wedding-accent/20">
+                  <div className="flex justify-between items-start mb-3">
+                    <h4 className="text-wedding-dark font-semibold text-lg">{service.name}</h4>
+                    <span className="text-wedding-accent font-bold">{service.price}</span>
+                  </div>
+                  <p className="text-wedding-muted text-sm">{service.description}</p>
                 </div>
               ))}
             </div>
