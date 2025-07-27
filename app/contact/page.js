@@ -1,6 +1,7 @@
 'use client'
 
-import Navigation from '@/components/Navigation'
+import { Suspense } from 'react'
+import Navigation from '../../components/Navigation'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import {

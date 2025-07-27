@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Navigation from '@/components/Navigation'
+import Navigation from '../../../components/Navigation'
 
 export default function SignUp() {
   const [formData, setFormData] = useState({

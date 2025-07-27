@@ -3,7 +3,7 @@
 import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import Navigation from '@/components/Navigation'
+import Navigation from '../../../components/Navigation'
 
 function AuthErrorContent() {
   const searchParams = useSearchParams()
