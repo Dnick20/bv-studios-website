@@ -34,10 +34,10 @@ if command -v magick &> /dev/null; then
         -extent 800x600 \
         -quality 85 \
         -strip \
-        public/images/optimized/weddings/wedding-highlights-thumbnail.webp
+        public/images/portfolio/wedding-highlights.webp
     
     echo "✅ Image converted successfully!"
-    echo "📁 Saved as: public/images/optimized/weddings/wedding-highlights-thumbnail.webp"
+    echo "📁 Saved as: public/images/portfolio/wedding-highlights.webp"
     
 elif command -v convert &> /dev/null; then
     echo "✅ ImageMagick (legacy) found - converting image..."
@@ -49,10 +49,10 @@ elif command -v convert &> /dev/null; then
         -extent 800x600 \
         -quality 85 \
         -strip \
-        public/images/optimized/weddings/wedding-highlights-thumbnail.webp
+        public/images/portfolio/wedding-highlights.webp
     
     echo "✅ Image converted successfully!"
-    echo "📁 Saved as: public/images/optimized/weddings/wedding-highlights-thumbnail.webp"
+    echo "📁 Saved as: public/images/portfolio/wedding-highlights.webp"
     
 else
     echo "⚠️ ImageMagick not found. Please install it or convert manually:"
@@ -63,7 +63,7 @@ else
     echo ""
     echo "Or use an online converter:"
     echo "- Upload to https://convertio.co/jpg-webp/"
-    echo "- Save as: public/images/optimized/weddings/wedding-highlights-thumbnail.webp"
+    echo "- Save as: public/images/portfolio/wedding-highlights.webp"
 fi
 
 echo ""

@@ -11,10 +11,10 @@ export default function Portfolio() {
     {
       title: 'Wedding Highlights',
       category: 'Wedding',
-      image: '/images/optimized/weddings/wedding-highlights-thumbnail.webp',
+      image: '/images/portfolio/wedding-highlights.webp',
       description: 'Beautiful wedding cinematography capturing special moments',
       videoUrl: 'https://www.youtube.com/embed/SRBc8SJ3jLk',
-      thumbnail: '/images/optimized/weddings/wedding-highlights-thumbnail.webp'
+      thumbnail: '/images/portfolio/wedding-highlights.webp'
     },
     {
       title: 'Commercial Production',
