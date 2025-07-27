@@ -59,7 +59,7 @@ export default function WeddingPortfolio() {
         {weddingVideos.map((video) => (
           <div
             key={video.id}
-            className="group relative bg-black/30 backdrop-blur-sm rounded-xl overflow-hidden border border-gray-800 hover:border-accent/50 transition-colors cursor-pointer"
+            className="group relative bg-wedding-overlay backdrop-blur-sm rounded-xl overflow-hidden border border-wedding-accent/30 hover:border-wedding-accent/50 transition-colors cursor-pointer shadow-glow"
             onClick={() => openVideo(video)}
           >
             {/* Thumbnail */}
@@ -69,25 +69,25 @@ export default function WeddingPortfolio() {
                 alt={video.title}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors" />
+              <div className="absolute inset-0 bg-wedding-dark/40 group-hover:bg-wedding-dark/20 transition-colors" />
               
               {/* Play Button */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 bg-accent/90 rounded-full flex items-center justify-center group-hover:bg-accent transition-colors">
-                  <PlayIcon className="w-8 h-8 text-primary" />
+                <div className="w-16 h-16 bg-wedding-accent/90 rounded-full flex items-center justify-center group-hover:bg-wedding-accent transition-colors">
+                  <PlayIcon className="w-8 h-8 text-wedding-dark" />
                 </div>
               </div>
 
               {/* Duration */}
-              <div className="absolute bottom-2 right-2 bg-black/70 text-white text-sm px-2 py-1 rounded">
+              <div className="absolute bottom-2 right-2 bg-wedding-dark/70 text-wedding-primary text-sm px-2 py-1 rounded">
                 {video.duration}
               </div>
             </div>
 
             {/* Video Info */}
             <div className="p-4">
-              <h3 className="text-lg font-semibold text-white mb-2">{video.title}</h3>
-              <p className="text-gray-300 text-sm">{video.description}</p>
+              <h3 className="text-lg font-semibold text-wedding-dark mb-2">{video.title}</h3>
+              <p className="text-wedding-muted text-sm">{video.description}</p>
             </div>
           </div>
         ))}
@@ -95,12 +95,12 @@ export default function WeddingPortfolio() {
 
       {/* Video Modal */}
       {isModalOpen && selectedVideo && (
-        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-wedding-dark/90 flex items-center justify-center z-50 p-4">
           <div className="relative w-full max-w-4xl">
             {/* Close Button */}
             <button
               onClick={closeVideo}
-              className="absolute -top-12 right-0 text-white hover:text-accent transition-colors"
+              className="absolute -top-12 right-0 text-wedding-primary hover:text-wedding-accent transition-colors"
             >
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -108,7 +108,7 @@ export default function WeddingPortfolio() {
             </button>
 
             {/* Video Player */}
-            <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+            <div className="relative aspect-video bg-wedding-dark rounded-lg overflow-hidden">
               <iframe
                 src={selectedVideo.videoUrl}
                 title={selectedVideo.title}
@@ -121,8 +121,8 @@ export default function WeddingPortfolio() {
 
             {/* Video Info */}
             <div className="mt-4 text-center">
-              <h3 className="text-2xl font-semibold text-white mb-2">{selectedVideo.title}</h3>
-              <p className="text-gray-300">{selectedVideo.description}</p>
+              <h3 className="text-2xl font-semibold text-wedding-primary mb-2">{selectedVideo.title}</h3>
+              <p className="text-wedding-muted">{selectedVideo.description}</p>
             </div>
           </div>
         </div>
