@@ -55,7 +55,7 @@ export default function WeddingPortfolio() {
   return (
     <div className="space-y-8">
       {/* Video Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {weddingVideos.map((video) => (
           <div
             key={video.id}
@@ -85,9 +85,9 @@ export default function WeddingPortfolio() {
             </div>
 
             {/* Video Info */}
-            <div className="p-4">
-              <h3 className="text-lg font-semibold text-wedding-dark mb-2">{video.title}</h3>
-              <p className="text-wedding-muted text-sm">{video.description}</p>
+            <div className="p-6">
+              <h3 className="text-xl font-semibold text-wedding-dark mb-3">{video.title}</h3>
+              <p className="text-wedding-muted">{video.description}</p>
             </div>
           </div>
         ))}
