@@ -6,14 +6,15 @@ import {
   CameraIcon, 
   HeartIcon, 
   StarIcon,
-  CheckIcon
+  CheckIcon,
+  SparklesIcon
 } from '@heroicons/react/24/outline'
 
 export default function WeddingsPage() {
   const packages = [
     {
       name: 'Essential',
-      price: '$1,500',
+      price: '$1,200',
       description: 'Perfect for intimate celebrations',
       features: [
         '4 hours of coverage',
@@ -25,7 +26,7 @@ export default function WeddingsPage() {
     },
     {
       name: 'Classic',
-      price: '$2,500',
+      price: '$2,200',
       description: 'Our most popular package',
       features: [
         '8 hours of coverage',
@@ -39,10 +40,11 @@ export default function WeddingsPage() {
     },
     {
       name: 'Premium',
-      price: '$3,500',
+      price: '$3,200',
       description: 'Complete wedding story',
+      featured: true,
       features: [
-        'Full day coverage',
+        'Full day coverage (12 hours)',
         'Cinematic highlight film (8-12 min)',
         'Full ceremony edit',
         'Reception highlights',
@@ -50,9 +52,25 @@ export default function WeddingsPage() {
         'Getting ready footage',
         'Online gallery',
         'USB delivery',
-        'Drone footage'
+        'Drone footage',
+        'Same-day edit preview'
       ]
     }
+  ]
+
+  const extraServices = [
+    'Additional hours of coverage',
+    'Second videographer',
+    'Same-day edit',
+    'Extended highlight film',
+    'Raw footage delivery',
+    'Custom music selection',
+    'Photo slideshow',
+    'Wedding trailer',
+    'Social media clips',
+    'Parent edits',
+    'Ceremony only',
+    'Reception only'
   ]
 
   const features = [
@@ -163,10 +181,31 @@ export default function WeddingsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {packages.map((pkg, index) => (
-              <div key={index} className="bg-wedding-overlay backdrop-blur-sm rounded-xl p-8 border border-wedding-accent/30 shadow-glow">
+              <div 
+                key={index} 
+                className={`relative rounded-xl p-8 border transition-all duration-300 ${
+                  pkg.featured 
+                    ? 'bg-gradient-to-br from-wedding-accent/20 to-wedding-accent/10 border-wedding-accent shadow-glow-strong scale-105' 
+                    : 'bg-wedding-overlay backdrop-blur-sm border-wedding-accent/30 shadow-glow'
+                }`}
+              >
+                {/* Featured Badge */}
+                {pkg.featured && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <div className="bg-wedding-accent text-wedding-dark px-4 py-2 rounded-full text-sm font-semibold flex items-center">
+                      <SparklesIcon className="w-4 h-4 mr-2" />
+                      Most Popular
+                    </div>
+                  </div>
+                )}
+
                 <div className="text-center mb-6">
-                  <h3 className="text-2xl font-semibold text-wedding-dark mb-2">{pkg.name}</h3>
-                  <div className="text-3xl font-bold text-wedding-accent mb-2">{pkg.price}</div>
+                  <h3 className={`text-2xl font-semibold mb-2 ${pkg.featured ? 'text-wedding-dark' : 'text-wedding-dark'}`}>
+                    {pkg.name}
+                  </h3>
+                  <div className={`text-3xl font-bold mb-2 ${pkg.featured ? 'text-wedding-accent' : 'text-wedding-accent'}`}>
+                    {pkg.price}
+                  </div>
                   <p className="text-wedding-muted">{pkg.description}</p>
                 </div>
                 <ul className="space-y-3">
@@ -177,11 +216,30 @@ export default function WeddingsPage() {
                     </li>
                   ))}
                 </ul>
-                <button className="w-full mt-8 px-6 py-3 bg-wedding-accent text-wedding-dark font-semibold rounded-lg hover:bg-wedding-accent/90 transition-colors shadow-glow">
-                  Choose Package
+                <button className={`w-full mt-8 px-6 py-3 font-semibold rounded-lg transition-colors ${
+                  pkg.featured 
+                    ? 'bg-wedding-accent text-wedding-dark hover:bg-wedding-accent/90 shadow-glow' 
+                    : 'bg-wedding-accent text-wedding-dark hover:bg-wedding-accent/90 shadow-glow'
+                }`}>
+                  {pkg.featured ? 'Choose Premium' : 'Choose Package'}
                 </button>
               </div>
             ))}
+          </div>
+
+          {/* Extra Services */}
+          <div className="mt-16">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-wedding-dark mb-4">Additional Services</h3>
+              <p className="text-wedding-muted">Customize your package with these add-ons</p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {extraServices.map((service, index) => (
+                <div key={index} className="bg-wedding-overlay backdrop-blur-sm rounded-lg p-4 border border-wedding-accent/20">
+                  <p className="text-wedding-dark text-sm font-medium">{service}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
