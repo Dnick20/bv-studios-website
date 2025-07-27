@@ -2,6 +2,10 @@
 
 export const mediaUrls = {
   images: {
+    team: {
+      dominic: "https://drive.google.com/uc?export=view&id=1sBgiF4FajI2fNr56n0Cs54agJ1Hxyd7U", // Dominic's photo
+      deisy: "https://drive.google.com/uc?export=view&id=1aS-Qcfb2DIlk-Yk_eFEhjixCaqjry1qX", // Deisy's photo
+    },
     weddings: {
       // Wedding thumbnails
       christianHailee: "/images/weddings/christian-hailee.jpg", // Christian & Hailee (couple in fall setting)
@@ -14,6 +18,9 @@ export const mediaUrls = {
       lodge: "/images/commercial/lodge.png", // The Lodge (exterior building with flags)
       stuttgart: "/images/commercial/stuttgart.png", // Stuttgart (red classic car interior)
       timRegus: "/images/commercial/tim-regus.jpg", // Tim Regus (modern living room with blue couch)
+    },
+    portfolio: {
+      hero: "https://drive.google.com/uc?export=view&id=16oqXdfp7D9_yUvc1BWk8Z7cw2ukKaPTe", // Portfolio hero image
     },
   },
   videos: {
