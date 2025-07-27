@@ -25,12 +25,12 @@ export default function Portfolio() {
       thumbnail: '/images/optimized/commercial/stuttgart.webp'
     },
     {
-      title: 'Event Coverage',
-      category: 'Event',
-      image: '/images/optimized/commercial/lodge.webp',
-      description: 'Comprehensive event video coverage and highlights',
-      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Placeholder - replace with actual video
-      thumbnail: '/images/optimized/portfolio/hero.webp'
+      title: 'Real Estate & Events',
+      category: 'Real Estate',
+      image: '/images/optimized/commercial/tim-regus.webp',
+      description: 'Professional real estate videography and event coverage',
+      videoUrl: 'https://www.youtube.com/embed/XqX9JotLUb0',
+      thumbnail: '/images/optimized/commercial/tim-regus.webp'
     }
   ]
 
