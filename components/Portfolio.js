@@ -13,15 +13,15 @@ export default function Portfolio() {
       category: 'Wedding',
       image: '/images/optimized/weddings/niki-matt.webp',
       description: 'Beautiful wedding cinematography capturing special moments',
-      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Placeholder - replace with actual video
+      videoUrl: 'https://www.youtube.com/embed/SRBc8SJ3jLk',
       thumbnail: '/images/optimized/portfolio/wedding-hero.webp'
     },
     {
       title: 'Commercial Production',
       category: 'Commercial',
-      image: '/images/optimized/commercial/tim-regus.webp',
+      image: '/images/optimized/commercial/stuttgart.webp',
       description: 'Professional commercial video production for businesses',
-      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Placeholder - replace with actual video
+      videoUrl: 'https://www.youtube.com/embed/isO7D5PLyRo',
       thumbnail: '/images/optimized/commercial/stuttgart.webp'
     },
     {
