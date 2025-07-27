@@ -15,7 +15,7 @@ import {
   UserIcon,
   ClockIcon,
   EyeIcon,
-  DownloadIcon,
+  ArrowDownTrayIcon,
   ShareIcon,
   PencilIcon,
   TrashIcon,
@@ -371,7 +371,7 @@ export default function ProjectPage() {
                           <EyeIcon className="w-4 h-4" />
                         </button>
                         <button className="p-1 text-gray-400 hover:text-white transition-colors">
-                          <DownloadIcon className="w-4 h-4" />
+                          <ArrowDownTrayIcon className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
@@ -421,7 +421,7 @@ export default function ProjectPage() {
                             <EyeIcon className="w-4 h-4" />
                           </button>
                           <button className="p-1 text-gray-400 hover:text-white transition-colors">
-                            <DownloadIcon className="w-4 h-4" />
+                            <ArrowDownTrayIcon className="w-4 h-4" />
                           </button>
                           <button className="p-1 text-red-400 hover:text-red-300 transition-colors">
                             <TrashIcon className="w-4 h-4" />

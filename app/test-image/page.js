@@ -1,3 +1,5 @@
+'use client'
+
 export default function TestImage() {
   return (
     <div className="min-h-screen bg-primary p-8">
