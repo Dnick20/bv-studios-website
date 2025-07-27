@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, XMarkIcon, UserIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
+import { useSession, signOut } from 'next-auth/react'
 
 const navItems = [
   { name: 'Home', href: '/#home' },
@@ -17,6 +18,7 @@ const navItems = [
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const { data: session, status } = useSession()
 
   // Handle scroll event to change header background
   useEffect(() => {
@@ -79,6 +81,43 @@ export default function Navigation() {
                 {item.name}
               </Link>
             ))}
+            
+            {/* Authentication Buttons */}
+            {status === 'loading' ? (
+              <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+            ) : session ? (
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/dashboard"
+                  className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
+                >
+                  <UserIcon className="w-5 h-5" />
+                  <span>Dashboard</span>
+                </Link>
+                <button
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                  className="px-4 py-2 text-red-400 hover:text-red-300 transition-colors"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/auth/signin"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="px-4 py-2 bg-accent text-primary rounded-full font-medium hover:bg-accent/90 transition-colors"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
+            
             <motion.a
               href="#contact"
               onClick={handleClick}
@@ -127,6 +166,50 @@ export default function Navigation() {
                     {item.name}
                   </Link>
                 ))}
+                {/* Authentication in Mobile Menu */}
+                {status === 'loading' ? (
+                  <div className="px-4 py-2">
+                    <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto"></div>
+                  </div>
+                ) : session ? (
+                  <div className="px-4 space-y-2">
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center space-x-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                    >
+                      <UserIcon className="w-5 h-5" />
+                      <span>Dashboard</span>
+                    </Link>
+                    <button
+                      onClick={() => {
+                        signOut({ callbackUrl: '/' })
+                        setIsOpen(false)
+                      }}
+                      className="w-full px-4 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors text-left"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                ) : (
+                  <div className="px-4 space-y-2">
+                    <Link
+                      href="/auth/signin"
+                      onClick={() => setIsOpen(false)}
+                      className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/auth/signup"
+                      onClick={() => setIsOpen(false)}
+                      className="block px-4 py-2 bg-accent text-primary text-center rounded-lg font-medium hover:bg-accent/90 transition-colors"
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
+                
                 <div className="px-4 pt-4">
                   <motion.a
                     href="#contact"
