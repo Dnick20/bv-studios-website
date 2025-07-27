@@ -74,25 +74,35 @@ export default function WeddingsPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-wedding-primary">
+    <div className="min-h-screen bg-primary">
       <Navigation />
       
-      {/* Decorative background elements */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,theme(colors.wedding.accent/0.15),transparent_70%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,theme(colors.wedding.accent/0.1),transparent_70%)]" />
-      </div>
-      
-      {/* Hero Section */}
-      <section className="relative pt-20 pb-16">
-        <div className="absolute inset-0 bg-gradient-to-b from-wedding-accent/20 to-wedding-primary"></div>
-        <div className="relative container mx-auto px-4">
+      {/* Hero Section with Wedding Umbrella Background */}
+      <section className="relative pt-20 pb-16 min-h-screen flex items-center">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: 'url(/media/images/weddings/hero.jpg)'
+          }}
+        />
+        
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-wedding-dark/40"></div>
+        
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,theme(colors.wedding.accent/0.15),transparent_70%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,theme(colors.wedding.accent/0.1),transparent_70%)]" />
+        </div>
+        
+        <div className="relative container mx-auto px-4 z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-bold text-wedding-dark mb-6">
+            <h1 className="text-5xl md:text-6xl font-bold text-wedding-primary mb-6">
               Wedding
               <span className="text-wedding-accent block">Films</span>
             </h1>
-            <p className="text-xl text-wedding-muted mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-wedding-primary/90 mb-8 max-w-2xl mx-auto">
               Capture your special day with cinematic wedding films that tell your unique love story. 
               From engagement shoots to the big day, we preserve your memories beautifully.
             </p>
@@ -104,7 +114,7 @@ export default function WeddingsPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-wedding-secondary/50">
+      <section className="py-16 bg-wedding-primary">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-wedding-dark mb-4">Why Choose Our Wedding Films</h2>
@@ -128,7 +138,7 @@ export default function WeddingsPage() {
       </section>
 
       {/* Portfolio Section */}
-      <section className="py-16">
+      <section className="py-16 bg-wedding-secondary">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-wedding-dark mb-4">Featured Wedding Films</h2>
@@ -142,7 +152,7 @@ export default function WeddingsPage() {
       </section>
 
       {/* Packages Section */}
-      <section className="py-16 bg-wedding-secondary/50">
+      <section className="py-16 bg-wedding-primary">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-wedding-dark mb-4">Wedding Packages</h2>
@@ -177,7 +187,7 @@ export default function WeddingsPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16">
+      <section className="py-16 bg-wedding-secondary">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-4xl font-bold text-wedding-dark mb-4">
