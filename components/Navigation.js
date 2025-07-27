@@ -117,15 +117,6 @@ export default function Navigation() {
                 </Link>
               </div>
             )}
-            <motion.a
-              href="#contact"
-              onClick={handleClick}
-              className="px-4 py-2 bg-accent text-primary rounded-full font-medium hover:bg-accent/90 transition-colors"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Get Started
-            </motion.a>
           </div>
 
           {/* Mobile menu button */}
@@ -205,17 +196,6 @@ export default function Navigation() {
                     </Link>
                   </div>
                 )}
-                
-                <Link
-                  href="#contact"
-                  onClick={() => {
-                    handleClick({ currentTarget: { getAttribute: () => '#contact' }, preventDefault: () => {} })
-                    setIsOpen(false)
-                  }}
-                  className="block px-4 py-2 bg-accent text-primary rounded-full font-medium hover:bg-accent/90 transition-colors text-center"
-                >
-                  Get Started
-                </Link>
               </div>
             </motion.div>
           )}
