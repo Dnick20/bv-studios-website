@@ -11,26 +11,26 @@ export default function Portfolio() {
     {
       title: 'Wedding Highlights',
       category: 'Wedding',
-      image: '/media/images/weddings/joel-overbeck-fGPGd9PFd3w-unsplash.jpg',
+      image: '/images/optimized/weddings/niki-matt.webp',
       description: 'Beautiful wedding cinematography capturing special moments',
       videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Placeholder - replace with actual video
-      thumbnail: '/media/images/weddings/hero.jpg'
+      thumbnail: '/images/optimized/portfolio/wedding-hero.webp'
     },
     {
       title: 'Commercial Production',
       category: 'Commercial',
-      image: '/media/images/commercial/tim-regus.jpg',
+      image: '/images/optimized/commercial/tim-regus.webp',
       description: 'Professional commercial video production for businesses',
       videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Placeholder - replace with actual video
-      thumbnail: '/media/images/commercial/stuttgart.png'
+      thumbnail: '/images/optimized/commercial/stuttgart.webp'
     },
     {
       title: 'Event Coverage',
       category: 'Event',
-      image: '/media/images/commercial/lodge.png',
+      image: '/images/optimized/commercial/lodge.webp',
       description: 'Comprehensive event video coverage and highlights',
       videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Placeholder - replace with actual video
-      thumbnail: '/media/images/portfolio/hero.jpg'
+      thumbnail: '/images/optimized/portfolio/hero.webp'
     }
   ]
 

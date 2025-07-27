@@ -9,7 +9,7 @@ export default function Hero() {
       {/* Background Video/Image */}
       <div className="absolute inset-0">
         <Image
-          src="/media/images/portfolio/hero.jpg"
+          src="/images/optimized/portfolio/hero.webp"
           alt="BV Studios Video Production"
           fill
           className="object-cover"
