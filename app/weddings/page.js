@@ -36,7 +36,7 @@ export default function WeddingsPage() {
     },
     {
       name: 'Diamond Collection',
-      price: '$3,750',
+      price: '$4,500',
       description: 'Complete wedding story',
       featured: true,
       features: [
@@ -54,22 +54,22 @@ export default function WeddingsPage() {
     {
       name: 'Ceremony Film',
       description: 'A 15-20 Minute film of your ceremony with clean recorded audio, color grading, and 2 camera angles',
-      price: '$500'
+      price: '$650'
     },
     {
       name: 'Engagement Film',
       description: 'A short creative aside from your wedding film that accompanies your wedding film',
-      price: '$500'
+      price: '$650'
     },
     {
       name: 'Additional Hours',
       description: 'Have a long party? Get additional hours so you don\'t miss a thing!',
-      price: '$200/hour'
+      price: '$260/hour'
     },
     {
       name: 'Drone Footage',
       description: 'Aerial coverage to capture your venue and special moments from above',
-      price: '$500'
+      price: '$650'
     }
   ]
 
