@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bars3Icon, XMarkIcon, UserIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, XMarkIcon, UserIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 
@@ -19,6 +19,7 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [showAuthDropdown, setShowAuthDropdown] = useState(false)
   
   // Safely use session with fallback
   const sessionResult = useSession()
@@ -56,6 +57,69 @@ export default function Navigation() {
       top: offsetPosition,
       behavior: 'smooth'
     })
+  }
+
+  // Smart authentication button component
+  const AuthButton = () => {
+    if (status === 'loading') {
+      return (
+        <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+      )
+    }
+
+    if (session) {
+      return (
+        <div className="relative">
+          <button
+            onClick={() => setShowAuthDropdown(!showAuthDropdown)}
+            className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
+          >
+            <UserIcon className="w-5 h-5" />
+            <span>Dashboard</span>
+            <ChevronDownIcon className="w-4 h-4" />
+          </button>
+          
+          <AnimatePresence>
+            {showAuthDropdown && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute right-0 mt-2 w-48 bg-black/90 backdrop-blur-sm rounded-lg border border-gray-700 shadow-lg"
+              >
+                <div className="py-2">
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setShowAuthDropdown(false)}
+                    className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
+                  >
+                    My Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      signOut({ callbackUrl: '/' })
+                      setShowAuthDropdown(false)
+                    }}
+                    className="block w-full text-left px-4 py-2 text-red-400 hover:text-red-300 hover:bg-gray-800 transition-colors"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )
+    }
+
+    return (
+      <Link
+        href="/auth"
+        className="px-4 py-2 bg-accent text-primary rounded-full font-medium hover:bg-accent/90 transition-colors"
+      >
+        Get Started
+      </Link>
+    )
   }
 
   // Don't render session-dependent content during SSR
@@ -128,41 +192,8 @@ export default function Navigation() {
               </Link>
             ))}
             
-            {/* Authentication Buttons */}
-            {status === 'loading' ? (
-              <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
-            ) : session ? (
-              <div className="flex items-center space-x-4">
-                <Link
-                  href="/dashboard"
-                  className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
-                >
-                  <UserIcon className="w-5 h-5" />
-                  <span>Dashboard</span>
-                </Link>
-                <button
-                  onClick={() => signOut({ callbackUrl: '/' })}
-                  className="px-4 py-2 text-red-400 hover:text-red-300 transition-colors"
-                >
-                  Sign Out
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-4">
-                <Link
-                  href="/auth/signin"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/auth/signup"
-                  className="px-4 py-2 bg-accent text-primary rounded-full font-medium hover:bg-accent/90 transition-colors"
-                >
-                  Sign Up
-                </Link>
-              </div>
-            )}
+            {/* Smart Authentication Button */}
+            <AuthButton />
           </div>
 
           {/* Mobile menu button */}
@@ -201,46 +232,39 @@ export default function Navigation() {
                 ))}
                 
                 {/* Mobile Authentication */}
-                {status === 'loading' ? (
-                  <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
-                ) : session ? (
-                  <div className="space-y-4 pt-4 border-t border-gray-700">
+                <div className="pt-4 border-t border-gray-700">
+                  {status === 'loading' ? (
+                    <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+                  ) : session ? (
+                    <div className="space-y-4">
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setIsOpen(false)}
+                        className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
+                      >
+                        <UserIcon className="w-5 h-5" />
+                        <span>Dashboard</span>
+                      </Link>
+                      <button
+                        onClick={() => {
+                          signOut({ callbackUrl: '/' })
+                          setIsOpen(false)
+                        }}
+                        className="w-full text-left text-red-400 hover:text-red-300 transition-colors"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  ) : (
                     <Link
-                      href="/dashboard"
-                      onClick={() => setIsOpen(false)}
-                      className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
-                    >
-                      <UserIcon className="w-5 h-5" />
-                      <span>Dashboard</span>
-                    </Link>
-                    <button
-                      onClick={() => {
-                        signOut({ callbackUrl: '/' })
-                        setIsOpen(false)
-                      }}
-                      className="w-full text-left text-red-400 hover:text-red-300 transition-colors"
-                    >
-                      Sign Out
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-4 pt-4 border-t border-gray-700">
-                    <Link
-                      href="/auth/signin"
-                      onClick={() => setIsOpen(false)}
-                      className="block text-gray-300 hover:text-white transition-colors"
-                    >
-                      Sign In
-                    </Link>
-                    <Link
-                      href="/auth/signup"
+                      href="/auth"
                       onClick={() => setIsOpen(false)}
                       className="block px-4 py-2 bg-accent text-primary rounded-full font-medium hover:bg-accent/90 transition-colors text-center"
                     >
-                      Sign Up
+                      Get Started
                     </Link>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </motion.div>
           )}
