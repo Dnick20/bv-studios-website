@@ -1,0 +1,122 @@
+# Git Version Control Workflow
+
+## Frequent Commit Strategy
+- **Commit after each feature**: Every significant change gets committed
+- **Descriptive messages**: Use emojis and clear descriptions
+- **Regular intervals**: Commit at least once per development session
+- **Before major changes**: Always commit before starting new optimizations
+
+## Commit Message Format
+```bash
+# Feature commits
+git commit -m "✨ Add new feature: [description]"
+
+# Bug fixes
+git commit -m "🐛 Fix issue: [description]"
+
+# Optimizations
+git commit -m "🚀 Optimization: [description]"
+
+# Documentation
+git commit -m "📝 Update docs: [description]"
+
+# Refactoring
+git commit -m "♻️ Refactor: [description]"
+
+# Save points
+git commit -m "💾 Save Point: [description]"
+```
+
+## Version Tagging Strategy
+- **Major versions**: v2.0.0, v3.0.0 (significant updates)
+- **Minor versions**: v2.1.0, v2.2.0 (new features)
+- **Patch versions**: v2.1.1, v2.1.2 (bug fixes)
+- **Use descriptive tags**: Include what was accomplished
+
+## Git Commands for Frequent Control
+
+### Daily Workflow
+```bash
+# Check status before starting
+git status
+
+# Add all changes
+git add .
+
+# Commit with descriptive message
+git commit -m "📝 [Description of changes]"
+
+# Check recent commits
+git log --oneline -5
+```
+
+### Before Major Changes
+```bash
+# Create save point
+git add .
+git commit -m "💾 Save Point: Before [description of upcoming changes]"
+
+# Create tag for major milestones
+git tag -a v2.x.x -m "🎯 Version 2.x.x: [description]"
+```
+
+### After Optimizations
+```bash
+# Commit each optimization
+git commit -m "🚀 Optimization #[number]: [description]"
+
+# Tag final version
+git tag -a v2.x.x -m "🎯 Version 2.x.x: Complete [feature] optimization"
+```
+
+## Project-Specific Patterns
+
+### Component Splitting Workflow
+1. **Before**: `git commit -m "💾 Save Point: Before component splitting"`
+2. **Split component**: Create new files and refactor
+3. **Test**: Verify functionality
+4. **Commit**: `git commit -m "🚀 Optimization: [Component] splitting"`
+5. **Tag**: `git tag -a v2.x.x -m "🎯 Version 2.x.x: [Component] optimization"`
+
+### API Optimization Workflow
+1. **Before**: `git commit -m "💾 Save Point: Before API optimization"`
+2. **Optimize**: Add caching, CORS headers, error handling
+3. **Test**: Verify API performance
+4. **Commit**: `git commit -m "🚀 Optimization: API routes performance"`
+5. **Tag**: `git tag -a v2.x.x -m "🎯 Version 2.x.x: API optimization"`
+
+### Turbopack Integration Workflow
+1. **Before**: `git commit -m "💾 Save Point: Before Turbopack integration"`
+2. **Implement**: Add `--turbopack` flag and optimizations
+3. **Test**: Verify compilation speed improvements
+4. **Commit**: `git commit -m "🚀 Optimization: Turbopack integration"`
+5. **Tag**: `git tag -a v2.x.x -m "🎯 Version 2.x.x: Turbopack optimization"`
+
+## Branch Strategy
+- **Main branch**: Stable, production-ready code
+- **Feature branches**: For major new features
+- **Hotfix branches**: For urgent bug fixes
+- **Always merge back to main**: Keep main branch current
+
+## Backup Strategy
+- **Push frequently**: `git push origin main`
+- **Remote backup**: Ensure GitHub/GitLab is up to date
+- **Tag releases**: Create tags for all major versions
+- **Document changes**: Keep README updated with changes
+
+## Monitoring and Maintenance
+- **Regular status checks**: `git status` before starting work
+- **Review recent commits**: `git log --oneline -10`
+- **Check tags**: `git tag -l` to see version history
+- **Clean up**: Remove old branches when no longer needed
+
+## Integration with Development Workflow
+- **Before coding**: Check git status
+- **During development**: Commit frequently
+- **After testing**: Commit with descriptive message
+- **Before pushing**: Review commits and create tags
+- **After deployment**: Tag final version
+description:
+globs:
+alwaysApply: false
+---
