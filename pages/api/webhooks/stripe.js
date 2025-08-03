@@ -14,6 +14,25 @@ export const config = {
   },
 }
 
+// Optimized event handler mapping
+const eventHandlers = {
+  'customer.created': handleCustomerCreated,
+  'customer.updated': handleCustomerUpdated,
+  'customer.deleted': handleCustomerDeleted,
+  'payment_intent.succeeded': handlePaymentIntentSucceeded,
+  'payment_intent.payment_failed': handlePaymentIntentFailed,
+  'invoice.payment_succeeded': handleInvoicePaymentSucceeded,
+  'invoice.payment_failed': handleInvoicePaymentFailed,
+  'customer.subscription.created': handleSubscriptionCreated,
+  'customer.subscription.updated': handleSubscriptionUpdated,
+  'customer.subscription.deleted': handleSubscriptionDeleted,
+  'checkout.session.completed': handleCheckoutSessionCompleted,
+  'account.updated': handleAccountUpdated,
+  'file.created': handleFileCreated,
+  'file.updated': handleFileUpdated,
+  'file.deleted': handleFileDeleted,
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -34,69 +53,13 @@ export default async function handler(req, res) {
   console.log('Received webhook event:', event.type)
 
   try {
-    switch (event.type) {
-      case 'customer.created':
-        await handleCustomerCreated(event.data.object)
-        break
-
-      case 'customer.updated':
-        await handleCustomerUpdated(event.data.object)
-        break
-
-      case 'customer.deleted':
-        await handleCustomerDeleted(event.data.object)
-        break
-
-      case 'payment_intent.succeeded':
-        await handlePaymentIntentSucceeded(event.data.object)
-        break
-
-      case 'payment_intent.payment_failed':
-        await handlePaymentIntentFailed(event.data.object)
-        break
-
-      case 'invoice.payment_succeeded':
-        await handleInvoicePaymentSucceeded(event.data.object)
-        break
-
-      case 'invoice.payment_failed':
-        await handleInvoicePaymentFailed(event.data.object)
-        break
-
-      case 'customer.subscription.created':
-        await handleSubscriptionCreated(event.data.object)
-        break
-
-      case 'customer.subscription.updated':
-        await handleSubscriptionUpdated(event.data.object)
-        break
-
-      case 'customer.subscription.deleted':
-        await handleSubscriptionDeleted(event.data.object)
-        break
-
-      case 'checkout.session.completed':
-        await handleCheckoutSessionCompleted(event.data.object)
-        break
-
-      case 'account.updated':
-        await handleAccountUpdated(event.data.object)
-        break
-
-      case 'file.created':
-        await handleFileCreated(event.data.object)
-        break
-
-      case 'file.updated':
-        await handleFileUpdated(event.data.object)
-        break
-
-      case 'file.deleted':
-        await handleFileDeleted(event.data.object)
-        break
-
-      default:
-        console.log(`Unhandled event type: ${event.type}`)
+    // Use optimized event handler mapping
+    const handler = eventHandlers[event.type]
+    
+    if (handler) {
+      await handler(event.data.object)
+    } else {
+      console.log(`Unhandled event type: ${event.type}`)
     }
 
     res.status(200).json({ received: true })
