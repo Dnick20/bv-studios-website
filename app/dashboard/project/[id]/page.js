@@ -3,6 +3,7 @@
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { use } from 'react'
 import Link from 'next/link'
 import {
   ArrowLeftIcon,
@@ -27,7 +28,7 @@ import {
 export default function ProjectPage({ params }) {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const { id } = params
+  const { id } = use(params)
   
   const [project, setProject] = useState(null)
   const [files, setFiles] = useState([])
