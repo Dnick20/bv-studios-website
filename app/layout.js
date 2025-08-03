@@ -6,6 +6,7 @@ import Providers from '../components/Providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
+  metadataBase: new URL('https://bvstudios.com'),
   title: 'BV Studios | Professional Video Production in Lexington, KY',
   description: 'Expert video production services in Lexington, Kentucky. We create compelling video content that drives results for your business.',
   keywords: 'video production, commercial video, brand story, event coverage, Lexington, Kentucky',

@@ -18,7 +18,7 @@
     "bcryptjs": "^2.4.3",
     "framer-motion": "^11.18.2",
     "micro": "^10.0.1",
-    "next": "14.1.0",
+    "next": "^15.4.5",
     "next-auth": "^4.24.5",
     "nodemailer": "^6.9.8",
     "postcss": "^8.4.35",
