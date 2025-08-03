@@ -1,0 +1,47 @@
+# BV Studios Website Project Structure
+
+## Core Architecture
+This is a Next.js 15.4.5 project using the App Router with Turbopack optimization. The main entry point is [app/layout.js](mdc:app/layout.js) which provides the root layout.
+
+## Directory Structure
+
+### App Router Pages
+- [app/page.js](mdc:app/page.js) - Homepage with hero section
+- [app/dashboard/page.js](mdc:app/dashboard/page.js) - User dashboard with file management
+- [app/dashboard/project/[id]/page.js](mdc:app/dashboard/project/[id]/page.js) - Dynamic project pages
+- [app/admin/dashboard/page.js](mdc:app/admin/dashboard/page.js) - Admin interface (1,678 lines)
+- [app/admin/test-buttons/page.js](mdc:app/admin/test-buttons/page.js) - Admin testing page
+
+### Components Organization
+- [components/Navigation.js](mdc:components/Navigation.js) - Main navigation (optimized)
+- [components/portfolio/PortfolioItem.js](mdc:components/portfolio/PortfolioItem.js) - Individual portfolio items
+- [components/portfolio/VideoModal.js](mdc:components/portfolio/VideoModal.js) - Video modal component
+- [components/navigation/AuthButton.js](mdc:components/navigation/AuthButton.js) - Authentication button
+- [components/navigation/MobileMenu.js](mdc:components/navigation/MobileMenu.js) - Mobile menu
+- [components/admin/Overview.js](mdc:components/admin/Overview.js) - Admin dashboard overview
+- [components/admin/UsersManagement.js](mdc:components/admin/UsersManagement.js) - User management interface
+- [components/contact/ContactFormLazy.js](mdc:components/contact/ContactFormLazy.js) - Optimized contact form
+
+### API Routes
+- [pages/api/files.js](mdc:pages/api/files.js) - File management API (optimized with caching)
+- [pages/api/webhooks/stripe.js](mdc:pages/api/webhooks/stripe.js) - Stripe webhook handler (456 lines)
+- [pages/api/auth/[...nextauth].js](mdc:pages/api/auth/[...nextauth].js) - NextAuth.js configuration
+
+### Configuration Files
+- [package.json](mdc:package.json) - Dependencies and scripts (Turbopack enabled)
+- [next.config.js](mdc:next.config.js) - Next.js configuration
+- [tailwind.config.js](mdc:tailwind.config.js) - Tailwind CSS configuration
+- [prisma/schema.prisma](mdc:prisma/schema.prisma) - Database schema
+
+## Key Technologies
+- Next.js 15.4.5 with App Router
+- Turbopack for development
+- NextAuth.js for authentication
+- Prisma for database
+- Tailwind CSS for styling
+- Framer Motion for animations
+- Stripe for payments
+description:
+globs:
+alwaysApply: false
+---

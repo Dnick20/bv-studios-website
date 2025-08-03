@@ -1,0 +1,80 @@
+# Accessibility Standards & Best Practices
+
+## Core Accessibility Requirements
+- **Tabindex**: Add `tabindex="0"` to all interactive elements
+- **ARIA labels**: Include `aria-label` for screen readers
+- **Keyboard navigation**: Implement `onKeyDown` handlers
+- **Focus management**: Ensure proper focus states
+- **Semantic HTML**: Use appropriate HTML elements
+
+## Interactive Elements
+```javascript
+// Button with full accessibility
+<button
+  onClick={handleClick}
+  onKeyDown={handleKeyDown}
+  tabIndex={0}
+  aria-label="Submit form"
+  className="focus:outline-none focus:ring-2 focus:ring-blue-500"
+>
+  Submit
+</button>
+```
+
+## Form Accessibility
+- Use proper `<label>` elements for form inputs
+- Include `aria-describedby` for error messages
+- Implement proper validation feedback
+- Use `aria-invalid` for invalid fields
+
+## Navigation Accessibility
+- Ensure keyboard navigation works for all menu items
+- Use proper heading hierarchy (h1, h2, h3)
+- Include skip links for main content
+- Implement proper focus management for modals
+
+## Image Accessibility
+- Always include `alt` attributes for images
+- Use descriptive alt text
+- Implement lazy loading with proper accessibility
+- Use `aria-hidden` for decorative images
+
+## Modal and Dialog Accessibility
+- Use proper ARIA roles (`dialog`, `modal`)
+- Implement focus trapping
+- Include close button with proper labeling
+- Use `aria-modal="true"` for modal dialogs
+
+## Color and Contrast
+- Ensure sufficient color contrast (WCAG AA standards)
+- Don't rely solely on color to convey information
+- Use focus indicators that work with high contrast mode
+- Test with color blindness simulators
+
+## Screen Reader Support
+- Use semantic HTML elements
+- Implement proper heading structure
+- Include descriptive link text
+- Use `aria-live` regions for dynamic content
+
+## Keyboard Navigation
+- Ensure all interactive elements are keyboard accessible
+- Implement proper tab order
+- Use arrow keys for custom components
+- Include keyboard shortcuts where appropriate
+
+## Focus Management
+- Maintain logical tab order
+- Implement focus restoration after modal close
+- Use `useRef` for focus management
+- Test with keyboard-only navigation
+
+## Error Handling
+- Provide clear error messages
+- Use `aria-live` for error announcements
+- Include suggestions for error resolution
+- Ensure errors are perceivable by all users
+description:
+globs:
+alwaysApply: false
+---

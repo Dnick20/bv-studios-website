@@ -1,0 +1,63 @@
+# Turbopack Optimization Guidelines
+
+## Development Setup
+- Always use `npm run dev --turbopack` for development
+- Turbopack provides 2-3x faster compilation than Webpack
+- Hot reload is near-instant for component changes
+- Only rebuilds changed files, not entire project
+
+## Component Optimization for Turbopack
+
+### Component Splitting
+- Split components >150 lines into smaller pieces
+- Create dedicated folders: `components/navigation/`, `components/admin/`, `components/portfolio/`
+- Keep individual components under 200 lines
+- Use proper imports and exports
+
+### Lazy Loading Implementation
+- Use dynamic imports for heavy components
+- Implement proper loading states
+- Cache expensive computations with `useMemo`
+- Use `React.lazy()` for route-based code splitting
+
+### Performance Patterns
+- Use `motion` components from Framer Motion efficiently
+- Implement proper loading states with `useState` and `useEffect`
+- Cache API responses with Map objects
+- Use Prisma select queries to limit data transfer
+
+### File Organization
+- Group related components in dedicated folders
+- Use consistent naming conventions
+- Implement proper prop interfaces
+- Create reusable utility functions
+
+### API Route Optimization
+- Add CORS headers for better performance
+- Implement caching strategies for frequently accessed data
+- Use proper error handling with try-catch blocks
+- Return consistent JSON responses with status codes
+
+### Database Integration
+- Use Prisma for all database operations
+- Implement proper connection handling
+- Use select queries to limit data transfer
+- Cache database results when appropriate
+
+## Turbopack-Specific Benefits
+- Faster compilation times (2-3x improvement)
+- Incremental compilation (only changed files)
+- Better memory usage
+- Improved hot reload performance
+- Rust-based bundler for better performance
+
+## Monitoring Performance
+- Monitor compilation times in terminal output
+- Check for console errors in browser
+- Verify hot reload performance
+- Test all major user flows after changes
+- Use browser dev tools to monitor performance
+description:
+globs:
+alwaysApply: false
+---

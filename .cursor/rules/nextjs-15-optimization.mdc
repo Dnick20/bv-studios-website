@@ -1,0 +1,41 @@
+# Next.js 15 Optimization Guidelines
+
+## App Router Best Practices
+- Always use `'use client'` directive for client components
+- Use `use()` hook for async params: `const { id } = use(params)` instead of `const { id } = params`
+- Import from `next/navigation` instead of `next/router` for App Router
+- Use `useRouter()` from `next/navigation` for navigation
+
+## Turbopack Optimization
+- Components should be split into smaller, focused files for better compilation
+- Use lazy loading for heavy components
+- Implement caching in API routes for better performance
+- Keep component files under 200 lines when possible
+
+## Performance Patterns
+- Use `motion` components from Framer Motion for animations
+- Implement proper loading states with `useState` and `useEffect`
+- Use `useSession()` from NextAuth.js for authentication
+- Cache API responses with Map objects for better performance
+
+## Component Structure
+- Split large components (>150 lines) into smaller sub-components
+- Create dedicated folders for component categories (admin/, navigation/, portfolio/)
+- Use prop drilling sparingly, prefer context or state management
+- Implement proper error boundaries and loading states
+
+## API Route Optimization
+- Add CORS headers for better performance
+- Implement caching strategies for frequently accessed data
+- Use proper error handling with try-catch blocks
+- Return consistent JSON responses with status codes
+
+## Database Integration
+- Use Prisma for database operations
+- Implement proper connection handling
+- Use select queries to limit data transfer
+- Cache database results when appropriate
+description:
+globs:
+alwaysApply: false
+---

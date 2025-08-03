@@ -1,0 +1,51 @@
+# Component Optimization Patterns
+
+## Navigation Components
+- [components/Navigation.js](mdc:components/Navigation.js) is the main navigation component
+- [components/navigation/AuthButton.js](mdc:components/navigation/AuthButton.js) handles authentication UI
+- [components/navigation/MobileMenu.js](mdc:components/navigation/MobileMenu.js) manages mobile menu
+- Use `useSession()` for authentication state
+- Implement smooth scrolling for hash links
+
+## Portfolio Components
+- [components/Portfolio.js](mdc:components/Portfolio.js) is the main portfolio component
+- [components/portfolio/PortfolioItem.js](mdc:components/portfolio/PortfolioItem.js) renders individual portfolio items
+- [components/portfolio/VideoModal.js](mdc:components/portfolio/VideoModal.js) handles video playback
+- Use Framer Motion for animations and transitions
+- Implement proper image optimization with WebP format
+
+## Admin Components
+- [components/admin/Overview.js](mdc:components/admin/Overview.js) shows dashboard statistics
+- [components/admin/UsersManagement.js](mdc:components/admin/UsersManagement.js) handles user CRUD operations
+- [app/admin/dashboard/page.js](mdc:app/admin/dashboard/page.js) is the main admin interface (1,678 lines)
+- Use proper form handling with controlled components
+- Implement modal patterns for editing and creating
+
+## Contact Components
+- [components/contact/ContactFormLazy.js](mdc:components/contact/ContactFormLazy.js) is the optimized contact form
+- Use proper form validation and state management
+- Implement loading states for form submission
+- Use controlled components for form inputs
+
+## Animation Patterns
+- Use `motion.div` for container animations
+- Implement `whileInView` for scroll-triggered animations
+- Use `AnimatePresence` for modal and dropdown animations
+- Apply consistent transition durations (0.8s for main animations)
+
+## State Management
+- Use `useState` for local component state
+- Implement proper loading states with boolean flags
+- Use `useEffect` for side effects and data fetching
+- Cache expensive computations with `useMemo` when needed
+
+## Performance Optimizations
+- Split large components into smaller, focused pieces
+- Use lazy loading for heavy components
+- Implement proper error boundaries
+- Cache API responses and database queries
+- Use proper image optimization and WebP format
+description:
+globs:
+alwaysApply: false
+---

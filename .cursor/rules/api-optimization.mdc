@@ -1,0 +1,53 @@
+# API Route Optimization Patterns
+
+## File Management API
+- [pages/api/files.js](mdc:pages/api/files.js) handles file operations with caching
+- Implement Map-based caching with 5-minute duration
+- Use proper CORS headers for better performance
+- Return consistent JSON responses with status codes
+- Use Prisma select queries to limit data transfer
+
+## Stripe Webhook Handler
+- [pages/api/webhooks/stripe.js](mdc:pages/api/webhooks/stripe.js) processes Stripe events (456 lines)
+- Use optimized event handler mapping instead of switch statements
+- Implement proper error handling and logging
+- Use `buffer` from 'micro' for webhook signature verification
+- Handle multiple event types efficiently
+
+## Authentication API
+- [pages/api/auth/[...nextauth].js](mdc:pages/api/auth/[...nextauth].js) configures NextAuth.js
+- Use proper session handling with `getServerSession`
+- Implement secure authentication flows
+- Handle multiple authentication providers
+
+## Performance Patterns
+- Add CORS headers: `Access-Control-Allow-Origin`, `Access-Control-Allow-Methods`
+- Implement caching strategies for frequently accessed data
+- Use proper error handling with try-catch blocks
+- Return development-specific error details only in development mode
+- Clear cache when data is modified
+
+## Database Integration
+- Use Prisma for all database operations
+- Implement proper connection handling
+- Use select queries to limit data transfer: `select: { id: true, name: true }`
+- Cache database results when appropriate
+- Handle database errors gracefully
+
+## Security Best Practices
+- Validate webhook signatures for external services
+- Implement proper authentication checks
+- Use environment variables for sensitive data
+- Sanitize user inputs
+- Implement rate limiting where appropriate
+
+## Error Handling
+- Use consistent error response format
+- Log errors for debugging
+- Return appropriate HTTP status codes
+- Provide meaningful error messages
+- Handle edge cases gracefully
+description:
+globs:
+alwaysApply: false
+---

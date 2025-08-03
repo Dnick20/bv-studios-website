@@ -1,0 +1,56 @@
+# Development Workflow & Best Practices
+
+## Turbopack Development
+- Use `npm run dev` with `--turbopack` flag for faster development
+- Turbopack provides 2-3x faster compilation than Webpack
+- Hot reload is near-instant for component changes
+- Only rebuilds changed files, not entire project
+
+## Git Workflow
+- Create save points before major optimizations
+- Use descriptive commit messages with emojis
+- Tag major versions (v2.0.0, v2.1.0)
+- Test each optimization before committing
+
+## Performance Testing
+- Test response times with `curl -s -o /dev/null -w "%{time_total}"`
+- Monitor compilation times in terminal output
+- Check for console errors in browser
+- Verify hot reload performance
+
+## Component Development
+- Split large components (>150 lines) into smaller pieces
+- Create dedicated folders for component categories
+- Use consistent naming conventions
+- Implement proper prop interfaces
+
+## API Development
+- Test API endpoints with curl commands
+- Monitor response times and error rates
+- Implement proper caching strategies
+- Use consistent error handling patterns
+
+## Database Development
+- Use Prisma for all database operations
+- Test database queries in development
+- Implement proper connection handling
+- Use select queries to optimize performance
+
+## Optimization Checklist
+- [ ] Component splitting for large files
+- [ ] API route caching implementation
+- [ ] Lazy loading for heavy components
+- [ ] Error boundary implementation
+- [ ] Performance testing and validation
+- [ ] Git commit with descriptive message
+- [ ] Test in browser before final commit
+
+## Troubleshooting
+- Check for Next.js 15 compatibility issues
+- Verify Turbopack is running properly
+- Monitor terminal for compilation errors
+- Test all major user flows after changes
+description:
+globs:
+alwaysApply: false
+---
