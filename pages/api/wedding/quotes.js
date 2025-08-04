@@ -14,6 +14,7 @@ export default async function handler(req, res) {
         eventDate,
         eventTime,
         venueId,
+        venueName,
         guestCount,
         specialRequests,
         addons
@@ -54,15 +55,25 @@ export default async function handler(req, res) {
         })
       }
 
+      // Get user by email since session might not have id
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email }
+      })
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' })
+      }
+
       // Create the quote
       const quote = await prisma.weddingQuote.create({
         data: {
-          userId: session.user.id,
+          userId: user.id,
           packageId,
           eventDate: new Date(eventDate),
           eventTime,
           venueId: venueId || null,
-          guestCount: guestCount || null,
+          venueName: venueName || null,
+          guestCount: guestCount ? parseInt(guestCount, 10) : null,
           specialRequests: specialRequests || null,
           totalPrice
         }
@@ -96,9 +107,18 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
+      // Get user by email since session might not have id
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email }
+      })
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' })
+      }
+
       const quotes = await prisma.weddingQuote.findMany({
         where: {
-          userId: session.user.id
+          userId: user.id
         },
         include: {
           package: true,

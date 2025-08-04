@@ -321,6 +321,20 @@ export default function Dashboard() {
               <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
               <div className="space-y-3">
                 <Link
+                  href="/wedding-booking"
+                  className="flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
+                >
+                  <VideoCameraIcon className="w-5 h-5 text-accent" />
+                  <span className="text-white">Book Wedding</span>
+                </Link>
+                <Link
+                  href="/my-quotes"
+                  className="flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
+                >
+                  <DocumentIcon className="w-5 h-5 text-accent" />
+                  <span className="text-white">My Quotes</span>
+                </Link>
+                <Link
                   href="/dashboard/project/new"
                   className="flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
                 >

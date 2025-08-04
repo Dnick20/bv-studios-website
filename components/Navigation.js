@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Bars3Icon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 import AuthButton from './navigation/AuthButton'
 import MobileMenu from './navigation/MobileMenu'
 
@@ -17,6 +18,7 @@ const navItems = [
 ]
 
 export default function Navigation() {
+  const { data: session } = useSession()
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -85,6 +87,16 @@ export default function Navigation() {
                 {item.name}
               </Link>
             ))}
+            
+            {/* My Quotes - Only show when signed in */}
+            {session && (
+              <Link
+                href="/my-quotes"
+                className="text-gray-300 hover:text-white transition-colors"
+              >
+                My Quotes
+              </Link>
+            )}
             
             {/* Optimized Authentication Button */}
             <AuthButton />

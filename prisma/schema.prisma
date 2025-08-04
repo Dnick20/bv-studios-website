@@ -161,6 +161,7 @@ model WeddingPackage {
   // Relations
   weddingQuotes WeddingQuote[]
   weddingEvents WeddingEvent[]
+  reviews Review[]
 
   @@index([isActive])
   @@index([sortOrder])
@@ -203,6 +204,7 @@ model Venue {
   // Relations
   weddingEvents WeddingEvent[]
   weddingQuotes WeddingQuote[]
+  reviews Review[]
 
   @@index([isActive])
   @@index([city])
@@ -236,11 +238,17 @@ model WeddingQuote {
   eventDate   DateTime
   eventTime   String   // e.g., "14:00"
   venueId     String?
+  venueName   String?  // For custom venue names
   guestCount  Int?
   specialRequests String?
   status      String   @default("pending") // 'pending', 'approved', 'rejected', 'expired'
   totalPrice  Int      // Total price in cents
   adminNotes  String?
+  paymentStatus String? // pending, deposit_paid, paid, failed, canceled
+  stripePaymentIntentId String?
+  paidAt    DateTime?
+  lastEmailSent DateTime?
+  emailType String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -255,6 +263,7 @@ model WeddingQuote {
   @@index([status])
   @@index([eventDate])
   @@index([createdAt])
+  @@index([paymentStatus])
 }
 
 model QuoteAddon {
@@ -286,6 +295,7 @@ model WeddingEvent {
   totalPrice  Int
   depositPaid  Boolean @default(false)
   balancePaid  Boolean @default(false)
+  stripePaymentIntentId String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -323,9 +333,13 @@ model Review {
   userId      String
   eventId     String?
   vendorId    String?
+  packageId   String?
+  venueId     String?
   rating      Int      // 1-5 stars
   title       String?
   comment     String?
+  isAnonymous Boolean  @default(false)
+  status      String   @default("pending") // pending, approved, rejected
   isApproved  Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -333,10 +347,12 @@ model Review {
   // Relations
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   event WeddingEvent? @relation(fields: [eventId], references: [id])
+  package WeddingPackage? @relation(fields: [packageId], references: [id])
+  venue Venue? @relation(fields: [venueId], references: [id])
   vendor VendorProfile? @relation(fields: [vendorId], references: [id])
 
   @@index([userId])
+  @@index([status])
   @@index([rating])
-  @@index([isApproved])
   @@index([createdAt])
 } 

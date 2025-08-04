@@ -2,15 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useSession } from 'next-auth/react'
 
 export default function AdminDashboard() {
-  const { data: session, status } = useSession()
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('overview')
   const [users, setUsers] = useState([])
   const [projects, setProjects] = useState([])
   const [notifications, setNotifications] = useState([])
+  const [adminUser, setAdminUser] = useState(null)
   
   // Modal states
   const [showUserModal, setShowUserModal] = useState(false)
@@ -42,34 +41,48 @@ export default function AdminDashboard() {
   const router = useRouter()
 
   useEffect(() => {
-    if (status === 'loading') return
-
-    // Check if user is authenticated and has admin role
-    if (!session) {
-      router.push('/auth/signin')
+    // Check for admin token in localStorage
+    const adminToken = localStorage.getItem('adminToken')
+    const adminUserData = localStorage.getItem('adminUser')
+    
+    if (!adminToken || !adminUserData) {
+      router.push('/admin')
       return
     }
 
-    if (session.user.role !== 'admin') {
-      router.push('/dashboard')
+    try {
+      const user = JSON.parse(adminUserData)
+      if (user.role !== 'admin') {
+        router.push('/admin')
+        return
+      }
+      setAdminUser(user)
+    } catch (error) {
+      router.push('/admin')
       return
     }
 
     loadDashboardData()
     setIsLoading(false)
-  }, [session, status, router])
+  }, [router])
 
   const loadDashboardData = async () => {
     try {
+      const adminToken = localStorage.getItem('adminToken')
+      const headers = {
+        'Content-Type': 'application/json',
+        'x-admin-token': adminToken
+      }
+
       // Load users
-      const usersResponse = await fetch('/api/admin/users')
+      const usersResponse = await fetch('/api/admin/users', { headers })
       if (usersResponse.ok) {
         const usersData = await usersResponse.json()
         setUsers(usersData.users)
       }
 
       // Load projects
-      const projectsResponse = await fetch('/api/admin/projects')
+      const projectsResponse = await fetch('/api/admin/projects', { headers })
       if (projectsResponse.ok) {
         const projectsData = await projectsResponse.json()
         setProjects(projectsData.projects)
@@ -87,7 +100,11 @@ export default function AdminDashboard() {
   }
 
   const handleLogout = () => {
-    router.push('/api/auth/signout')
+    // Clear admin tokens from localStorage
+    localStorage.removeItem('adminToken')
+    localStorage.removeItem('adminUser')
+    // Redirect to admin login page
+    router.push('/admin')
   }
 
   const handleTabChange = (tab) => {
@@ -291,9 +308,7 @@ export default function AdminDashboard() {
     )
   }
 
-  if (!session || session.user.role !== 'admin') {
-    return null
-  }
+
 
   const renderOverview = () => (
     <div>
@@ -1204,7 +1219,7 @@ export default function AdminDashboard() {
               <label style={{ display: 'block', marginBottom: '5px' }}>Admin Username</label>
               <input 
                 type="text" 
-                defaultValue={session?.user?.name}
+                defaultValue={adminUser?.username || 'admin'}
                 style={{ width: '100%', padding: '10px', backgroundColor: '#333', border: '1px solid #555', borderRadius: '5px', color: '#fff' }}
               />
             </div>
@@ -1212,7 +1227,7 @@ export default function AdminDashboard() {
               <label style={{ display: 'block', marginBottom: '5px' }}>Email</label>
               <input 
                 type="email" 
-                defaultValue={session?.user?.email}
+                defaultValue={adminUser?.email || 'admin@example.com'}
                 style={{ width: '100%', padding: '10px', backgroundColor: '#333', border: '1px solid #555', borderRadius: '5px', color: '#fff' }}
               />
             </div>
@@ -1303,7 +1318,7 @@ export default function AdminDashboard() {
       <div style={{ padding: '20px', borderBottom: '1px solid #333', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>Admin Dashboard</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <span>Welcome, {session?.user?.name}</span>
+          <span>Welcome, {adminUser?.username || 'Admin'}</span>
           <button
             onClick={handleLogout}
             style={{

@@ -34,6 +34,17 @@ export default function MobileMenu({ isOpen, setIsOpen, navItems, handleClick })
               </Link>
             ))}
             
+            {/* My Quotes - Only show when signed in */}
+            {session && (
+              <Link
+                href="/my-quotes"
+                onClick={() => setIsOpen(false)}
+                className="block text-gray-300 hover:text-white transition-colors"
+              >
+                My Quotes
+              </Link>
+            )}
+            
             {/* Mobile Authentication */}
             <div className="pt-4 border-t border-gray-700">
               {status === 'loading' ? (

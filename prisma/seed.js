@@ -94,38 +94,11 @@ async function main() {
       price: 65000, // $650
       category: 'video',
       sortOrder: 4
-    },
-    {
-      name: 'Instagram Trailer',
-      description: 'A short, shareable trailer perfect for social media',
-      price: 30000, // $300
-      category: 'video',
-      sortOrder: 5
-    },
-    {
-      name: 'Same-Day Edit',
-      description: 'Get your highlight reel ready for the reception',
-      price: 75000, // $750
-      category: 'service',
-      sortOrder: 6
-    },
-    {
-      name: 'Rehearsal Dinner Coverage',
-      description: 'Coverage of your rehearsal dinner',
-      price: 35000, // $350
-      category: 'video',
-      sortOrder: 7
-    },
-    {
-      name: 'Raw Footage',
-      description: 'All raw footage from your wedding day',
-      price: 15000, // $150
-      category: 'video',
-      sortOrder: 8
     }
   ]
 
   for (const addon of addons) {
+    console.log('Creating addon:', addon.name)
     await prisma.weddingAddon.create({
       data: addon
     })
@@ -136,50 +109,50 @@ async function main() {
     {
       name: 'The Grand Ballroom',
       address: '123 Main Street',
-      city: 'Nashville',
-      state: 'TN',
-      zipCode: '37201',
-      phone: '(615) 555-0123',
+      city: 'Lexington',
+      state: 'KY',
+      zipCode: '40507',
+      phone: '(859) 555-0123',
       website: 'https://grandballroom.com',
       description: 'Elegant ballroom perfect for large weddings'
     },
     {
       name: 'Riverside Gardens',
       address: '456 River Road',
-      city: 'Nashville',
-      state: 'TN',
-      zipCode: '37202',
-      phone: '(615) 555-0456',
+      city: 'Lexington',
+      state: 'KY',
+      zipCode: '40502',
+      phone: '(859) 555-0456',
       website: 'https://riversidegardens.com',
       description: 'Beautiful outdoor venue with garden settings'
     },
     {
       name: 'Historic Church',
       address: '789 Church Street',
-      city: 'Nashville',
-      state: 'TN',
-      zipCode: '37203',
-      phone: '(615) 555-0789',
+      city: 'Lexington',
+      state: 'KY',
+      zipCode: '40503',
+      phone: '(859) 555-0789',
       website: 'https://historicchurch.com',
       description: 'Traditional church with stunning architecture'
     },
     {
       name: 'Modern Loft',
       address: '321 Industrial Blvd',
-      city: 'Nashville',
-      state: 'TN',
-      zipCode: '37204',
-      phone: '(615) 555-0321',
+      city: 'Lexington',
+      state: 'KY',
+      zipCode: '40504',
+      phone: '(859) 555-0321',
       website: 'https://modernloft.com',
       description: 'Contemporary space with urban charm'
     },
     {
       name: 'Country Club',
       address: '654 Country Club Drive',
-      city: 'Nashville',
-      state: 'TN',
-      zipCode: '37205',
-      phone: '(615) 555-0654',
+      city: 'Lexington',
+      state: 'KY',
+      zipCode: '40505',
+      phone: '(859) 555-0654',
       website: 'https://countryclub.com',
       description: 'Upscale venue with golf course views'
     }

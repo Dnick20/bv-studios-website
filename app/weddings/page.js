@@ -124,9 +124,14 @@ export default function WeddingsPage() {
               Capture your special day with cinematic wedding films that tell your unique love story. 
               From engagement shoots to the big day, we preserve your memories beautifully.
             </p>
-            <button className="px-8 py-4 bg-wedding-accent text-wedding-dark font-semibold rounded-lg hover:bg-wedding-accent/90 transition-colors shadow-glow">
-              View Our Films
-            </button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="px-8 py-4 bg-wedding-accent text-wedding-dark font-semibold rounded-lg hover:bg-wedding-accent/90 transition-colors shadow-glow">
+                View Our Films
+              </button>
+              <a href="/auth" className="px-8 py-4 bg-wedding-dark text-wedding-primary font-semibold rounded-lg hover:bg-wedding-dark/90 transition-colors shadow-glow border border-wedding-accent">
+                Sign In to Book
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -216,13 +221,13 @@ export default function WeddingsPage() {
                     </li>
                   ))}
                 </ul>
-                <button className={`w-full mt-8 px-6 py-3 font-semibold rounded-lg transition-colors ${
+                <a href="/auth" className={`w-full mt-8 px-6 py-3 font-semibold rounded-lg transition-colors block text-center ${
                   pkg.featured 
                     ? 'bg-wedding-accent text-wedding-dark hover:bg-wedding-accent/90 shadow-glow' 
                     : 'bg-wedding-accent text-wedding-dark hover:bg-wedding-accent/90 shadow-glow'
                 }`}>
-                  {pkg.featured ? 'Choose Diamond' : 'Choose Package'}
-                </button>
+                  {pkg.featured ? 'Sign In to Book' : 'Sign In to Book'}
+                </a>
               </div>
             ))}
           </div>
@@ -258,9 +263,9 @@ export default function WeddingsPage() {
             <p className="text-xl text-wedding-muted mb-8">
               Let's discuss your wedding vision and create a beautiful film that tells your unique story.
             </p>
-            <button className="px-8 py-4 bg-wedding-accent text-wedding-dark font-semibold rounded-lg hover:bg-wedding-accent/90 transition-colors shadow-glow">
-              Start Planning
-            </button>
+            <a href="/auth" className="px-8 py-4 bg-wedding-accent text-wedding-dark font-semibold rounded-lg hover:bg-wedding-accent/90 transition-colors shadow-glow inline-block">
+              Sign In to Start Planning
+            </a>
           </div>
         </div>
       </section>
