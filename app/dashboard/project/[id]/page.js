@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { use } from 'react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import {
   ArrowLeftIcon,
   FolderIcon,
@@ -38,6 +39,10 @@ export default function ProjectPage({ params }) {
   const [newComment, setNewComment] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [editData, setEditData] = useState({})
+  const [showShareModal, setShowShareModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showUploadModal, setShowUploadModal] = useState(false)
+  const [uploadFile, setUploadFile] = useState(null)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -114,6 +119,109 @@ export default function ProjectPage({ params }) {
     setIsEditing(false)
   }
 
+  const handleShareProject = async () => {
+    try {
+      // Generate shareable link
+      const shareUrl = `${window.location.origin}/dashboard/project/${id}`
+      
+      // Copy to clipboard
+      await navigator.clipboard.writeText(shareUrl)
+      
+      // Show success message
+      alert('Project link copied to clipboard!')
+      setShowShareModal(false)
+    } catch (error) {
+      console.error('Error sharing project:', error)
+      alert('Failed to share project')
+    }
+  }
+
+  const handleDeleteProject = async () => {
+    try {
+      // Call API to delete project
+      const response = await fetch(`/api/projects/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (response.ok) {
+        alert('Project deleted successfully!')
+        router.push('/dashboard')
+      } else {
+        throw new Error('Failed to delete project')
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error)
+      alert('Failed to delete project')
+    } finally {
+      setShowDeleteModal(false)
+    }
+  }
+
+  const handleUploadFile = async () => {
+    if (!uploadFile) return
+
+    try {
+      const formData = new FormData()
+      formData.append('file', uploadFile)
+      formData.append('projectId', id)
+
+      const response = await fetch('/api/files/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        
+        // Add new file to the list
+        const newFile = {
+          id: result.file.id,
+          name: result.file.name,
+          type: result.file.type,
+          size: result.file.size,
+          uploadedAt: new Date().toISOString().split('T')[0]
+        }
+        
+        setFiles([...files, newFile])
+        setUploadFile(null)
+        setShowUploadModal(false)
+        alert('File uploaded successfully!')
+      } else {
+        throw new Error('Failed to upload file')
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error)
+      alert('Failed to upload file')
+    }
+  }
+
+  const handleFileAction = async (fileId, action) => {
+    try {
+      if (action === 'view') {
+        window.open(`/api/files/${fileId}/view`, '_blank')
+      } else if (action === 'download') {
+        const response = await fetch(`/api/files/${fileId}/download`)
+        if (response.ok) {
+          const blob = await response.blob()
+          const url = window.URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = files.find(f => f.id === fileId)?.name || 'file'
+          document.body.appendChild(a)
+          a.click()
+          window.URL.revokeObjectURL(url)
+          document.body.removeChild(a)
+        }
+      }
+    } catch (error) {
+      console.error('Error handling file action:', error)
+      alert('Failed to perform file action')
+    }
+  }
+
   const getFileIcon = (type) => {
     switch (type) {
       case 'image':
@@ -186,7 +294,10 @@ export default function ProjectPage({ params }) {
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <button className="px-4 py-2 border border-gray-700 text-gray-300 rounded-lg hover:bg-gray-800 transition-colors">
+              <button 
+                onClick={handleShareProject}
+                className="px-4 py-2 border border-gray-700 text-gray-300 rounded-lg hover:bg-gray-800 transition-colors"
+              >
                 <ShareIcon className="w-5 h-5" />
               </button>
               <button 
@@ -312,7 +423,10 @@ export default function ProjectPage({ params }) {
             <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-white">Project Files</h3>
-                <button className="flex items-center space-x-2 text-accent hover:text-accent/80 transition-colors">
+                <button 
+                  onClick={() => setShowUploadModal(true)}
+                  className="flex items-center space-x-2 text-accent hover:text-accent/80 transition-colors"
+                >
                   <PlusIcon className="w-5 h-5" />
                   <span>Upload File</span>
                 </button>
@@ -332,10 +446,16 @@ export default function ProjectPage({ params }) {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <button className="p-2 text-gray-400 hover:text-white transition-colors">
+                      <button 
+                        onClick={() => handleFileAction(file.id, 'view')}
+                        className="p-2 text-gray-400 hover:text-white transition-colors"
+                      >
                         <EyeIcon className="w-5 h-5" />
                       </button>
-                      <button className="p-2 text-gray-400 hover:text-white transition-colors">
+                      <button 
+                        onClick={() => handleFileAction(file.id, 'download')}
+                        className="p-2 text-gray-400 hover:text-white transition-colors"
+                      >
                         <ArrowDownTrayIcon className="w-5 h-5" />
                       </button>
                     </div>
@@ -385,15 +505,24 @@ export default function ProjectPage({ params }) {
             <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
               <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
               <div className="space-y-3">
-                <button className="w-full flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors">
+                <button 
+                  onClick={() => setShowUploadModal(true)}
+                  className="w-full flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
+                >
                   <PlusIcon className="w-5 h-5 text-accent" />
                   <span className="text-white">Upload Files</span>
                 </button>
-                <button className="w-full flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors">
+                <button 
+                  onClick={handleShareProject}
+                  className="w-full flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
+                >
                   <ChatBubbleLeftIcon className="w-5 h-5 text-accent" />
                   <span className="text-white">Share Project</span>
                 </button>
-                <button className="w-full flex items-center space-x-3 p-3 bg-red-600/10 rounded-lg hover:bg-red-600/20 transition-colors">
+                <button 
+                  onClick={() => setShowDeleteModal(true)}
+                  className="w-full flex items-center space-x-3 p-3 bg-red-600/10 rounded-lg hover:bg-red-600/20 transition-colors"
+                >
                   <TrashIcon className="w-5 h-5 text-red-400" />
                   <span className="text-red-400">Delete Project</span>
                 </button>
@@ -402,6 +531,64 @@ export default function ProjectPage({ params }) {
           </div>
         </div>
       </main>
+
+      {/* Upload Modal */}
+      {showUploadModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-gray-900 rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-xl font-bold text-white mb-4">Upload File</h3>
+            <input
+              type="file"
+              onChange={(e) => setUploadFile(e.target.files[0])}
+              className="w-full mb-4 p-2 bg-black/20 border border-gray-700 rounded-lg text-white"
+            />
+            <div className="flex space-x-3">
+              <button
+                onClick={handleUploadFile}
+                disabled={!uploadFile}
+                className="flex-1 px-4 py-2 bg-accent text-primary rounded-lg hover:bg-accent/90 transition-colors disabled:opacity-50"
+              >
+                Upload
+              </button>
+              <button
+                onClick={() => {
+                  setShowUploadModal(false)
+                  setUploadFile(null)
+                }}
+                className="flex-1 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-gray-900 rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-xl font-bold text-white mb-4">Delete Project</h3>
+            <p className="text-gray-300 mb-6">
+              Are you sure you want to delete "{project.name}"? This action cannot be undone.
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={handleDeleteProject}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Delete
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="flex-1 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 } 
