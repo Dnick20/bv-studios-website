@@ -11,8 +11,8 @@ export default async function handler(req, res) {
     const where = {}
     if (search) {
       where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } }
+        { name: { contains: search } },
+        { description: { contains: search } }
       ]
     }
     if (city) {
