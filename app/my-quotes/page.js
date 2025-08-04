@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Navigation from '../../components/Navigation'
+import { weddingAnalytics, analyticsHelpers } from '../../lib/analytics'
 
 const MyQuotesPage = () => {
   const { data: session, status } = useSession()
@@ -14,9 +15,24 @@ const MyQuotesPage = () => {
   useEffect(() => {
     if (status === 'loading') return
     
+    // Track page visit
+    weddingAnalytics.pageView('My Quotes', {
+      has_session: !!session,
+      user_email: session?.user?.email
+    })
+    
     if (!session) {
+      weddingAnalytics.conversionAbandoned('quote_review', 'user_not_authenticated')
       router.push('/auth')
       return
+    }
+
+    // Identify user for quotes review
+    if (session?.user?.email) {
+      analyticsHelpers.identifyUser(session.user.email, {
+        reviewing_quotes: true,
+        quote_review_timestamp: new Date().toISOString()
+      })
     }
 
     const fetchQuotes = async () => {
@@ -25,15 +41,24 @@ const MyQuotesPage = () => {
         if (response.ok) {
           const data = await response.json()
           setQuotes(data.quotes || [])
+          
+          // Track quote engagement
+          weddingAnalytics.userEngagement('quotes_viewed', {
+            quotes_count: data.quotes?.length || 0,
+            has_quotes: (data.quotes?.length || 0) > 0
+          })
         } else if (response.status === 401) {
           // User is not authenticated, redirect to login
+          weddingAnalytics.conversionAbandoned('quote_review', 'authentication_expired')
           router.push('/auth')
           return
         } else {
           console.error('Failed to fetch quotes')
+          weddingAnalytics.performanceMetric('quotes_fetch_error', response.status)
         }
       } catch (error) {
         console.error('Error fetching quotes:', error)
+        weddingAnalytics.performanceMetric('quotes_fetch_error', error.message)
       } finally {
         setLoading(false)
       }

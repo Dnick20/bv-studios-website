@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import AnalyticsDashboard from '../../../components/AnalyticsDashboard'
+import { analytics } from '../../../lib/analytics'
 
 export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true)
@@ -56,6 +58,12 @@ export default function AdminDashboard() {
         router.push('/admin')
         return
       }
+      
+      // Track admin dashboard access
+      analytics.adminActionPerformed('dashboard_accessed', {
+        admin_user: user.username,
+        timestamp: new Date().toISOString()
+      })
       setAdminUser(user)
     } catch (error) {
       router.push('/admin')
@@ -312,7 +320,7 @@ export default function AdminDashboard() {
 
   const renderOverview = () => (
     <div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginBottom: '30px' }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
         <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
           <h3 style={{ marginBottom: '10px', color: '#00ff00' }}>Total Users</h3>
           <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{users.length}</p>
@@ -338,7 +346,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
           <h3 style={{ marginBottom: '20px', color: '#00ff00' }}>Recent Activity</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -594,100 +602,76 @@ export default function AdminDashboard() {
 
   const renderContent = () => (
     <div>
-      <h2 style={{ color: '#00ff00', marginBottom: '20px' }}>Content Management</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-        <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
-          <h3 style={{ marginBottom: '15px', color: '#00ff00' }}>Website Pages</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <h2 className="text-accent mb-5 text-2xl font-bold">Content Management</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="bg-black/20 p-5 rounded-lg border border-gray-700">
+          <h3 className="mb-4 text-accent font-semibold">Website Pages</h3>
+          <div className="flex flex-col gap-3">
             <button 
               onClick={() => handleContentManagement('homepage')}
-              style={{
-                padding: '10px',
-                backgroundColor: '#333',
-                color: '#fff',
-                border: '1px solid #555',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                textAlign: 'left'
-              }}
+              className="p-3 bg-gray-700 hover:bg-gray-600 text-white border border-gray-600 rounded-lg cursor-pointer text-left transition-colors"
             >
               Homepage Content
             </button>
             <button 
               onClick={() => handleContentManagement('wedding')}
-              style={{
-                padding: '10px',
-                backgroundColor: '#333',
-                color: '#fff',
-                border: '1px solid #555',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                textAlign: 'left'
-              }}
+              className="p-3 bg-gray-700 hover:bg-gray-600 text-white border border-gray-600 rounded-lg cursor-pointer text-left transition-colors"
             >
               Wedding Page
             </button>
             <button 
               onClick={() => handleContentManagement('portfolio')}
-              style={{
-                padding: '10px',
-                backgroundColor: '#333',
-                color: '#fff',
-                border: '1px solid #555',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                textAlign: 'left'
-              }}
+              className="p-3 bg-gray-700 hover:bg-gray-600 text-white border border-gray-600 rounded-lg cursor-pointer text-left transition-colors"
             >
               Portfolio Gallery
             </button>
           </div>
         </div>
 
-        <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
-          <h3 style={{ marginBottom: '15px', color: '#00ff00' }}>Media Management</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div className="bg-black/20 p-5 rounded-lg border border-gray-700">
+          <h3 className="mb-4 text-accent font-semibold">Media Management</h3>
+          <div className="flex flex-col gap-3">
             <button 
               onClick={() => handleMediaManagement('upload-images')}
-              style={{
-                padding: '10px',
-                backgroundColor: '#333',
-                color: '#fff',
-                border: '1px solid #555',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                textAlign: 'left'
-              }}
+              className="p-3 bg-gray-700 hover:bg-gray-600 text-white border border-gray-600 rounded-lg cursor-pointer text-left transition-colors"
             >
               Upload Images
             </button>
             <button 
               onClick={() => handleMediaManagement('manage-videos')}
-              style={{
-                padding: '10px',
-                backgroundColor: '#333',
-                color: '#fff',
-                border: '1px solid #555',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                textAlign: 'left'
-              }}
+              className="p-3 bg-gray-700 hover:bg-gray-600 text-white border border-gray-600 rounded-lg cursor-pointer text-left transition-colors"
             >
               Manage Videos
             </button>
             <button 
               onClick={() => handleMediaManagement('seo-settings')}
-              style={{
-                padding: '10px',
-                backgroundColor: '#333',
-                color: '#fff',
-                border: '1px solid #555',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                textAlign: 'left'
-              }}
+              className="p-3 bg-gray-700 hover:bg-gray-600 text-white border border-gray-600 rounded-lg cursor-pointer text-left transition-colors"
             >
               SEO Settings
+            </button>
+          </div>
+        </div>
+
+        <div className="bg-black/20 p-5 rounded-lg border border-gray-700">
+          <h3 className="mb-4 text-accent font-semibold">Backup & Storage</h3>
+          <div className="flex flex-col gap-3">
+            <button 
+              onClick={handleBackupDatabase}
+              className="p-3 bg-blue-600 hover:bg-blue-700 text-white border border-blue-500 rounded-lg cursor-pointer text-left transition-colors"
+            >
+              Backup Database to Backblaze
+            </button>
+            <button 
+              onClick={handleViewBackups}
+              className="p-3 bg-green-600 hover:bg-green-700 text-white border border-green-500 rounded-lg cursor-pointer text-left transition-colors"
+            >
+              View Backups
+            </button>
+            <button 
+              onClick={handleStorageManagement}
+              className="p-3 bg-purple-600 hover:bg-purple-700 text-white border border-purple-500 rounded-lg cursor-pointer text-left transition-colors"
+            >
+              Storage Management
             </button>
           </div>
         </div>
@@ -698,9 +682,10 @@ export default function AdminDashboard() {
   const renderAnalytics = () => (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2 style={{ color: '#00ff00' }}>Analytics & Reports</h2>
+        <h2 style={{ color: '#00ff00' }}>Wedding Booking Analytics</h2>
         <button 
           onClick={() => {
+            analytics.adminActionPerformed('view_detailed_reports', { from_tab: 'analytics' })
             console.log('View Detailed Reports button clicked!')
             setActiveTab('reports')
           }}
@@ -718,61 +703,67 @@ export default function AdminDashboard() {
         </button>
       </div>
       
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-        <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
-          <h3 style={{ marginBottom: '15px', color: '#00ff00' }}>Revenue Analytics</h3>
-          <div style={{ height: '200px', backgroundColor: '#222', borderRadius: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-            <p style={{ color: '#ccc', fontSize: '2rem', fontWeight: 'bold', margin: '0 0 10px 0' }}>${projects.reduce((sum, p) => sum + p.budget, 0).toLocaleString()}</p>
-            <p style={{ color: '#00ff00', fontSize: '14px' }}>Total Revenue</p>
-          </div>
-          <div style={{ marginTop: '15px', display: 'flex', justifyContent: 'space-between' }}>
-            <div>
-              <p style={{ color: '#ccc', fontSize: '12px' }}>This Month</p>
-              <p style={{ color: '#00ff00', fontSize: '16px', fontWeight: 'bold' }}>+23.5%</p>
+      {/* PostHog Analytics Dashboard */}
+      <AnalyticsDashboard />
+      
+      {/* Original Analytics (Legacy) */}
+      <div style={{ marginTop: '30px' }}>
+        <h3 style={{ color: '#00ff00', marginBottom: '20px' }}>📊 Legacy Analytics</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+          <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
+            <h3 style={{ marginBottom: '15px', color: '#00ff00' }}>Revenue Analytics</h3>
+            <div style={{ height: '200px', backgroundColor: '#222', borderRadius: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+              <p style={{ color: '#ccc', fontSize: '2rem', fontWeight: 'bold', margin: '0 0 10px 0' }}>${projects.reduce((sum, p) => sum + p.budget, 0).toLocaleString()}</p>
+              <p style={{ color: '#00ff00', fontSize: '14px' }}>Total Revenue</p>
             </div>
-            <div>
-              <p style={{ color: '#ccc', fontSize: '12px' }}>Last Month</p>
-              <p style={{ color: '#ffaa00', fontSize: '16px', fontWeight: 'bold' }}>+18.2%</p>
+            <div style={{ marginTop: '15px', display: 'flex', justifyContent: 'space-between' }}>
+              <div>
+                <p style={{ color: '#ccc', fontSize: '12px' }}>This Month</p>
+                <p style={{ color: '#00ff00', fontSize: '16px', fontWeight: 'bold' }}>+23.5%</p>
+              </div>
+              <div>
+                <p style={{ color: '#ccc', fontSize: '12px' }}>Last Month</p>
+                <p style={{ color: '#ffaa00', fontSize: '16px', fontWeight: 'bold' }}>+18.2%</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
-          <h3 style={{ marginBottom: '15px', color: '#00ff00' }}>Project Performance</h3>
-          <div style={{ height: '200px', backgroundColor: '#222', borderRadius: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-            <p style={{ color: '#ccc', fontSize: '2rem', fontWeight: 'bold', margin: '0 0 10px 0' }}>{projects.length}</p>
-            <p style={{ color: '#00ff00', fontSize: '14px' }}>Active Projects</p>
+          <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
+            <h3 style={{ marginBottom: '15px', color: '#00ff00' }}>Project Performance</h3>
+            <div style={{ height: '200px', backgroundColor: '#222', borderRadius: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+              <p style={{ color: '#ccc', fontSize: '2rem', fontWeight: 'bold', margin: '0 0 10px 0' }}>{projects.length}</p>
+              <p style={{ color: '#00ff00', fontSize: '14px' }}>Active Projects</p>
+            </div>
+            <div style={{ marginTop: '15px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                <span style={{ color: '#ccc', fontSize: '12px' }}>Completed</span>
+                <span style={{ color: '#00ff00', fontSize: '12px' }}>{projects.filter(p => p.status === 'completed').length}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                <span style={{ color: '#ccc', fontSize: '12px' }}>In Progress</span>
+                <span style={{ color: '#0066ff', fontSize: '12px' }}>{projects.filter(p => p.status === 'in-progress').length}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#ccc', fontSize: '12px' }}>Pending</span>
+                <span style={{ color: '#ffaa00', fontSize: '12px' }}>{projects.filter(p => p.status === 'pending').length}</span>
+              </div>
+            </div>
           </div>
-          <div style={{ marginTop: '15px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-              <span style={{ color: '#ccc', fontSize: '12px' }}>Completed</span>
-              <span style={{ color: '#00ff00', fontSize: '12px' }}>{projects.filter(p => p.status === 'completed').length}</span>
+          <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
+            <h3 style={{ marginBottom: '15px', color: '#00ff00' }}>User Growth</h3>
+            <div style={{ height: '200px', backgroundColor: '#222', borderRadius: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+              <p style={{ color: '#ccc', fontSize: '2rem', fontWeight: 'bold', margin: '0 0 10px 0' }}>{users.length}</p>
+              <p style={{ color: '#00ff00', fontSize: '14px' }}>Total Users</p>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-              <span style={{ color: '#ccc', fontSize: '12px' }}>In Progress</span>
-              <span style={{ color: '#0066ff', fontSize: '12px' }}>{projects.filter(p => p.status === 'in-progress').length}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: '#ccc', fontSize: '12px' }}>Pending</span>
-              <span style={{ color: '#ffaa00', fontSize: '12px' }}>{projects.filter(p => p.status === 'pending').length}</span>
-            </div>
-          </div>
-        </div>
-
-        <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
-          <h3 style={{ marginBottom: '15px', color: '#00ff00' }}>User Growth</h3>
-          <div style={{ height: '200px', backgroundColor: '#222', borderRadius: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-            <p style={{ color: '#ccc', fontSize: '2rem', fontWeight: 'bold', margin: '0 0 10px 0' }}>{users.length}</p>
-            <p style={{ color: '#00ff00', fontSize: '14px' }}>Total Users</p>
-          </div>
-          <div style={{ marginTop: '15px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-              <span style={{ color: '#ccc', fontSize: '12px' }}>Active</span>
-              <span style={{ color: '#00ff00', fontSize: '12px' }}>{users.filter(u => u.status === 'active').length}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: '#ccc', fontSize: '12px' }}>Pending</span>
-              <span style={{ color: '#ffaa00', fontSize: '12px' }}>{users.filter(u => u.status === 'pending').length}</span>
+            <div style={{ marginTop: '15px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                <span style={{ color: '#ccc', fontSize: '12px' }}>Active</span>
+                <span style={{ color: '#00ff00', fontSize: '12px' }}>{users.filter(u => u.status === 'active').length}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#ccc', fontSize: '12px' }}>Pending</span>
+                <span style={{ color: '#ffaa00', fontSize: '12px' }}>{users.filter(u => u.status === 'pending').length}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -1141,19 +1132,22 @@ export default function AdminDashboard() {
 
   const handleBackupDatabase = async () => {
     try {
-      const response = await fetch('/api/admin/backup-database', {
-        method: 'POST'
+      const response = await fetch('/api/admin/backup', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('admin-token')}`
+        }
       })
       
       if (response.ok) {
-        const data = await response.json()
-        alert(`Database backup created successfully! Backup ID: ${data.backupId}`)
+        const result = await response.json()
+        alert(`Database backup created successfully!\nBackup URL: ${result.backup.url}`)
       } else {
-        alert('Failed to create backup. Please try again.')
+        alert('Failed to create database backup')
       }
     } catch (error) {
       console.error('Backup error:', error)
-      alert('Failed to create backup. Please try again.')
+      alert('Error creating backup')
     }
   }
 
@@ -1188,7 +1182,7 @@ export default function AdminDashboard() {
         router.push('/admin/content/portfolio')
         break
       default:
-        alert('Content management feature coming soon!')
+        router.push(`/admin/content/${type}`)
     }
   }
 
@@ -1204,7 +1198,51 @@ export default function AdminDashboard() {
         router.push('/admin/media/seo-settings')
         break
       default:
-        alert('Media management feature coming soon!')
+        router.push(`/admin/media/${type}`)
+    }
+  }
+
+  const handleViewBackups = async () => {
+    try {
+      const response = await fetch('/api/admin/backup', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('admin-token')}`
+        }
+      })
+      
+      if (response.ok) {
+        const result = await response.json()
+        const backupList = result.backups.map(backup => 
+          `${backup.key} (${new Date(backup.lastModified).toLocaleString()})`
+        ).join('\n')
+        alert(`Available Backups:\n\n${backupList}`)
+      } else {
+        alert('Failed to load backups')
+      }
+    } catch (error) {
+      console.error('Error loading backups:', error)
+      alert('Error loading backups')
+    }
+  }
+
+  const handleStorageManagement = async () => {
+    try {
+      const response = await fetch('/api/admin/storage', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('admin-token')}`
+        }
+      })
+      
+      if (response.ok) {
+        const result = await response.json()
+        const storageInfo = `Total Files: ${result.total}\nBucket: ${result.bucket}\n\nFiles:\n${result.files.map(file => `- ${file.key} (${(file.size / 1024 / 1024).toFixed(2)} MB)`).join('\n')}`
+        alert(`Storage Information:\n\n${storageInfo}`)
+      } else {
+        alert('Failed to load storage information')
+      }
+    } catch (error) {
+      console.error('Error loading storage:', error)
+      alert('Error loading storage information')
     }
   }
 

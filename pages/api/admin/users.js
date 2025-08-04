@@ -2,18 +2,11 @@ import { prisma } from '../../../lib/prisma'
 
 function verifyAdminToken(req) {
   const token = req.headers.authorization?.replace('Bearer ', '') || req.headers['x-admin-token']
-  
-  if (!token) {
-    return null
-  }
-
-  try {
-    // For now, we'll do a simple token check since we're using basic tokens
-    // In production, you'd want to verify JWT properly
+  if (!token) return null
+  if (process.env.ADMIN_TOKEN && token === process.env.ADMIN_TOKEN) {
     return { role: 'admin' }
-  } catch (error) {
-    return null
   }
+  return null
 }
 
 export default async function handler(req, res) {

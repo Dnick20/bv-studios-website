@@ -1,0 +1,75 @@
+[
+  {
+    "id": "wedding-booking-api",
+    "name": "Wedding Booking System",
+    "requests": [
+      {
+        "id": "get-packages",
+        "name": "Get Wedding Packages",
+        "url": "http://localhost:3001/api/wedding/packages",
+        "method": "GET",
+        "headers": [],
+        "body": {},
+        "tests": []
+      },
+      {
+        "id": "get-addons",
+        "name": "Get Wedding Addons", 
+        "url": "http://localhost:3001/api/wedding/addons",
+        "method": "GET",
+        "headers": [],
+        "body": {},
+        "tests": []
+      },
+      {
+        "id": "get-venues",
+        "name": "Get Wedding Venues",
+        "url": "http://localhost:3001/api/wedding/venues",
+        "method": "GET", 
+        "headers": [],
+        "body": {},
+        "tests": []
+      },
+      {
+        "id": "create-quote",
+        "name": "Create Wedding Quote",
+        "url": "http://localhost:3001/api/wedding/quotes",
+        "method": "POST",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "type": "json",
+          "raw": "{\n  \"packageId\": \"cmdwm0mu60001sktu9yp5fwmv\",\n  \"eventDate\": \"2025-08-15\",\n  \"eventTime\": \"Afternoon\",\n  \"venueId\": \"cmdwm0muc0009sktufrzcboqz\",\n  \"guestCount\": 150,\n  \"specialRequests\": \"Test quote\",\n  \"addons\": [\n    {\n      \"addonId\": \"addon123\",\n      \"price\": 50000\n    }\n  ]\n}"
+        },
+        "tests": []
+      },
+      {
+        "id": "get-quotes",
+        "name": "Get User Quotes",
+        "url": "http://localhost:3001/api/wedding/quotes",
+        "method": "GET",
+        "headers": [],
+        "body": {},
+        "tests": []
+      },
+      {
+        "id": "admin-users",
+        "name": "Admin - Get Users",
+        "url": "http://localhost:3001/api/admin/users",
+        "method": "GET",
+        "headers": [
+          {
+            "name": "x-admin-token",
+            "value": "YOUR_ADMIN_TOKEN_HERE"
+          }
+        ],
+        "body": {},
+        "tests": []
+      }
+    ]
+  }
+]

@@ -22,8 +22,8 @@ export default async function handler(req, res) {
       return res.status(401).json({ message: 'Invalid admin credentials' })
     }
 
-    // Create admin session token (you might want to use JWT here)
-    const adminToken = Buffer.from(`${username}:${Date.now()}`).toString('base64')
+    // Return the real ADMIN_TOKEN from env
+    const adminToken = process.env.ADMIN_TOKEN || 'admin-token'
 
     res.status(200).json({
       message: 'Admin login successful',

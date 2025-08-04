@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -355,4 +355,47 @@ model Review {
   @@index([status])
   @@index([rating])
   @@index([createdAt])
+}
+
+// Content Management System
+model Content {
+  id        String   @id @default(cuid())
+  page      String   @unique
+  data      String   // JSON string of content data
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([page])
+}
+
+// Media Management System
+model Media {
+  id        String   @id @default(cuid())
+  title     String
+  category  String   // 'weddings', 'commercial', 'portfolio', 'team'
+  url       String
+  thumbnail String?
+  duration  String?
+  type      String   // 'image', 'video'
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// SEO Settings
+model SEOSettings {
+  id                String   @id @default(cuid())
+  siteTitle         String?
+  siteDescription   String?
+  keywords          String?
+  ogImage           String?
+  twitterCard       String?
+  googleAnalytics   String?
+  googleTagManager  String?
+  structuredData    String?  // JSON-LD structured data
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 } 

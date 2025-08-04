@@ -1,9 +1,39 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { EnvelopeIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline'
+import { analytics } from '../lib/analytics'
 
 export default function ContactForm() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  })
+  const [formStarted, setFormStarted] = useState(false)
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+    
+    if (!formStarted) {
+      setFormStarted(true)
+      analytics.contactFormStarted()
+    }
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    
+    analytics.contactFormSubmitted(formData)
+    analytics.leadGenerated('contact_form', 'inquiry', formData)
+    
+    alert('Thank you for your message! We\'ll get back to you soon.')
+    setFormData({ name: '', email: '', message: '' })
+    setFormStarted(false)
+  }
+
   return (
     <section className="py-20">
       <div className="container mx-auto px-4">
@@ -29,22 +59,30 @@ export default function ContactForm() {
             transition={{ duration: 0.8 }}
           >
             <h3 className="text-2xl font-bold text-white mb-6">Send Us a Message</h3>
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-white mb-2">Name *</label>
                   <input
                     type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
                     className="w-full px-4 py-3 bg-black/30 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-accent focus:outline-none"
                     placeholder="Your name"
+                    required
                   />
                 </div>
                 <div>
                   <label className="block text-white mb-2">Email *</label>
                   <input
                     type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
                     className="w-full px-4 py-3 bg-black/30 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-accent focus:outline-none"
                     placeholder="your@email.com"
+                    required
                   />
                 </div>
               </div>
@@ -52,8 +90,12 @@ export default function ContactForm() {
                 <label className="block text-white mb-2">Message *</label>
                 <textarea
                   rows={6}
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-black/30 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-accent focus:outline-none"
                   placeholder="Tell us about your project..."
+                  required
                 ></textarea>
               </div>
               <motion.button

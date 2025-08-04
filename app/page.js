@@ -4,10 +4,14 @@ import Services from '../components/Services'
 import Portfolio from '../components/Portfolio'
 import About from '../components/About'
 import ContactForm from '../components/ContactForm'
+import AnalyticsWrapper from '../components/AnalyticsWrapper'
 
 export default function Home() {
   return (
     <main className="relative bg-primary">
+      {/* Analytics Tracking */}
+      <AnalyticsWrapper pageName="Home" additionalData={{ page_type: 'landing' }} />
+      
       {/* Background gradient overlay */}
       <div className="fixed inset-0 bg-gradient-radial from-accent/5 via-primary to-primary pointer-events-none" />
       

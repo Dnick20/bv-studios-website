@@ -101,7 +101,7 @@ export default async function handler(req, res) {
             <li><strong>Package:</strong> ${quote.package.name}</li>
             <li><strong>Event Date:</strong> ${new Date(quote.eventDate).toLocaleDateString()}</li>
             <li><strong>Event Time:</strong> ${quote.eventTime}</li>
-            <li><strong>Venue:</strong> ${quote.venue?.name || 'TBD'}</li>
+            <li><strong>Venue:</strong> ${quote.venue?.name || 'To be determined'}</li>
           </ul>
           
           <p><strong>What's Next:</strong></p>
