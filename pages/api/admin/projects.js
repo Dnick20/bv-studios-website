@@ -1,69 +1,49 @@
+import { getServerSession } from 'next-auth/next'
+import { prisma } from '../../../lib/prisma'
+
 export default async function handler(req, res) {
-  // Check admin authentication
-  const authHeader = req.headers.authorization
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'Unauthorized' })
+  // Check admin authentication using NextAuth session
+  const session = await getServerSession(req, res)
+  
+  if (!session) {
+    return res.status(401).json({ message: 'Unauthorized - Please sign in' })
   }
 
-  const token = authHeader.split(' ')[1]
-  
-  try {
-    // Verify admin token (simplified for demo)
-    const decoded = Buffer.from(token, 'base64').toString()
-    if (!decoded.includes('admin:')) {
-      return res.status(401).json({ message: 'Invalid admin token' })
-    }
+  if (session.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Forbidden - Admin access required' })
+  }
 
+  try {
     if (req.method === 'GET') {
-      // Return mock projects data
-      const projects = [
-        { 
-          id: 1, 
-          title: 'Wedding Video - Sarah & Mike', 
-          client: 'Sarah Smith', 
-          status: 'completed', 
-          budget: 2500, 
-          progress: 100,
-          startDate: '2024-01-15',
-          endDate: '2024-02-15',
-          description: 'Full wedding coverage including ceremony and reception'
+      // Get all projects from database
+      const projects = await prisma.project.findMany({
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true
+            }
+          }
         },
-        { 
-          id: 2, 
-          title: 'Commercial Project - ABC Corp', 
-          client: 'John Doe', 
-          status: 'in-progress', 
-          budget: 5000, 
-          progress: 65,
-          startDate: '2024-02-01',
-          endDate: '2024-03-15',
-          description: 'Corporate promotional video for new product launch'
-        },
-        { 
-          id: 3, 
-          title: 'Event Coverage - Tech Conference', 
-          client: 'Mike Johnson', 
-          status: 'pending', 
-          budget: 3000, 
-          progress: 0,
-          startDate: '2024-03-01',
-          endDate: '2024-03-05',
-          description: 'Multi-day technology conference documentation'
-        },
-        { 
-          id: 4, 
-          title: 'Real Estate Video - Luxury Home', 
-          client: 'Emily Davis', 
-          status: 'in-progress', 
-          budget: 1800, 
-          progress: 40,
-          startDate: '2024-02-10',
-          endDate: '2024-02-25',
-          description: 'Professional real estate marketing video'
+        orderBy: {
+          createdAt: 'desc'
         }
-      ]
+      })
+
+      // Transform data to match expected format
+      const formattedProjects = projects.map(project => ({
+        id: project.id,
+        title: project.title,
+        client: project.user?.name || 'Unknown Client',
+        status: project.status || 'pending',
+        budget: project.budget || 0,
+        progress: project.progress || 0,
+        startDate: project.startDate?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0],
+        endDate: project.endDate?.toISOString().split('T')[0] || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        description: project.description || ''
+      }))
       
-      return res.status(200).json({ projects })
+      return res.status(200).json({ projects: formattedProjects })
     }
 
     if (req.method === 'POST') {
@@ -74,20 +54,51 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: 'Title, client, and budget are required' })
       }
 
-      // Mock project creation
-      const newProject = {
-        id: Date.now(),
-        title,
-        client,
-        status: 'pending',
-        budget: parseInt(budget),
-        progress: 0,
-        description: description || '',
-        startDate: startDate || new Date().toISOString().split('T')[0],
-        endDate: endDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+      // Find user by name (you might want to change this to use user ID)
+      const user = await prisma.user.findFirst({
+        where: { name: client }
+      })
+
+      if (!user) {
+        return res.status(400).json({ message: 'Client not found' })
       }
 
-      return res.status(201).json({ project: newProject, message: 'Project created successfully' })
+      // Create new project
+      const newProject = await prisma.project.create({
+        data: {
+          title,
+          description: description || '',
+          budget: parseInt(budget),
+          status: 'pending',
+          progress: 0,
+          startDate: startDate ? new Date(startDate) : new Date(),
+          endDate: endDate ? new Date(endDate) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          userId: user.id
+        },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true
+            }
+          }
+        }
+      })
+
+      return res.status(201).json({ 
+        project: {
+          id: newProject.id,
+          title: newProject.title,
+          client: newProject.user?.name || 'Unknown Client',
+          status: newProject.status,
+          budget: newProject.budget,
+          progress: newProject.progress,
+          startDate: newProject.startDate.toISOString().split('T')[0],
+          endDate: newProject.endDate.toISOString().split('T')[0],
+          description: newProject.description
+        }, 
+        message: 'Project created successfully' 
+      })
     }
 
     if (req.method === 'PUT') {
@@ -98,20 +109,57 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: 'Project ID is required' })
       }
 
-      // Mock project update
-      const updatedProject = {
-        id: parseInt(id),
-        title: title || 'Updated Project',
-        client: client || 'Updated Client',
-        status: status || 'in-progress',
-        budget: budget || 2000,
-        progress: progress || 50,
-        description: description || 'Updated project description',
-        startDate: '2024-01-15',
-        endDate: '2024-03-15'
+      // Check if project exists
+      const existingProject = await prisma.project.findUnique({
+        where: { id: parseInt(id) },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true
+            }
+          }
+        }
+      })
+
+      if (!existingProject) {
+        return res.status(404).json({ message: 'Project not found' })
       }
 
-      return res.status(200).json({ project: updatedProject, message: 'Project updated successfully' })
+      // Update project
+      const updatedProject = await prisma.project.update({
+        where: { id: parseInt(id) },
+        data: {
+          title: title || existingProject.title,
+          description: description || existingProject.description,
+          budget: budget ? parseInt(budget) : existingProject.budget,
+          status: status || existingProject.status,
+          progress: progress ? parseInt(progress) : existingProject.progress
+        },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true
+            }
+          }
+        }
+      })
+
+      return res.status(200).json({ 
+        project: {
+          id: updatedProject.id,
+          title: updatedProject.title,
+          client: updatedProject.user?.name || 'Unknown Client',
+          status: updatedProject.status,
+          budget: updatedProject.budget,
+          progress: updatedProject.progress,
+          startDate: updatedProject.startDate.toISOString().split('T')[0],
+          endDate: updatedProject.endDate.toISOString().split('T')[0],
+          description: updatedProject.description
+        }, 
+        message: 'Project updated successfully' 
+      })
     }
 
     if (req.method === 'DELETE') {
@@ -121,6 +169,20 @@ export default async function handler(req, res) {
       if (!id) {
         return res.status(400).json({ message: 'Project ID is required' })
       }
+
+      // Check if project exists
+      const existingProject = await prisma.project.findUnique({
+        where: { id: parseInt(id) }
+      })
+
+      if (!existingProject) {
+        return res.status(404).json({ message: 'Project not found' })
+      }
+
+      // Delete project
+      await prisma.project.delete({
+        where: { id: parseInt(id) }
+      })
 
       return res.status(200).json({ message: 'Project deleted successfully' })
     }

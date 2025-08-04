@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 export default function AdminDashboard() {
-  const [adminUser, setAdminUser] = useState(null)
+  const { data: session, status } = useSession()
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('overview')
   const [users, setUsers] = useState([])
@@ -41,49 +42,34 @@ export default function AdminDashboard() {
   const router = useRouter()
 
   useEffect(() => {
-    // Check if admin is authenticated
-    const token = localStorage.getItem('adminToken')
-    const user = localStorage.getItem('adminUser')
+    if (status === 'loading') return
 
-    if (!token || !user) {
-      router.push('/admin')
+    // Check if user is authenticated and has admin role
+    if (!session) {
+      router.push('/auth/signin')
       return
     }
 
-    try {
-      const userData = JSON.parse(user)
-      setAdminUser(userData)
-      loadDashboardData()
-    } catch (error) {
-      console.error('Error parsing admin user data:', error)
-      router.push('/admin')
+    if (session.user.role !== 'admin') {
+      router.push('/dashboard')
       return
     }
 
+    loadDashboardData()
     setIsLoading(false)
-  }, [router])
+  }, [session, status, router])
 
   const loadDashboardData = async () => {
     try {
-      const token = localStorage.getItem('adminToken')
-      
       // Load users
-      const usersResponse = await fetch('/api/admin/users', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
+      const usersResponse = await fetch('/api/admin/users')
       if (usersResponse.ok) {
         const usersData = await usersResponse.json()
         setUsers(usersData.users)
       }
 
       // Load projects
-      const projectsResponse = await fetch('/api/admin/projects', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
+      const projectsResponse = await fetch('/api/admin/projects')
       if (projectsResponse.ok) {
         const projectsData = await projectsResponse.json()
         setProjects(projectsData.projects)
@@ -101,9 +87,7 @@ export default function AdminDashboard() {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('adminToken')
-    localStorage.removeItem('adminUser')
-    router.push('/admin')
+    router.push('/api/auth/signout')
   }
 
   const handleTabChange = (tab) => {
@@ -113,7 +97,6 @@ export default function AdminDashboard() {
 
   const handleUserAction = async (action, userId) => {
     console.log('User action:', action, 'for user:', userId)
-    const token = localStorage.getItem('adminToken')
     
     if (action === 'edit') {
       const user = users.find(u => u.id === userId)
@@ -129,10 +112,7 @@ export default function AdminDashboard() {
       if (confirm('Are you sure you want to delete this user?')) {
         try {
           const response = await fetch(`/api/admin/users?id=${userId}`, {
-            method: 'DELETE',
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
+            method: 'DELETE'
           })
           
           if (response.ok) {
@@ -149,7 +129,6 @@ export default function AdminDashboard() {
 
   const handleProjectAction = async (action, projectId) => {
     console.log('Project action:', action, 'for project:', projectId)
-    const token = localStorage.getItem('adminToken')
     
     if (action === 'edit') {
       const project = projects.find(p => p.id === projectId)
@@ -167,10 +146,7 @@ export default function AdminDashboard() {
       if (confirm('Are you sure you want to delete this project?')) {
         try {
           const response = await fetch(`/api/admin/projects?id=${projectId}`, {
-            method: 'DELETE',
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
+            method: 'DELETE'
           })
           
           if (response.ok) {
@@ -188,14 +164,12 @@ export default function AdminDashboard() {
   const handleCreateUser = async (e) => {
     console.log('Creating new user...')
     e.preventDefault()
-    const token = localStorage.getItem('adminToken')
     
     try {
       const response = await fetch('/api/admin/users', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(userForm)
       })
@@ -219,14 +193,12 @@ export default function AdminDashboard() {
   const handleCreateProject = async (e) => {
     console.log('Creating new project...')
     e.preventDefault()
-    const token = localStorage.getItem('adminToken')
     
     try {
       const response = await fetch('/api/admin/projects', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(projectForm)
       })
@@ -249,14 +221,12 @@ export default function AdminDashboard() {
 
   const handleUpdateUser = async (e) => {
     e.preventDefault()
-    const token = localStorage.getItem('adminToken')
     
     try {
       const response = await fetch('/api/admin/users', {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           id: editingUser.id,
@@ -283,14 +253,12 @@ export default function AdminDashboard() {
 
   const handleUpdateProject = async (e) => {
     e.preventDefault()
-    const token = localStorage.getItem('adminToken')
     
     try {
       const response = await fetch('/api/admin/projects', {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           id: editingProject.id,
@@ -315,12 +283,16 @@ export default function AdminDashboard() {
     }
   }
 
-  if (isLoading) {
+  if (isLoading || status === 'loading') {
     return (
       <div style={{ minHeight: '100vh', backgroundColor: '#000', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div>Loading...</div>
       </div>
     )
+  }
+
+  if (!session || session.user.role !== 'admin') {
+    return null
   }
 
   const renderOverview = () => (
@@ -1007,7 +979,6 @@ export default function AdminDashboard() {
   )
 
   const generateReport = (type) => {
-    const token = localStorage.getItem('adminToken')
     
     // In a real application, this would call the analytics API
     console.log(`Generating ${type} report...`)
@@ -1064,7 +1035,7 @@ export default function AdminDashboard() {
               <label style={{ display: 'block', marginBottom: '5px' }}>Admin Username</label>
               <input 
                 type="text" 
-                defaultValue={adminUser?.username}
+                defaultValue={session?.user?.name}
                 style={{ width: '100%', padding: '10px', backgroundColor: '#333', border: '1px solid #555', borderRadius: '5px', color: '#fff' }}
               />
             </div>
@@ -1072,7 +1043,7 @@ export default function AdminDashboard() {
               <label style={{ display: 'block', marginBottom: '5px' }}>Email</label>
               <input 
                 type="email" 
-                defaultValue="admin@bvstudios.com"
+                defaultValue={session?.user?.email}
                 style={{ width: '100%', padding: '10px', backgroundColor: '#333', border: '1px solid #555', borderRadius: '5px', color: '#fff' }}
               />
             </div>
@@ -1151,7 +1122,7 @@ export default function AdminDashboard() {
       <div style={{ padding: '20px', borderBottom: '1px solid #333', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>Admin Dashboard</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <span>Welcome, {adminUser?.username}</span>
+          <span>Welcome, {session?.user?.name}</span>
           <button
             onClick={handleLogout}
             style={{
