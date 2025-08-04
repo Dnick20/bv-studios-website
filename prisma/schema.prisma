@@ -58,6 +58,12 @@ model User {
   payments     Payment[]
   subscriptions Subscription[]
   projects     Project[]
+  
+  // Wedding Booking System Relations
+  weddingQuotes    WeddingQuote[]
+  weddingEvents    WeddingEvent[]
+  reviews          Review[]
+  vendorProfile    VendorProfile?
 }
 
 model VerificationToken {
@@ -136,4 +142,201 @@ model Subscription {
   @@index([userId])
   @@index([status])
   @@index([stripeSubscriptionId])
+}
+
+// ===== WEDDING BOOKING SYSTEM MODELS =====
+
+model WeddingPackage {
+  id          String   @id @default(cuid())
+  name        String   // e.g., "Basic Package", "Premium Package"
+  description String
+  price       Int      // Price in cents
+  duration    Int      // Duration in hours
+  features    String   // JSON array of features
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  weddingQuotes WeddingQuote[]
+  weddingEvents WeddingEvent[]
+
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+model WeddingAddon {
+  id          String   @id @default(cuid())
+  name        String   // e.g., "Drone Coverage", "Photo Album"
+  description String
+  price       Int      // Price in cents
+  category    String   // 'video', 'photo', 'equipment', 'service'
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  quoteAddons QuoteAddon[]
+  eventAddons EventAddon[]
+
+  @@index([category])
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+model Venue {
+  id          String   @id @default(cuid())
+  name        String
+  address     String
+  city        String
+  state       String
+  zipCode     String
+  phone       String?
+  website     String?
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  weddingEvents WeddingEvent[]
+  weddingQuotes WeddingQuote[]
+
+  @@index([isActive])
+  @@index([city])
+  @@index([state])
+}
+
+model VendorProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  businessName String
+  description String?
+  specialties String?  // JSON array of specialties
+  experience  Int      @default(0) // Years of experience
+  isVerified  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviews Review[]
+
+  @@index([isActive])
+  @@index([isVerified])
+}
+
+model WeddingQuote {
+  id          String   @id @default(cuid())
+  userId      String
+  packageId   String
+  eventDate   DateTime
+  eventTime   String   // e.g., "14:00"
+  venueId     String?
+  guestCount  Int?
+  specialRequests String?
+  status      String   @default("pending") // 'pending', 'approved', 'rejected', 'expired'
+  totalPrice  Int      // Total price in cents
+  adminNotes  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  package WeddingPackage @relation(fields: [packageId], references: [id])
+  venue  Venue? @relation(fields: [venueId], references: [id])
+  quoteAddons QuoteAddon[]
+  weddingEvent WeddingEvent?
+
+  @@index([userId])
+  @@index([status])
+  @@index([eventDate])
+  @@index([createdAt])
+}
+
+model QuoteAddon {
+  id          String   @id @default(cuid())
+  quoteId     String
+  addonId     String
+  price       Int      // Price in cents (may differ from base addon price)
+  createdAt   DateTime @default(now())
+
+  // Relations
+  quote WeddingQuote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  addon WeddingAddon @relation(fields: [addonId], references: [id])
+
+  @@unique([quoteId, addonId])
+  @@index([quoteId])
+}
+
+model WeddingEvent {
+  id          String   @id @default(cuid())
+  quoteId     String   @unique
+  userId      String
+  packageId   String
+  venueId     String?
+  eventDate   DateTime
+  eventTime   String
+  guestCount  Int?
+  specialRequests String?
+  status      String   @default("confirmed") // 'confirmed', 'completed', 'cancelled'
+  totalPrice  Int
+  depositPaid  Boolean @default(false)
+  balancePaid  Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  quote WeddingQuote @relation(fields: [quoteId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  package WeddingPackage @relation(fields: [packageId], references: [id])
+  venue Venue? @relation(fields: [venueId], references: [id])
+  eventAddons EventAddon[]
+  reviews Review[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([eventDate])
+  @@index([createdAt])
+}
+
+model EventAddon {
+  id          String   @id @default(cuid())
+  eventId     String
+  addonId     String
+  price       Int      // Price in cents
+  createdAt   DateTime @default(now())
+
+  // Relations
+  event WeddingEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  addon WeddingAddon @relation(fields: [addonId], references: [id])
+
+  @@unique([eventId, addonId])
+  @@index([eventId])
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  userId      String
+  eventId     String?
+  vendorId    String?
+  rating      Int      // 1-5 stars
+  title       String?
+  comment     String?
+  isApproved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event WeddingEvent? @relation(fields: [eventId], references: [id])
+  vendor VendorProfile? @relation(fields: [vendorId], references: [id])
+
+  @@index([userId])
+  @@index([rating])
+  @@index([isApproved])
+  @@index([createdAt])
 } 
