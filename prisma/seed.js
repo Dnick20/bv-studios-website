@@ -7,54 +7,53 @@ async function main() {
   // Create Wedding Packages
   const packages = [
     {
-      name: 'Basic Wedding Package',
-      description: 'Perfect for intimate weddings with essential coverage',
-      price: 150000, // $1,500
+      name: 'Silver Collection',
+      description: 'Perfect for intimate celebrations',
+      price: 220000, // $2,200
       duration: 4,
       features: JSON.stringify([
-        '4 hours of video coverage',
-        'Basic editing and color correction',
-        'Digital delivery',
+        '4 hours of coverage',
+        'Short Film',
+        'Digital Delivery',
         '1 videographer',
-        'Highlight reel (3-5 minutes)',
+        'Basic editing and color correction',
         'Full ceremony and reception coverage'
       ]),
       sortOrder: 1
     },
     {
-      name: 'Premium Wedding Package',
-      description: 'Comprehensive coverage for your special day',
-      price: 250000, // $2,500
-      duration: 8,
+      name: 'Gold Collection',
+      description: 'Our most popular package',
+      price: 310000, // $3,100
+      duration: 6,
       features: JSON.stringify([
-        '8 hours of video coverage',
-        'Advanced editing and color correction',
-        'Digital delivery + USB backup',
+        '6 hours of coverage',
+        'Short Film',
+        'Ceremony',
+        'Instagram Trailer',
+        'Digital Delivery',
         '2 videographers',
-        'Highlight reel (5-8 minutes)',
-        'Full ceremony and reception coverage',
-        'Pre-wedding consultation',
-        'Drone footage included'
+        'Advanced editing and color correction',
+        'Pre-wedding consultation'
       ]),
       sortOrder: 2
     },
     {
-      name: 'Luxury Wedding Package',
-      description: 'Ultimate wedding experience with premium features',
-      price: 400000, // $4,000
-      duration: 12,
+      name: 'Diamond Collection',
+      description: 'Complete wedding story',
+      price: 450000, // $4,500
+      duration: 8,
       features: JSON.stringify([
-        '12 hours of video coverage',
-        'Cinematic editing and color grading',
-        'Digital delivery + USB backup + Blu-ray',
+        '8 hours of coverage',
+        'Short Film',
+        'Ceremony and Reception Film',
+        'Drone Coverage',
+        'Instagram Trailer',
+        'Digital Delivery',
         '3 videographers',
-        'Highlight reel (8-12 minutes)',
-        'Full ceremony and reception coverage',
+        'Cinematic editing and color grading',
         'Pre-wedding consultation',
-        'Drone footage included',
-        'Same-day edit available',
-        'Engagement session included',
-        'Custom music selection'
+        'Same-day edit available'
       ]),
       sortOrder: 3
     }
@@ -69,51 +68,51 @@ async function main() {
   // Create Wedding Add-ons
   const addons = [
     {
-      name: 'Drone Coverage',
-      description: 'Aerial footage of your venue and special moments',
-      price: 50000, // $500
+      name: 'Ceremony Film',
+      description: 'A 15-20 Minute film of your ceremony with clean recorded audio, color grading, and 2 camera angles',
+      price: 65000, // $650
       category: 'video',
       sortOrder: 1
     },
     {
-      name: 'Photo Album',
-      description: 'Beautiful printed photo album with your favorite moments',
-      price: 30000, // $300
-      category: 'photo',
+      name: 'Engagement Film',
+      description: 'A short creative aside from your wedding film that accompanies your wedding film',
+      price: 65000, // $650
+      category: 'video',
       sortOrder: 2
+    },
+    {
+      name: 'Additional Hours',
+      description: 'Have a long party? Get additional hours so you don\'t miss a thing!',
+      price: 26000, // $260 per hour
+      category: 'video',
+      sortOrder: 3
+    },
+    {
+      name: 'Drone Footage',
+      description: 'Aerial coverage to capture your venue and special moments from above',
+      price: 65000, // $650
+      category: 'video',
+      sortOrder: 4
+    },
+    {
+      name: 'Instagram Trailer',
+      description: 'A short, shareable trailer perfect for social media',
+      price: 30000, // $300
+      category: 'video',
+      sortOrder: 5
     },
     {
       name: 'Same-Day Edit',
       description: 'Get your highlight reel ready for the reception',
       price: 75000, // $750
       category: 'service',
-      sortOrder: 3
-    },
-    {
-      name: 'Engagement Session',
-      description: 'Pre-wedding photo and video session',
-      price: 40000, // $400
-      category: 'photo',
-      sortOrder: 4
+      sortOrder: 6
     },
     {
       name: 'Rehearsal Dinner Coverage',
       description: 'Coverage of your rehearsal dinner',
       price: 35000, // $350
-      category: 'video',
-      sortOrder: 5
-    },
-    {
-      name: 'Custom Music Selection',
-      description: 'Personalized music for your highlight reel',
-      price: 25000, // $250
-      category: 'service',
-      sortOrder: 6
-    },
-    {
-      name: 'Extended Coverage',
-      description: 'Additional hours of coverage',
-      price: 20000, // $200 per hour
       category: 'video',
       sortOrder: 7
     },
