@@ -21,7 +21,12 @@ export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [userFiles, setUserFiles] = useState([])
+  const [userProjects, setUserProjects] = useState([])
+  const [storageUsed, setStorageUsed] = useState(0)
+  const [recentActivity, setRecentActivity] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [showUploadModal, setShowUploadModal] = useState(false)
+  const [uploadFile, setUploadFile] = useState(null)
 
   useEffect(() => {
     if (status === 'loading') return
@@ -31,18 +36,37 @@ export default function Dashboard() {
       return
     }
 
-    fetchUserFiles()
+    fetchDashboardData()
   }, [session, status, router])
 
-  const fetchUserFiles = async () => {
+  const fetchDashboardData = async () => {
     try {
-      const response = await fetch('/api/files')
-      if (response.ok) {
-        const data = await response.json()
-        setUserFiles(data.files || [])
+      // Fetch user files
+      const filesResponse = await fetch('/api/files')
+      if (filesResponse.ok) {
+        const filesData = await filesResponse.json()
+        setUserFiles(filesData.files || [])
+        
+        // Calculate storage used
+        const totalSize = filesData.files?.reduce((sum, file) => sum + (file.size || 0), 0) || 0
+        setStorageUsed(totalSize)
+      }
+
+      // Fetch user projects
+      const projectsResponse = await fetch('/api/projects')
+      if (projectsResponse.ok) {
+        const projectsData = await projectsResponse.json()
+        setUserProjects(projectsData.projects || [])
+      }
+
+      // Fetch recent activity
+      const activityResponse = await fetch('/api/activity')
+      if (activityResponse.ok) {
+        const activityData = await activityResponse.json()
+        setRecentActivity(activityData.activities || [])
       }
     } catch (error) {
-      console.error('Error fetching files:', error)
+      console.error('Error fetching dashboard data:', error)
     } finally {
       setIsLoading(false)
     }
@@ -66,6 +90,72 @@ export default function Dashboard() {
     const sizes = ['Bytes', 'KB', 'MB', 'GB']
     const i = Math.floor(Math.log(bytes) / Math.log(1024))
     return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i]
+  }
+
+  const handleUploadFile = async () => {
+    if (!uploadFile) return
+
+    try {
+      const formData = new FormData()
+      formData.append('file', uploadFile)
+
+      const response = await fetch('/api/files/upload', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (response.ok) {
+        alert('File uploaded successfully!')
+        setShowUploadModal(false)
+        setUploadFile(null)
+        fetchDashboardData() // Refresh data
+      } else {
+        alert('Failed to upload file. Please try again.')
+      }
+    } catch (error) {
+      console.error('Upload error:', error)
+      alert('Failed to upload file. Please try again.')
+    }
+  }
+
+  const handleFileAction = (fileId, action) => {
+    switch (action) {
+      case 'download':
+        window.open(`/api/files/${fileId}/download`, '_blank')
+        break
+      case 'view':
+        window.open(`/api/files/${fileId}/view`, '_blank')
+        break
+      case 'delete':
+        if (confirm('Are you sure you want to delete this file?')) {
+          deleteFile(fileId)
+        }
+        break
+      default:
+        console.log('Unknown file action:', action)
+    }
+  }
+
+  const deleteFile = async (fileId) => {
+    try {
+      const response = await fetch(`/api/files/${fileId}`, {
+        method: 'DELETE'
+      })
+
+      if (response.ok) {
+        alert('File deleted successfully!')
+        fetchDashboardData() // Refresh data
+      } else {
+        alert('Failed to delete file. Please try again.')
+      }
+    } catch (error) {
+      console.error('Delete error:', error)
+      alert('Failed to delete file. Please try again.')
+    }
+  }
+
+  const handleViewReports = () => {
+    router.push('/dashboard/reports')
   }
 
   if (status === 'loading' || isLoading) {
@@ -134,7 +224,7 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-300 text-sm">Active Projects</p>
-                    <p className="text-3xl font-bold text-white">3</p>
+                    <p className="text-3xl font-bold text-white">{userProjects.length}</p>
                   </div>
                   <CalendarIcon className="w-8 h-8 text-accent" />
                 </div>
@@ -149,7 +239,7 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-300 text-sm">Storage Used</p>
-                    <p className="text-3xl font-bold text-white">2.4 GB</p>
+                    <p className="text-3xl font-bold text-white">{formatFileSize(storageUsed)}</p>
                   </div>
                   <ClockIcon className="w-8 h-8 text-accent" />
                 </div>
@@ -160,7 +250,10 @@ export default function Dashboard() {
             <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-white">Recent Files</h2>
-                <button className="flex items-center space-x-2 text-accent hover:text-accent/80 transition-colors">
+                <button 
+                  onClick={() => setShowUploadModal(true)}
+                  className="flex items-center space-x-2 text-accent hover:text-accent/80 transition-colors"
+                >
                   <PlusIcon className="w-5 h-5" />
                   <span>Upload File</span>
                 </button>
@@ -170,7 +263,10 @@ export default function Dashboard() {
                 <div className="text-center py-12">
                   <FolderIcon className="w-16 h-16 text-gray-500 mx-auto mb-4" />
                   <p className="text-gray-400 mb-4">No files uploaded yet</p>
-                  <button className="px-4 py-2 bg-accent text-primary rounded-lg hover:bg-accent/90 transition-colors">
+                  <button 
+                    onClick={() => setShowUploadModal(true)}
+                    className="px-4 py-2 bg-accent text-primary rounded-lg hover:bg-accent/90 transition-colors"
+                  >
                     Upload Your First File
                   </button>
                 </div>
@@ -195,9 +291,22 @@ export default function Dashboard() {
                           </p>
                         </div>
                       </div>
-                      <button className="text-gray-400 hover:text-white transition-colors">
-                        <ArrowRightIcon className="w-5 h-5" />
-                      </button>
+                      <div className="flex items-center space-x-2">
+                        <button 
+                          onClick={() => handleFileAction(file.id, 'view')}
+                          className="text-gray-400 hover:text-white transition-colors p-1"
+                          title="View file"
+                        >
+                          <ArrowRightIcon className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={() => handleFileAction(file.id, 'download')}
+                          className="text-gray-400 hover:text-white transition-colors p-1"
+                          title="Download file"
+                        >
+                          <DocumentIcon className="w-4 h-4" />
+                        </button>
+                      </div>
                     </motion.div>
                   ))}
                 </div>
@@ -218,11 +327,17 @@ export default function Dashboard() {
                   <PlusIcon className="w-5 h-5 text-accent" />
                   <span className="text-white">New Project</span>
                 </Link>
-                <button className="w-full flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors">
+                <button 
+                  onClick={() => setShowUploadModal(true)}
+                  className="w-full flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
+                >
                   <PhotoIcon className="w-5 h-5 text-accent" />
                   <span className="text-white">Upload Files</span>
                 </button>
-                <button className="w-full flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors">
+                <button 
+                  onClick={handleViewReports}
+                  className="w-full flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
+                >
                   <DocumentIcon className="w-5 h-5 text-accent" />
                   <span className="text-white">View Reports</span>
                 </button>
@@ -233,23 +348,53 @@ export default function Dashboard() {
             <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
               <h3 className="text-lg font-bold text-white mb-4">Recent Activity</h3>
               <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-accent rounded-full"></div>
-                  <p className="text-gray-300 text-sm">File "wedding-video.mp4" uploaded</p>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-accent rounded-full"></div>
-                  <p className="text-gray-300 text-sm">Project "Smith Wedding" updated</p>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-accent rounded-full"></div>
-                  <p className="text-gray-300 text-sm">New comment on "Commercial Project"</p>
-                </div>
+                {recentActivity.length === 0 ? (
+                  <p className="text-gray-400 text-sm">No recent activity</p>
+                ) : (
+                  recentActivity.map((activity, index) => (
+                    <div key={index} className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-accent rounded-full"></div>
+                      <p className="text-gray-300 text-sm">{activity.message}</p>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
         </div>
       </main>
+
+      {/* Upload Modal */}
+      {showUploadModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-gray-900 p-6 rounded-lg w-full max-w-md">
+            <h3 className="text-xl font-bold text-white mb-4">Upload File</h3>
+            <input
+              type="file"
+              onChange={(e) => setUploadFile(e.target.files[0])}
+              className="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mb-4"
+            />
+            <div className="flex space-x-3">
+              <button
+                onClick={handleUploadFile}
+                disabled={!uploadFile}
+                className="px-4 py-2 bg-accent text-primary rounded hover:bg-accent/90 transition-colors disabled:opacity-50"
+              >
+                Upload
+              </button>
+              <button
+                onClick={() => {
+                  setShowUploadModal(false)
+                  setUploadFile(null)
+                }}
+                className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 } 

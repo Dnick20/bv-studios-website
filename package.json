@@ -16,6 +16,7 @@
     "@vercel/analytics": "^1.5.0",
     "autoprefixer": "^10.4.17",
     "bcryptjs": "^2.4.3",
+    "formidable": "^3.5.4",
     "framer-motion": "^11.18.2",
     "micro": "^10.0.1",
     "next": "^15.4.5",
