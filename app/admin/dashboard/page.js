@@ -584,37 +584,46 @@ export default function AdminDashboard() {
         <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
           <h3 style={{ marginBottom: '15px', color: '#00ff00' }}>Website Pages</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button style={{
-              padding: '10px',
-              backgroundColor: '#333',
-              color: '#fff',
-              border: '1px solid #555',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              textAlign: 'left'
-            }}>
+            <button 
+              onClick={() => handleContentManagement('homepage')}
+              style={{
+                padding: '10px',
+                backgroundColor: '#333',
+                color: '#fff',
+                border: '1px solid #555',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                textAlign: 'left'
+              }}
+            >
               Homepage Content
             </button>
-            <button style={{
-              padding: '10px',
-              backgroundColor: '#333',
-              color: '#fff',
-              border: '1px solid #555',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              textAlign: 'left'
-            }}>
+            <button 
+              onClick={() => handleContentManagement('wedding')}
+              style={{
+                padding: '10px',
+                backgroundColor: '#333',
+                color: '#fff',
+                border: '1px solid #555',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                textAlign: 'left'
+              }}
+            >
               Wedding Page
             </button>
-            <button style={{
-              padding: '10px',
-              backgroundColor: '#333',
-              color: '#fff',
-              border: '1px solid #555',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              textAlign: 'left'
-            }}>
+            <button 
+              onClick={() => handleContentManagement('portfolio')}
+              style={{
+                padding: '10px',
+                backgroundColor: '#333',
+                color: '#fff',
+                border: '1px solid #555',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                textAlign: 'left'
+              }}
+            >
               Portfolio Gallery
             </button>
           </div>
@@ -623,37 +632,46 @@ export default function AdminDashboard() {
         <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
           <h3 style={{ marginBottom: '15px', color: '#00ff00' }}>Media Management</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button style={{
-              padding: '10px',
-              backgroundColor: '#333',
-              color: '#fff',
-              border: '1px solid #555',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              textAlign: 'left'
-            }}>
+            <button 
+              onClick={() => handleMediaManagement('upload-images')}
+              style={{
+                padding: '10px',
+                backgroundColor: '#333',
+                color: '#fff',
+                border: '1px solid #555',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                textAlign: 'left'
+              }}
+            >
               Upload Images
             </button>
-            <button style={{
-              padding: '10px',
-              backgroundColor: '#333',
-              color: '#fff',
-              border: '1px solid #555',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              textAlign: 'left'
-            }}>
+            <button 
+              onClick={() => handleMediaManagement('manage-videos')}
+              style={{
+                padding: '10px',
+                backgroundColor: '#333',
+                color: '#fff',
+                border: '1px solid #555',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                textAlign: 'left'
+              }}
+            >
               Manage Videos
             </button>
-            <button style={{
-              padding: '10px',
-              backgroundColor: '#333',
-              color: '#fff',
-              border: '1px solid #555',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              textAlign: 'left'
-            }}>
+            <button 
+              onClick={() => handleMediaManagement('seo-settings')}
+              style={{
+                padding: '10px',
+                backgroundColor: '#333',
+                color: '#fff',
+                border: '1px solid #555',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                textAlign: 'left'
+              }}
+            >
               SEO Settings
             </button>
           </div>
@@ -1006,21 +1024,172 @@ export default function AdminDashboard() {
     alert(`${type.charAt(0).toUpperCase() + type.slice(1)} report generated successfully!`)
   }
 
-  const exportReport = (format) => {
-    // Mock export functionality
-    const data = {
-      revenue: projects.reduce((sum, p) => sum + p.budget, 0),
-      projects: projects.length,
-      users: users.length,
-      timestamp: new Date().toISOString()
+  const exportReport = async (format) => {
+    try {
+      // Create report data
+      const data = {
+        revenue: projects.reduce((sum, p) => sum + p.budget, 0),
+        projects: projects.length,
+        users: users.length,
+        timestamp: new Date().toISOString()
+      }
+      
+      if (format === 'pdf') {
+        // In a real app, this would generate and download a PDF
+        const response = await fetch('/api/admin/export/pdf', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        
+        if (response.ok) {
+          const blob = await response.blob()
+          const url = window.URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = `admin-report-${new Date().toISOString().split('T')[0]}.pdf`
+          document.body.appendChild(a)
+          a.click()
+          window.URL.revokeObjectURL(url)
+          document.body.removeChild(a)
+        } else {
+          alert('PDF export failed. Please try again.')
+        }
+      } else if (format === 'csv') {
+        // Generate CSV
+        const csvContent = `Revenue,Projects,Users,Timestamp\n${data.revenue},${data.projects},${data.users},${data.timestamp}`
+        const blob = new Blob([csvContent], { type: 'text/csv' })
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `admin-report-${new Date().toISOString().split('T')[0]}.csv`
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+      }
+    } catch (error) {
+      console.error('Export error:', error)
+      alert('Export failed. Please try again.')
+    }
+  }
+
+  const handleChangePassword = async () => {
+    const newPassword = prompt('Enter new password:')
+    if (!newPassword) return
+    
+    const confirmPassword = prompt('Confirm new password:')
+    if (newPassword !== confirmPassword) {
+      alert('Passwords do not match!')
+      return
     }
     
-    if (format === 'pdf') {
-      alert('PDF report export started...')
-      // In a real app, this would generate and download a PDF
-    } else if (format === 'csv') {
-      alert('CSV report export started...')
-      // In a real app, this would generate and download a CSV
+    try {
+      const response = await fetch('/api/admin/change-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ newPassword })
+      })
+      
+      if (response.ok) {
+        alert('Password changed successfully!')
+      } else {
+        alert('Failed to change password. Please try again.')
+      }
+    } catch (error) {
+      console.error('Password change error:', error)
+      alert('Failed to change password. Please try again.')
+    }
+  }
+
+  const handleEnable2FA = async () => {
+    try {
+      const response = await fetch('/api/admin/enable-2fa', {
+        method: 'POST'
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        alert(`2FA enabled! QR Code: ${data.qrCode}`)
+      } else {
+        alert('Failed to enable 2FA. Please try again.')
+      }
+    } catch (error) {
+      console.error('2FA error:', error)
+      alert('Failed to enable 2FA. Please try again.')
+    }
+  }
+
+  const handleBackupDatabase = async () => {
+    try {
+      const response = await fetch('/api/admin/backup-database', {
+        method: 'POST'
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        alert(`Database backup created successfully! Backup ID: ${data.backupId}`)
+      } else {
+        alert('Failed to create backup. Please try again.')
+      }
+    } catch (error) {
+      console.error('Backup error:', error)
+      alert('Failed to create backup. Please try again.')
+    }
+  }
+
+  const handleClearCache = async () => {
+    try {
+      const response = await fetch('/api/admin/clear-cache', {
+        method: 'POST'
+      })
+      
+      if (response.ok) {
+        alert('Cache cleared successfully!')
+        // Reload dashboard data
+        loadDashboardData()
+      } else {
+        alert('Failed to clear cache. Please try again.')
+      }
+    } catch (error) {
+      console.error('Cache clear error:', error)
+      alert('Failed to clear cache. Please try again.')
+    }
+  }
+
+  const handleContentManagement = (type) => {
+    switch (type) {
+      case 'homepage':
+        router.push('/admin/content/homepage')
+        break
+      case 'wedding':
+        router.push('/admin/content/wedding')
+        break
+      case 'portfolio':
+        router.push('/admin/content/portfolio')
+        break
+      default:
+        alert('Content management feature coming soon!')
+    }
+  }
+
+  const handleMediaManagement = (type) => {
+    switch (type) {
+      case 'upload-images':
+        router.push('/admin/media/upload-images')
+        break
+      case 'manage-videos':
+        router.push('/admin/media/manage-videos')
+        break
+      case 'seo-settings':
+        router.push('/admin/media/seo-settings')
+        break
+      default:
+        alert('Media management feature coming soon!')
     }
   }
 
@@ -1064,24 +1233,30 @@ export default function AdminDashboard() {
         <div style={{ marginBottom: '20px' }}>
           <h3 style={{ marginBottom: '10px', color: '#00ff00' }}>Security Settings</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button style={{
-              padding: '10px 20px',
-              backgroundColor: '#0066ff',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer'
-            }}>
+            <button 
+              onClick={handleChangePassword}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#0066ff',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer'
+              }}
+            >
               Change Password
             </button>
-            <button style={{
-              padding: '10px 20px',
-              backgroundColor: '#ffaa00',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer'
-            }}>
+            <button 
+              onClick={handleEnable2FA}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#ffaa00',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer'
+              }}
+            >
               Enable 2FA
             </button>
           </div>
@@ -1090,24 +1265,30 @@ export default function AdminDashboard() {
         <div>
           <h3 style={{ marginBottom: '10px', color: '#00ff00' }}>System Settings</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button style={{
-              padding: '10px 20px',
-              backgroundColor: '#ff6600',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer'
-            }}>
+            <button 
+              onClick={handleBackupDatabase}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#ff6600',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer'
+              }}
+            >
               Backup Database
             </button>
-            <button style={{
-              padding: '10px 20px',
-              backgroundColor: '#ff4444',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer'
-            }}>
+            <button 
+              onClick={handleClearCache}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#ff4444',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer'
+              }}
+            >
               Clear Cache
             </button>
           </div>
