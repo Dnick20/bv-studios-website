@@ -1,5 +1,8 @@
 import { backupDatabaseToBackblaze, listBackblazeFiles, BUCKETS } from '../../../lib/backblaze'
 import jwt from 'jsonwebtoken'
+import { prisma } from '../../../lib/prisma'
+
+const isProduction = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production'
 
 function verifyAdminToken(req) {
   const token = req.headers.authorization?.replace('Bearer ', '') || req.headers['x-admin-token']
@@ -18,6 +21,12 @@ function verifyAdminToken(req) {
 export default async function handler(req, res) {
   if (!verifyAdminToken(req)) {
     return res.status(401).json({ error: 'Unauthorized' })
+  }
+
+  if (isProduction) {
+    return res.status(200).json({
+      message: 'Database backup is only available in local development. Use Supabase dashboard for production backups.'
+    })
   }
 
   const { method } = req
@@ -81,4 +90,32 @@ export default async function handler(req, res) {
       res.setHeader('Allow', ['POST', 'GET'])
       res.status(405).end(`Method ${method} Not Allowed`)
   }
+} 
+
+// pages/api/admin/stats.js
+export default async function handler(req, res) {
+  if (req.method === 'GET') {
+    // Fetch the latest stats
+    const stats = await prisma.stats.findFirst({
+      orderBy: { updatedAt: 'desc' }
+    })
+    return res.status(200).json({ stats })
+  }
+  if (req.method === 'POST') {
+    // Update or create stats
+    const { totalVideos, happyClients, yearsExperience, clientSatisfaction, completionRate } = req.body
+    let stats = await prisma.stats.findFirst()
+    if (stats) {
+      stats = await prisma.stats.update({
+        where: { id: stats.id },
+        data: { totalVideos, happyClients, yearsExperience, clientSatisfaction, completionRate }
+      })
+    } else {
+      stats = await prisma.stats.create({
+        data: { totalVideos, happyClients, yearsExperience, clientSatisfaction, completionRate }
+      })
+    }
+    return res.status(200).json({ stats })
+  }
+  return res.status(405).json({ error: 'Method not allowed' })
 } 

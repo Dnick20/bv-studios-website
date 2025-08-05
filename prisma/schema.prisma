@@ -399,3 +399,14 @@ model SEOSettings {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 } 
+
+model Stats {
+  id                String   @id @default(cuid())
+  totalVideos       Int      @default(0)
+  happyClients      Int      @default(0)
+  yearsExperience   Int      @default(0)
+  clientSatisfaction Int     @default(100) // percent
+  completionRate    Int      @default(0)   // percent
+  updatedAt         DateTime @updatedAt
+  createdAt         DateTime @default(now())
+} 

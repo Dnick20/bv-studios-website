@@ -42,6 +42,14 @@ export default function AdminDashboard() {
   
   const router = useRouter()
 
+  const [stats, setStats] = useState({
+    totalVideos: 0,
+    happyClients: 0,
+    yearsExperience: 0,
+    clientSatisfaction: 100,
+    completionRate: 0
+  })
+
   useEffect(() => {
     // Check for admin token in localStorage
     const adminToken = localStorage.getItem('adminToken')
@@ -72,6 +80,12 @@ export default function AdminDashboard() {
 
     loadDashboardData()
     setIsLoading(false)
+
+    fetch('/api/admin/stats')
+      .then(res => res.json())
+      .then(data => {
+        if (data.stats) setStats(data.stats)
+      })
   }, [router])
 
   const loadDashboardData = async () => {
@@ -322,6 +336,29 @@ export default function AdminDashboard() {
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
         <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
+          <h3 style={{ marginBottom: '10px', color: '#00ff00' }}>Total Videos</h3>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{stats.totalVideos}</p>
+        </div>
+        <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
+          <h3 style={{ marginBottom: '10px', color: '#00ff00' }}>Happy Clients</h3>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{stats.happyClients}</p>
+        </div>
+        <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
+          <h3 style={{ marginBottom: '10px', color: '#00ff00' }}>Years Experience</h3>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{stats.yearsExperience}</p>
+        </div>
+        <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
+          <h3 style={{ marginBottom: '10px', color: '#00ff00' }}>Client Satisfaction</h3>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{stats.clientSatisfaction}%</p>
+        </div>
+        <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
+          <h3 style={{ marginBottom: '10px', color: '#00ff00' }}>Completion Rate</h3>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{stats.completionRate}%</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+        <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
           <h3 style={{ marginBottom: '10px', color: '#00ff00' }}>Total Users</h3>
           <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{users.length}</p>
           <p style={{ color: '#ccc', fontSize: '14px' }}>+12% from last month</p>
@@ -338,15 +375,9 @@ export default function AdminDashboard() {
           <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>${projects.reduce((sum, p) => sum + p.budget, 0).toLocaleString()}</p>
           <p style={{ color: '#ccc', fontSize: '14px' }}>This month</p>
         </div>
-
-        <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
-          <h3 style={{ marginBottom: '10px', color: '#00ff00' }}>Completion Rate</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>85%</p>
-          <p style={{ color: '#ccc', fontSize: '14px' }}>+5% from last month</p>
-        </div>
       </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div style={{ backgroundColor: '#111', padding: '20px', borderRadius: '10px', border: '1px solid #333' }}>
           <h3 style={{ marginBottom: '20px', color: '#00ff00' }}>Recent Activity</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
