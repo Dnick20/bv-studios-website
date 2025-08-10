@@ -125,10 +125,10 @@ export default function WeddingsPage() {
               From engagement shoots to the big day, we preserve your memories beautifully.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-4 bg-wedding-accent text-wedding-dark font-semibold rounded-lg hover:bg-wedding-accent/90 transition-colors shadow-glow">
+              <a href="#portfolio" className="px-8 py-4 bg-wedding-accent text-wedding-dark font-semibold rounded-lg hover:bg-wedding-accent/90 transition-colors shadow-glow inline-block">
                 View Our Films
-              </button>
-              <a href="/auth" className="px-8 py-4 bg-wedding-dark text-wedding-primary font-semibold rounded-lg hover:bg-wedding-dark/90 transition-colors shadow-glow border border-wedding-accent">
+              </a>
+              <a href="/auth/signin" className="px-8 py-4 bg-wedding-dark text-wedding-primary font-semibold rounded-lg hover:bg-wedding-dark/90 transition-colors shadow-glow border border-wedding-accent">
                 Sign In to Book
               </a>
             </div>
@@ -161,7 +161,7 @@ export default function WeddingsPage() {
       </section>
 
       {/* Portfolio Section */}
-      <section className="py-16 bg-wedding-secondary">
+      <section id="portfolio" className="py-16 bg-wedding-secondary">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-wedding-dark mb-4">Featured Wedding Films</h2>
@@ -221,7 +221,7 @@ export default function WeddingsPage() {
                     </li>
                   ))}
                 </ul>
-                <a href="/auth" className={`w-full mt-8 px-6 py-3 font-semibold rounded-lg transition-colors block text-center ${
+                <a href="/auth/signin" className={`w-full mt-8 px-6 py-3 font-semibold rounded-lg transition-colors block text-center ${
                   pkg.featured 
                     ? 'bg-wedding-accent text-wedding-dark hover:bg-wedding-accent/90 shadow-glow' 
                     : 'bg-wedding-accent text-wedding-dark hover:bg-wedding-accent/90 shadow-glow'
@@ -263,7 +263,7 @@ export default function WeddingsPage() {
             <p className="text-xl text-wedding-muted mb-8">
               Let's discuss your wedding vision and create a beautiful film that tells your unique story.
             </p>
-            <a href="/auth" className="px-8 py-4 bg-wedding-accent text-wedding-dark font-semibold rounded-lg hover:bg-wedding-accent/90 transition-colors shadow-glow inline-block">
+            <a href="/auth/signin" className="px-8 py-4 bg-wedding-accent text-wedding-dark font-semibold rounded-lg hover:bg-wedding-accent/90 transition-colors shadow-glow inline-block">
               Sign In to Start Planning
             </a>
           </div>
