@@ -88,9 +88,15 @@ export async function POST(request) {
     return NextResponse.json(
       {
         message: errorMessage,
-        // Expose minimal diagnostics even in production for now to help surface real cause
-        details: process.env.NODE_ENV === 'production' ? undefined : error?.message,
-        code: process.env.NODE_ENV === 'production' ? undefined : error?.code,
+        // Temporary diagnostics to unblock production debugging; safe to remove once stable
+        code: error?.code ?? null,
+        hint:
+          status === 503
+            ? 'Check DATABASE_URL connectivity and that the database schema is migrated.'
+            : status === 409
+            ? 'Try signing in or use a different email.'
+            : 'See server logs for stack trace.',
+        detail: (error?.message || '').slice(0, 300) || null,
       },
       { status }
     )
