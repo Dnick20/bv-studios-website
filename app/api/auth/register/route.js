@@ -57,10 +57,42 @@ export async function POST(request) {
       { status: 201 }
     )
   } catch (error) {
-    console.error('Registration error:', error)
+    // Log with more context for server-side inspection
+    console.error('[Auth/Register] Error:', {
+      message: error?.message,
+      code: error?.code,
+      name: error?.name,
+    })
+
+    // Map known errors to appropriate HTTP statuses
+    let status = 500
+    let errorMessage = 'Internal server error'
+
+    // Prisma unique constraint (email already exists)
+    if (error?.code === 'P2002') {
+      status = 409
+      errorMessage = 'User with this email already exists'
+    }
+
+    // Prisma connection / record not found variants
+    if (error?.code === 'P1001' || error?.message?.includes('connect')) {
+      status = 503
+      errorMessage = 'Database connection failed'
+    }
+
+    if (error?.message?.toLowerCase()?.includes('bcrypt')) {
+      status = 500
+      errorMessage = 'Password encryption failed'
+    }
+
     return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 }
+      {
+        message: errorMessage,
+        // Expose minimal diagnostics even in production for now to help surface real cause
+        details: process.env.NODE_ENV === 'production' ? undefined : error?.message,
+        code: process.env.NODE_ENV === 'production' ? undefined : error?.code,
+      },
+      { status }
     )
   }
 }
