@@ -12,7 +12,7 @@ const WeddingPackageComparison = () => {
       try {
         const response = await fetch('/api/wedding/packages')
         if (response.ok) {
-          const data = await response.json()
+          const data = await response.json().catch(() => ({ packages: [] }))
           setPackages(data.packages || [])
         }
       } catch (error) {
@@ -26,10 +26,10 @@ const WeddingPackageComparison = () => {
   }, [])
 
   const handlePackageSelect = (pkg) => {
-    setSelectedPackages(prev => {
-      const isSelected = prev.find(p => p.id === pkg.id)
+    setSelectedPackages((prev) => {
+      const isSelected = prev.find((p) => p.id === pkg.id)
       if (isSelected) {
-        return prev.filter(p => p.id !== pkg.id)
+        return prev.filter((p) => p.id !== pkg.id)
       } else {
         return [...prev, pkg].slice(0, 3) // Limit to 3 packages
       }
@@ -38,8 +38,8 @@ const WeddingPackageComparison = () => {
 
   const getAllFeatures = () => {
     const allFeatures = new Set()
-    packages.forEach(pkg => {
-      pkg.features.forEach(feature => allFeatures.add(feature))
+    packages.forEach((pkg) => {
+      pkg.features.forEach((feature) => allFeatures.add(feature))
     })
     return Array.from(allFeatures)
   }
@@ -81,7 +81,7 @@ const WeddingPackageComparison = () => {
             <div
               key={pkg.id}
               className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                selectedPackages.find(p => p.id === pkg.id)
+                selectedPackages.find((p) => p.id === pkg.id)
                   ? 'border-blue-500 bg-blue-50'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
@@ -92,15 +92,27 @@ const WeddingPackageComparison = () => {
                 <div className="text-2xl font-bold text-blue-600 mb-2">
                   {formatPrice(pkg.price)}
                 </div>
-                <div className="text-sm text-gray-600">{pkg.duration} hours</div>
-                <div className={`w-6 h-6 rounded-full border-2 mx-auto mt-2 ${
-                  selectedPackages.find(p => p.id === pkg.id)
-                    ? 'bg-blue-500 border-blue-500'
-                    : 'border-gray-300'
-                }`}>
-                  {selectedPackages.find(p => p.id === pkg.id) && (
-                    <svg className="w-4 h-4 text-white mx-auto mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                <div className="text-sm text-gray-600">
+                  {pkg.duration} hours
+                </div>
+                <div
+                  className={`w-6 h-6 rounded-full border-2 mx-auto mt-2 ${
+                    selectedPackages.find((p) => p.id === pkg.id)
+                      ? 'bg-blue-500 border-blue-500'
+                      : 'border-gray-300'
+                  }`}
+                >
+                  {selectedPackages.find((p) => p.id === pkg.id) && (
+                    <svg
+                      className="w-4 h-4 text-white mx-auto mt-0.5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   )}
                 </div>
@@ -121,7 +133,10 @@ const WeddingPackageComparison = () => {
                     Features
                   </th>
                   {selectedPackages.map((pkg) => (
-                    <th key={pkg.id} className="px-6 py-4 text-center text-sm font-medium text-gray-900">
+                    <th
+                      key={pkg.id}
+                      className="px-6 py-4 text-center text-sm font-medium text-gray-900"
+                    >
                       {pkg.name}
                     </th>
                   ))}
@@ -165,12 +180,28 @@ const WeddingPackageComparison = () => {
                     {selectedPackages.map((pkg) => (
                       <td key={pkg.id} className="px-6 py-4 text-center">
                         {hasFeature(pkg, feature) ? (
-                          <svg className="w-6 h-6 text-green-500 mx-auto" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          <svg
+                            className="w-6 h-6 text-green-500 mx-auto"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                         ) : (
-                          <svg className="w-6 h-6 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                          <svg
+                            className="w-6 h-6 text-gray-300 mx-auto"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                         )}
                       </td>
@@ -222,12 +253,20 @@ const WeddingPackageComparison = () => {
                 <h4 className="font-medium text-blue-900 mb-2">Best Value</h4>
                 <p className="text-sm text-blue-700">
                   {(() => {
-                    const bestValue = selectedPackages.reduce((best, current) => {
-                      const bestRatio = best.features.length / best.price
-                      const currentRatio = current.features.length / current.price
-                      return currentRatio > bestRatio ? current : best
-                    })
-                    return `${bestValue.name} offers the most features per dollar at ${(bestValue.features.length / (bestValue.price / 100)).toFixed(2)} features per $100.`
+                    const bestValue = selectedPackages.reduce(
+                      (best, current) => {
+                        const bestRatio = best.features.length / best.price
+                        const currentRatio =
+                          current.features.length / current.price
+                        return currentRatio > bestRatio ? current : best
+                      }
+                    )
+                    return `${
+                      bestValue.name
+                    } offers the most features per dollar at ${(
+                      bestValue.features.length /
+                      (bestValue.price / 100)
+                    ).toFixed(2)} features per $100.`
                   })()}
                 </p>
               </div>
@@ -235,11 +274,16 @@ const WeddingPackageComparison = () => {
 
             {selectedPackages.length >= 2 && (
               <div className="p-4 bg-green-50 rounded-lg">
-                <h4 className="font-medium text-green-900 mb-2">Most Comprehensive</h4>
+                <h4 className="font-medium text-green-900 mb-2">
+                  Most Comprehensive
+                </h4>
                 <p className="text-sm text-green-700">
                   {(() => {
-                    const mostFeatures = selectedPackages.reduce((best, current) => 
-                      current.features.length > best.features.length ? current : best
+                    const mostFeatures = selectedPackages.reduce(
+                      (best, current) =>
+                        current.features.length > best.features.length
+                          ? current
+                          : best
                     )
                     return `${mostFeatures.name} includes the most features (${mostFeatures.features.length}) for the most complete coverage.`
                   })()}
@@ -249,13 +293,19 @@ const WeddingPackageComparison = () => {
 
             {selectedPackages.length >= 2 && (
               <div className="p-4 bg-yellow-50 rounded-lg">
-                <h4 className="font-medium text-yellow-900 mb-2">Budget Friendly</h4>
+                <h4 className="font-medium text-yellow-900 mb-2">
+                  Budget Friendly
+                </h4>
                 <p className="text-sm text-yellow-700">
                   {(() => {
-                    const cheapest = selectedPackages.reduce((best, current) => 
+                    const cheapest = selectedPackages.reduce((best, current) =>
                       current.price < best.price ? current : best
                     )
-                    return `${cheapest.name} is the most affordable option at ${formatPrice(cheapest.price)} while still providing quality coverage.`
+                    return `${
+                      cheapest.name
+                    } is the most affordable option at ${formatPrice(
+                      cheapest.price
+                    )} while still providing quality coverage.`
                   })()}
                 </p>
               </div>
@@ -279,4 +329,4 @@ const WeddingPackageComparison = () => {
   )
 }
 
-export default WeddingPackageComparison 
+export default WeddingPackageComparison

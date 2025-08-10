@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { safeJson } from '../../../../lib/utils/safeJson'
 
 export default function MediaUploadManagement() {
   const router = useRouter()
@@ -15,12 +16,12 @@ export default function MediaUploadManagement() {
     { id: 'weddings', name: 'Weddings', path: '/images/weddings/' },
     { id: 'commercial', name: 'Commercial', path: '/images/commercial/' },
     { id: 'portfolio', name: 'Portfolio', path: '/images/portfolio/' },
-    { id: 'team', name: 'Team', path: '/images/team/' }
+    { id: 'team', name: 'Team', path: '/images/team/' },
   ]
 
   const handleFileSelect = (event) => {
     const files = Array.from(event.target.files)
-    setUploadedFiles(prev => [...prev, ...files])
+    setUploadedFiles((prev) => [...prev, ...files])
   }
 
   const handleUpload = async () => {
@@ -31,35 +32,37 @@ export default function MediaUploadManagement() {
 
     try {
       setIsUploading(true)
-      
+
       const uploadPromises = uploadedFiles.map(async (file) => {
         const formData = new FormData()
         formData.append('file', file)
-        
+
         const response = await fetch('/api/admin/upload', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('admin-token')}`
+            Authorization: `Bearer ${localStorage.getItem('admin-token')}`,
           },
           body: JSON.stringify({
             category: selectedCategory,
             filename: file.name,
-            contentType: file.type
-          })
+            contentType: file.type,
+          }),
         })
-        
+
         if (!response.ok) {
           throw new Error(`Failed to upload ${file.name}`)
         }
-        
-        return response.json()
+
+        return safeJson(response)
       })
-      
+
       const results = await Promise.all(uploadPromises)
-      const successfulUploads = results.filter(result => result.uploadUrl)
-      
-      setMessage(`Successfully uploaded ${successfulUploads.length} files to Backblaze B2`)
+      const successfulUploads = results.filter((result) => result.uploadUrl)
+
+      setMessage(
+        `Successfully uploaded ${successfulUploads.length} files to Backblaze B2`
+      )
       setUploadedFiles([])
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
@@ -72,7 +75,7 @@ export default function MediaUploadManagement() {
   }
 
   const handleRemoveFile = (index) => {
-    setUploadedFiles(prev => prev.filter((_, i) => i !== index))
+    setUploadedFiles((prev) => prev.filter((_, i) => i !== index))
   }
 
   const handleBack = () => {
@@ -83,7 +86,9 @@ export default function MediaUploadManagement() {
     <div className="min-h-screen bg-primary text-white p-6">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-accent">Media Upload Management</h1>
+          <h1 className="text-3xl font-bold text-accent">
+            Media Upload Management
+          </h1>
           <button
             onClick={handleBack}
             className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors"
@@ -93,9 +98,11 @@ export default function MediaUploadManagement() {
         </div>
 
         {message && (
-          <div className={`p-4 mb-6 rounded-lg ${
-            message.includes('Error') ? 'bg-red-600' : 'bg-green-600'
-          }`}>
+          <div
+            className={`p-4 mb-6 rounded-lg ${
+              message.includes('Error') ? 'bg-red-600' : 'bg-green-600'
+            }`}
+          >
             {message}
           </div>
         )}
@@ -108,7 +115,7 @@ export default function MediaUploadManagement() {
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="w-full px-4 py-3 bg-black/30 border border-gray-700 rounded-lg text-white focus:border-accent focus:outline-none"
             >
-              {categories.map(category => (
+              {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
                 </option>
@@ -117,7 +124,9 @@ export default function MediaUploadManagement() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Select Files</label>
+            <label className="block text-sm font-medium mb-2">
+              Select Files
+            </label>
             <input
               ref={fileInputRef}
               type="file"
@@ -130,10 +139,15 @@ export default function MediaUploadManagement() {
 
           {uploadedFiles.length > 0 && (
             <div>
-              <label className="block text-sm font-medium mb-2">Selected Files ({uploadedFiles.length})</label>
+              <label className="block text-sm font-medium mb-2">
+                Selected Files ({uploadedFiles.length})
+              </label>
               <div className="space-y-2">
                 {uploadedFiles.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-black/20 rounded-lg">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-black/20 rounded-lg"
+                  >
                     <span className="text-sm">{file.name}</span>
                     <button
                       onClick={() => handleRemoveFile(index)}
@@ -155,7 +169,7 @@ export default function MediaUploadManagement() {
             >
               {isUploading ? 'Uploading...' : 'Upload Files'}
             </button>
-            
+
             <button
               onClick={() => {
                 setUploadedFiles([])
@@ -183,4 +197,4 @@ export default function MediaUploadManagement() {
       </div>
     </div>
   )
-} 
+}

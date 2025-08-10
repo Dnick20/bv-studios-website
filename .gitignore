@@ -38,3 +38,4 @@ public/media/**/*.mkv
 .vscode
 *.swp
 *.swo 
+.vercel

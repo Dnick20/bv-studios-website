@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { analytics, analyticsHelpers } from '../../lib/analytics'
+import { safeJson } from '../../lib/utils/safeJson'
 
 const WeddingBookingPage = () => {
   const { data: session } = useSession()
@@ -19,24 +20,24 @@ const WeddingBookingPage = () => {
     eventDate: '',
     eventTime: '',
     guestCount: '',
-    specialRequests: ''
+    specialRequests: '',
   })
 
   useEffect(() => {
     // Track page view
     analytics.pageView('Wedding Booking', {
       has_session: !!session,
-      user_email: session?.user?.email
+      user_email: session?.user?.email,
     })
-    
+
     // Start session timer for analytics
     analyticsHelpers.startTimer('wedding_booking_session')
-    
+
     // Identify user if logged in
     if (session?.user?.email) {
       analyticsHelpers.identifyUser(session.user.email, {
         name: session.user.name,
-        booking_session_start: new Date().toISOString()
+        booking_session_start: new Date().toISOString(),
       })
     }
 
@@ -45,17 +46,17 @@ const WeddingBookingPage = () => {
         const [packagesRes, addonsRes, venuesRes] = await Promise.all([
           fetch('/api/wedding/packages'),
           fetch('/api/wedding/addons'),
-          fetch('/api/wedding/venues')
+          fetch('/api/wedding/venues'),
         ])
-        
-        const packagesData = await packagesRes.json()
-        const addonsData = await addonsRes.json()
-        const venuesData = await venuesRes.json()
-        
+
+        const packagesData = await safeJson(packagesRes, { packages: [] })
+        const addonsData = await safeJson(addonsRes, { addons: [] })
+        const venuesData = await safeJson(venuesRes, { venues: [] })
+
         setData({
           packages: packagesData.packages || [],
           addons: addonsData.addons || [],
-          venues: venuesData.venues || []
+          venues: venuesData.venues || [],
         })
 
         // Track data loading performance
@@ -73,10 +74,10 @@ const WeddingBookingPage = () => {
 
   const handlePackageSelect = (pkg) => {
     setSelectedPackage(pkg)
-    
+
     // Track package selection
     analytics.userEngagement('package_selected', { package: pkg })
-    
+
     // If this is their first package selection, track quote started
     if (!selectedPackage) {
       analytics.userEngagement('quote_started', { package: pkg })
@@ -84,15 +85,21 @@ const WeddingBookingPage = () => {
   }
 
   const handleAddonToggle = (addon) => {
-    setSelectedAddons(prev => {
-      const exists = prev.find(a => a.addonId === addon.id)
+    setSelectedAddons((prev) => {
+      const exists = prev.find((a) => a.addonId === addon.id)
       if (exists) {
         // Track addon removal
-        analytics.userEngagement('addon_removed', { addon, package: selectedPackage })
-        return prev.filter(a => a.addonId !== addon.id)
+        analytics.userEngagement('addon_removed', {
+          addon,
+          package: selectedPackage,
+        })
+        return prev.filter((a) => a.addonId !== addon.id)
       } else {
         // Track addon addition
-        analytics.userEngagement('addon_added', { addon, package: selectedPackage })
+        analytics.userEngagement('addon_added', {
+          addon,
+          package: selectedPackage,
+        })
         return [...prev, { addonId: addon.id, price: addon.price }]
       }
     })
@@ -100,7 +107,7 @@ const WeddingBookingPage = () => {
 
   const calculateTotalPrice = () => {
     let total = selectedPackage ? selectedPackage.price : 0
-    selectedAddons.forEach(addon => {
+    selectedAddons.forEach((addon) => {
       total += addon.price
     })
     return total
@@ -108,22 +115,31 @@ const WeddingBookingPage = () => {
 
   const handleSubmitQuote = async (e) => {
     e.preventDefault()
-    
+
     if (!session) {
       // Track conversion abandonment
-      analytics.userEngagement('conversion_abandoned', { reason: 'authentication_required', details: 'user_not_logged_in' })
+      analytics.userEngagement('conversion_abandoned', {
+        reason: 'authentication_required',
+        details: 'user_not_logged_in',
+      })
       router.push('/auth')
       return
     }
 
     if (!selectedPackage) {
-      analytics.userEngagement('conversion_abandoned', { reason: 'package_selection', details: 'no_package_selected' })
+      analytics.userEngagement('conversion_abandoned', {
+        reason: 'package_selection',
+        details: 'no_package_selected',
+      })
       alert('Please select a package')
       return
     }
 
     if (!quoteData.eventDate || !quoteData.eventTime) {
-      analytics.userEngagement('conversion_abandoned', { reason: 'form_completion', details: 'missing_date_time' })
+      analytics.userEngagement('conversion_abandoned', {
+        reason: 'form_completion',
+        details: 'missing_date_time',
+      })
       alert('Please select event date and time')
       return
     }
@@ -134,19 +150,21 @@ const WeddingBookingPage = () => {
       // Determine venue information
       let venueId = null
       let venueName = null
-      
+
       if (selectedVenue === 'other') {
         venueName = otherVenue
         analytics.userEngagement('custom_venue_selected', { venue: otherVenue })
       } else if (selectedVenue) {
-        const venue = data.venues.find(v => v.id === selectedVenue)
+        const venue = data.venues.find((v) => v.id === selectedVenue)
         venueName = venue?.name
         venueId = selectedVenue
         analytics.userEngagement('venue_selected', { venue })
       }
 
       const totalPrice = calculateTotalPrice()
-      const sessionDuration = analyticsHelpers.endTimer('wedding_booking_session')
+      const sessionDuration = analyticsHelpers.endTimer(
+        'wedding_booking_session'
+      )
 
       const response = await fetch('/api/wedding/quotes', {
         method: 'POST',
@@ -161,13 +179,13 @@ const WeddingBookingPage = () => {
           venueName: venueName,
           guestCount: quoteData.guestCount || null,
           specialRequests: quoteData.specialRequests || null,
-          addons: selectedAddons
+          addons: selectedAddons,
         }),
       })
 
       if (response.ok) {
-        const result = await response.json()
-        
+        const result = await safeJson(response)
+
         // Track successful quote submission
         analytics.userEngagement('quote_submitted', {
           id: result.quote?.id,
@@ -180,22 +198,28 @@ const WeddingBookingPage = () => {
           addons: selectedAddons,
           sessionDuration: sessionDuration,
           packageName: selectedPackage.name,
-          venueName: venueName
+          venueName: venueName,
         })
-        
+
         // Track user engagement
         analytics.userEngagement('quote_completed', { sessionDuration })
-        
+
         alert('Quote submitted successfully!')
         router.push('/my-quotes')
       } else {
-        const error = await response.json()
-        analytics.userEngagement('conversion_abandoned', { reason: 'submission_error', details: error.message })
+        const error = await safeJson(response)
+        analytics.userEngagement('conversion_abandoned', {
+          reason: 'submission_error',
+          details: error.message,
+        })
         alert(`Error: ${error.message}`)
       }
     } catch (error) {
       console.error('Error submitting quote:', error)
-      analytics.userEngagement('conversion_abandoned', { reason: 'technical_error', details: error.message })
+      analytics.userEngagement('conversion_abandoned', {
+        reason: 'technical_error',
+        details: error.message,
+      })
       alert('Error submitting quote. Please try again.')
     } finally {
       setSubmitting(false)
@@ -227,63 +251,77 @@ const WeddingBookingPage = () => {
 
         {/* Package Selection */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Select Your Package</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Select Your Package
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {data?.packages.map((pkg) => (
-              <div 
-                key={pkg.id} 
+              <div
+                key={pkg.id}
                 className={`bg-white rounded-lg shadow-lg p-6 cursor-pointer transition-all ${
-                  selectedPackage?.id === pkg.id 
-                    ? 'ring-2 ring-blue-500 shadow-xl' 
+                  selectedPackage?.id === pkg.id
+                    ? 'ring-2 ring-blue-500 shadow-xl'
                     : 'hover:shadow-xl'
                 }`}
                 onClick={() => handlePackageSelect(pkg)}
-                onMouseEnter={() => analytics.userEngagement('package_viewed', { package: pkg })}
+                onMouseEnter={() =>
+                  analytics.userEngagement('package_viewed', { package: pkg })
+                }
               >
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">{pkg.name}</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  {pkg.name}
+                </h3>
                 <p className="text-gray-600 mb-4">{pkg.description}</p>
                 <div className="mb-4">
                   <p className="text-3xl font-bold text-blue-600">
                     ${(pkg.price / 100).toLocaleString()}
                   </p>
-                  <p className="text-sm text-gray-500">{pkg.duration} hours of coverage</p>
+                  <p className="text-sm text-gray-500">
+                    {pkg.duration} hours of coverage
+                  </p>
                 </div>
                 <div className="mb-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">Includes:</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2">
+                    Includes:
+                  </h4>
                   <ul className="text-sm text-gray-600 space-y-1">
-                    {pkg.features && (() => {
-                      try {
-                        const features = JSON.parse(pkg.features)
-                        return features.map((feature, index) => (
-                          <li key={index} className="flex items-center">
-                            <span className="text-green-500 mr-2">✓</span>
-                            {feature}
-                          </li>
-                        ))
-                      } catch (error) {
-                        // If JSON parsing fails, try to parse as a simple string array
+                    {pkg.features &&
+                      (() => {
                         try {
-                          const features = pkg.features.replace(/^\[|\]$/g, '').split(',').map(f => f.trim().replace(/"/g, ''))
+                          const features = JSON.parse(pkg.features)
                           return features.map((feature, index) => (
                             <li key={index} className="flex items-center">
                               <span className="text-green-500 mr-2">✓</span>
                               {feature}
                             </li>
                           ))
-                        } catch (e) {
-                          // If all parsing fails, show a default message
-                          return (
-                            <li className="flex items-center">
-                              <span className="text-green-500 mr-2">✓</span>
-                              Professional wedding videography coverage
-                            </li>
-                          )
+                        } catch (error) {
+                          // If JSON parsing fails, try to parse as a simple string array
+                          try {
+                            const features = pkg.features
+                              .replace(/^\[|\]$/g, '')
+                              .split(',')
+                              .map((f) => f.trim().replace(/"/g, ''))
+                            return features.map((feature, index) => (
+                              <li key={index} className="flex items-center">
+                                <span className="text-green-500 mr-2">✓</span>
+                                {feature}
+                              </li>
+                            ))
+                          } catch (e) {
+                            // If all parsing fails, show a default message
+                            return (
+                              <li className="flex items-center">
+                                <span className="text-green-500 mr-2">✓</span>
+                                Professional wedding videography coverage
+                              </li>
+                            )
+                          }
                         }
-                      }
-                    })()}
+                      })()}
                   </ul>
                 </div>
-                <button 
+                <button
                   className={`w-full py-2 px-4 rounded-lg transition-colors ${
                     selectedPackage?.id === pkg.id
                       ? 'bg-blue-600 text-white'
@@ -294,7 +332,9 @@ const WeddingBookingPage = () => {
                     handlePackageSelect(pkg)
                   }}
                 >
-                  {selectedPackage?.id === pkg.id ? 'Selected' : 'Select Package'}
+                  {selectedPackage?.id === pkg.id
+                    ? 'Selected'
+                    : 'Select Package'}
                 </button>
               </div>
             ))}
@@ -303,18 +343,26 @@ const WeddingBookingPage = () => {
 
         {/* Add-ons Selection */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Customize Your Package</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Customize Your Package
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {data?.addons.map((addon) => {
-              const isSelected = selectedAddons.find(a => a.addonId === addon.id)
+              const isSelected = selectedAddons.find(
+                (a) => a.addonId === addon.id
+              )
               return (
-                <div 
-                  key={addon.id} 
+                <div
+                  key={addon.id}
                   className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                    isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                    isSelected
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300'
                   }`}
                   onClick={() => handleAddonToggle(addon)}
-                  onMouseEnter={() => analytics.userEngagement('addon_viewed', { addon })}
+                  onMouseEnter={() =>
+                    analytics.userEngagement('addon_viewed', { addon })
+                  }
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
@@ -325,9 +373,13 @@ const WeddingBookingPage = () => {
                           onChange={() => handleAddonToggle(addon)}
                           className="mr-3 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
-                        <h3 className="font-semibold text-gray-900">{addon.name}</h3>
+                        <h3 className="font-semibold text-gray-900">
+                          {addon.name}
+                        </h3>
                       </div>
-                      <p className="text-sm text-gray-600">{addon.description}</p>
+                      <p className="text-sm text-gray-600">
+                        {addon.description}
+                      </p>
                     </div>
                     <span className="text-lg font-bold text-blue-600 ml-4">
                       ${(addon.price / 100).toLocaleString()}
@@ -341,16 +393,22 @@ const WeddingBookingPage = () => {
 
         {/* Venue Selection */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Choose Your Venue (Optional)</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Choose Your Venue (Optional)
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {data?.venues.map((venue) => (
-              <div 
-                key={venue.id} 
+              <div
+                key={venue.id}
                 className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                  selectedVenue === venue.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                  selectedVenue === venue.id
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-200 hover:border-gray-300'
                 }`}
                 onClick={() => setSelectedVenue(venue.id)}
-                onMouseEnter={() => analytics.userEngagement('venue_viewed', { venue })}
+                onMouseEnter={() =>
+                  analytics.userEngagement('venue_viewed', { venue })
+                }
               >
                 <div className="flex items-start mb-2">
                   <input
@@ -361,9 +419,13 @@ const WeddingBookingPage = () => {
                     className="mr-3 h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <div>
-                    <h3 className="font-semibold text-gray-900">{venue.name}</h3>
+                    <h3 className="font-semibold text-gray-900">
+                      {venue.name}
+                    </h3>
                     <p className="text-sm text-gray-600">{venue.description}</p>
-                    <p className="text-sm text-gray-500 mt-1">{venue.address}, {venue.city}, {venue.state}</p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {venue.address}, {venue.city}, {venue.state}
+                    </p>
                     {venue.phone && (
                       <p className="text-sm text-gray-500">{venue.phone}</p>
                     )}
@@ -371,11 +433,13 @@ const WeddingBookingPage = () => {
                 </div>
               </div>
             ))}
-            
+
             {/* Other Venue Option */}
-            <div 
+            <div
               className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                selectedVenue === 'other' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                selectedVenue === 'other'
+                  ? 'border-blue-500 bg-blue-50'
+                  : 'border-gray-200 hover:border-gray-300'
               }`}
               onClick={() => setSelectedVenue('other')}
             >
@@ -389,7 +453,9 @@ const WeddingBookingPage = () => {
                 />
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900">Other Venue</h3>
-                  <p className="text-sm text-gray-600">Enter your venue details</p>
+                  <p className="text-sm text-gray-600">
+                    Enter your venue details
+                  </p>
                   {selectedVenue === 'other' && (
                     <input
                       type="text"
@@ -407,7 +473,9 @@ const WeddingBookingPage = () => {
 
         {/* Quote Form */}
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Event Details</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Event Details
+          </h2>
           <form onSubmit={handleSubmitQuote} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -418,10 +486,13 @@ const WeddingBookingPage = () => {
                   type="date"
                   required
                   value={quoteData.eventDate}
-                                  onChange={(e) => {
-                  setQuoteData({...quoteData, eventDate: e.target.value})
-                  analytics.userEngagement('form_field_filled', { field: 'event_date', value: e.target.value })
-                }}
+                  onChange={(e) => {
+                    setQuoteData({ ...quoteData, eventDate: e.target.value })
+                    analytics.userEngagement('form_field_filled', {
+                      field: 'event_date',
+                      value: e.target.value,
+                    })
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                 />
               </div>
@@ -432,10 +503,13 @@ const WeddingBookingPage = () => {
                 <select
                   required
                   value={quoteData.eventTime}
-                                  onChange={(e) => {
-                  setQuoteData({...quoteData, eventTime: e.target.value})
-                  analytics.userEngagement('form_field_filled', { field: 'event_time', value: e.target.value })
-                }}
+                  onChange={(e) => {
+                    setQuoteData({ ...quoteData, eventTime: e.target.value })
+                    analytics.userEngagement('form_field_filled', {
+                      field: 'event_time',
+                      value: e.target.value,
+                    })
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                 >
                   <option value="">Select time</option>
@@ -451,20 +525,27 @@ const WeddingBookingPage = () => {
                 <input
                   type="number"
                   value={quoteData.guestCount}
-                  onChange={(e) => setQuoteData({...quoteData, guestCount: e.target.value})}
+                  onChange={(e) =>
+                    setQuoteData({ ...quoteData, guestCount: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                   placeholder="Approximate number of guests"
                 />
               </div>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Special Requests
               </label>
               <textarea
                 value={quoteData.specialRequests}
-                onChange={(e) => setQuoteData({...quoteData, specialRequests: e.target.value})}
+                onChange={(e) =>
+                  setQuoteData({
+                    ...quoteData,
+                    specialRequests: e.target.value,
+                  })
+                }
                 rows={4}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                 placeholder="Any special requests or details about your wedding..."
@@ -474,16 +555,25 @@ const WeddingBookingPage = () => {
             {/* Price Summary */}
             {selectedPackage && (
               <div className="bg-gray-50 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Price Summary</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Price Summary
+                </h3>
                 <div className="space-y-2">
                   <div className="flex justify-between text-gray-900">
                     <span className="font-medium">{selectedPackage.name}</span>
-                    <span className="font-medium">${(selectedPackage.price / 100).toLocaleString()}</span>
+                    <span className="font-medium">
+                      ${(selectedPackage.price / 100).toLocaleString()}
+                    </span>
                   </div>
                   {selectedAddons.map((addon) => {
-                    const addonData = data.addons.find(a => a.id === addon.addonId)
+                    const addonData = data.addons.find(
+                      (a) => a.id === addon.addonId
+                    )
                     return (
-                      <div key={addon.addonId} className="flex justify-between text-sm text-gray-700">
+                      <div
+                        key={addon.addonId}
+                        className="flex justify-between text-sm text-gray-700"
+                      >
                         <span>+ {addonData?.name}</span>
                         <span>${(addon.price / 100).toLocaleString()}</span>
                       </div>
@@ -492,7 +582,9 @@ const WeddingBookingPage = () => {
                   <div className="border-t pt-2 mt-4">
                     <div className="flex justify-between font-semibold text-lg text-gray-900">
                       <span>Total</span>
-                      <span>${(calculateTotalPrice() / 100).toLocaleString()}</span>
+                      <span>
+                        ${(calculateTotalPrice() / 100).toLocaleString()}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -519,4 +611,4 @@ const WeddingBookingPage = () => {
   )
 }
 
-export default WeddingBookingPage 
+export default WeddingBookingPage

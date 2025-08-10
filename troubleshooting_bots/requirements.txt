@@ -1,0 +1,31 @@
+# CrewAI + LangGraph Hierarchical Troubleshooting System Dependencies
+
+# Core AI Framework (simplified for compatibility)
+crewai>=0.5.0
+langgraph
+langchain
+openai
+
+# Data and Configuration
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# Async and Networking
+aiohttp>=3.9.0
+httpx>=0.25.0
+
+# Data Processing
+pandas>=2.1.0
+structlog>=23.2.0
+
+# Environment and Configuration
+python-dotenv>=1.0.0
+typer>=0.9.0
+rich>=13.7.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+
+# Utilities
+colorama>=0.4.6

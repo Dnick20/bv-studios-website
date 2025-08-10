@@ -1,0 +1,113 @@
+{
+  "monitoring_system": {
+    "status": "active",
+    "uptime": "monitoring since system start",
+    "components": {
+      "metrics_collector": "active",
+      "error_tracker": "active",
+      "performance_monitor": "active",
+      "health_monitor": "active"
+    }
+  },
+  "system_health": {
+    "health_score": 70.0,
+    "health_status": "warning",
+    "timestamp": "2025-08-10T12:44:42.595966",
+    "metrics_summary": {
+      "counters": {
+        "test_counter": 5,
+        "test_performance_bot_operations_total": 1.0
+      },
+      "gauges": {
+        "test_gauge": 42.0
+      },
+      "timers": {
+        "test_timer": {
+          "count": 1,
+          "min": 1.23,
+          "max": 1.23,
+          "avg": 1.23,
+          "total": 1.23
+        },
+        "test_performance_bot_duration_seconds": {
+          "count": 1,
+          "min": 0.101154,
+          "max": 0.101154,
+          "avg": 0.101154,
+          "total": 0.101154
+        }
+      },
+      "total_metrics": 5,
+      "performance_snapshots": 1,
+      "collection_time": "2025-08-10T12:44:42.595956"
+    },
+    "error_summary": {
+      "total_errors": 3,
+      "error_types": {
+        "Exception": 1,
+        "ValueError": 1,
+        "RuntimeError": 1
+      },
+      "severity_distribution": {
+        "medium": 3
+      },
+      "bot_error_counts": {
+        "test_bot": 3
+      },
+      "recent_errors": [
+        {
+          "bot_name": "test_bot",
+          "bot_type": "coordinator",
+          "operation": "connection_error",
+          "error_type": "Exception",
+          "error_message": "Connection timeout",
+          "severity": "medium",
+          "timestamp": "2025-08-10T12:44:42.494209",
+          "context": {}
+        },
+        {
+          "bot_name": "test_bot",
+          "bot_type": "coordinator",
+          "operation": "validation_error",
+          "error_type": "ValueError",
+          "error_message": "Invalid input",
+          "severity": "medium",
+          "timestamp": "2025-08-10T12:44:42.494259",
+          "context": {}
+        },
+        {
+          "bot_name": "test_bot",
+          "bot_type": "coordinator",
+          "operation": "runtime_error",
+          "error_type": "RuntimeError",
+          "error_message": "Unexpected runtime issue",
+          "severity": "medium",
+          "timestamp": "2025-08-10T12:44:42.494304",
+          "context": {}
+        }
+      ],
+      "most_common_errors": [
+        [
+          "test_bot:Exception",
+          1
+        ],
+        [
+          "test_bot:ValueError",
+          1
+        ],
+        [
+          "test_bot:RuntimeError",
+          1
+        ]
+      ]
+    },
+    "error_patterns": [
+      "No significant error patterns detected"
+    ],
+    "recommendations": [
+      "Address recurring error: test_bot:Exception (1 occurrences)"
+    ],
+    "system_alerts": []
+  },
+  "generated_at": "2025-08-10T12:44:42.595970"
+}

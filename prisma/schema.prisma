@@ -409,4 +409,20 @@ model Stats {
   completionRate    Int      @default(0)   // percent
   updatedAt         DateTime @updatedAt
   createdAt         DateTime @default(now())
+}
+
+// Bot Management and Logging
+model BotLog {
+  id        String   @id @default(cuid())
+  botType   String   // 'database', 'content', 'lead', 'analytics', 'workflow'
+  action    String   // 'cleanup', 'generate', 'analyze', 'process', 'health-check'
+  status    String   // 'success', 'error', 'warning', 'info'
+  data      Json?    // Results or error details
+  duration  Int?     // Execution time in milliseconds
+  createdAt DateTime @default(now())
+
+  @@index([botType])
+  @@index([action])
+  @@index([status])
+  @@index([createdAt])
 } 

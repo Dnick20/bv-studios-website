@@ -1,0 +1,114 @@
+{
+  "monitoring_system": {
+    "status": "active",
+    "uptime": "monitoring since system start",
+    "components": {
+      "metrics_collector": "active",
+      "error_tracker": "active",
+      "performance_monitor": "active",
+      "health_monitor": "active"
+    }
+  },
+  "system_health": {
+    "health_score": 10.0,
+    "health_status": "critical",
+    "timestamp": "2025-08-10T12:46:00.150481",
+    "metrics_summary": {
+      "counters": {},
+      "gauges": {},
+      "timers": {
+        "bothydrationfix_resolution_time": {
+          "count": 1,
+          "min": 50.0,
+          "max": 50.0,
+          "avg": 50.0,
+          "total": 50.0
+        },
+        "botqueryoptimization_resolution_time": {
+          "count": 1,
+          "min": 35.0,
+          "max": 35.0,
+          "avg": 35.0,
+          "total": 35.0
+        },
+        "botapirestart_resolution_time": {
+          "count": 1,
+          "min": 65.0,
+          "max": 65.0,
+          "avg": 65.0,
+          "total": 65.0
+        }
+      },
+      "total_metrics": 3,
+      "performance_snapshots": 0,
+      "collection_time": "2025-08-10T12:46:00.150471"
+    },
+    "error_summary": {
+      "total_errors": 2,
+      "error_types": {
+        "Exception": 2
+      },
+      "severity_distribution": {
+        "high": 2
+      },
+      "bot_error_counts": {
+        "web_diagnostic": 1,
+        "network_diagnostic": 1
+      },
+      "recent_errors": [
+        {
+          "bot_name": "web_diagnostic",
+          "bot_type": "web_diagnostic",
+          "operation": "diagnostic",
+          "error_type": "Exception",
+          "error_message": "UserProfile component experiencing hydration failures",
+          "severity": "high",
+          "timestamp": "2025-08-10T12:46:00.150107",
+          "context": {
+            "issue_id": "diag_001"
+          }
+        },
+        {
+          "bot_name": "network_diagnostic",
+          "bot_type": "network_diagnostic",
+          "operation": "diagnostic",
+          "error_type": "Exception",
+          "error_message": "Lead bot API endpoint returning internal server errors",
+          "severity": "high",
+          "timestamp": "2025-08-10T12:46:00.150221",
+          "context": {
+            "issue_id": "diag_003"
+          }
+        }
+      ],
+      "most_common_errors": [
+        [
+          "web_diagnostic:Exception",
+          1
+        ],
+        [
+          "network_diagnostic:Exception",
+          1
+        ]
+      ]
+    },
+    "error_patterns": [
+      "No significant error patterns detected"
+    ],
+    "recommendations": [
+      "URGENT: System health is critical - immediate attention required",
+      "Slow operation detected: bothydrationfix_resolution_time - consider optimization",
+      "Slow operation detected: botqueryoptimization_resolution_time - consider optimization",
+      "Slow operation detected: botapirestart_resolution_time - consider optimization",
+      "Address recurring error: web_diagnostic:Exception (1 occurrences)"
+    ],
+    "system_alerts": [
+      {
+        "level": "critical",
+        "message": "System health is critically low",
+        "action_required": true
+      }
+    ]
+  },
+  "generated_at": "2025-08-10T12:46:00.150485"
+}

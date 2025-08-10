@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { use } from 'react'
 import Link from 'next/link'
+import { safeJson } from '../../../../lib/utils/safeJson'
 import { motion } from 'framer-motion'
 import {
   ArrowLeftIcon,
@@ -23,14 +24,14 @@ import {
   PencilIcon,
   TrashIcon,
   CheckIcon,
-  XMarkIcon
+  XMarkIcon,
 } from '@heroicons/react/24/outline'
 
 export default function ProjectPage({ params }) {
   const { data: session, status } = useSession()
   const router = useRouter()
   const { id } = use(params)
-  
+
   const [project, setProject] = useState(null)
   const [files, setFiles] = useState([])
   const [comments, setComments] = useState([])
@@ -63,7 +64,8 @@ export default function ProjectPage({ params }) {
       const mockProject = {
         id: id,
         name: `Project ${id}`,
-        description: 'A professional video production project showcasing our creative vision and technical expertise.',
+        description:
+          'A professional video production project showcasing our creative vision and technical expertise.',
         status: 'in-progress',
         client: 'John Smith',
         startDate: '2024-01-15',
@@ -71,15 +73,49 @@ export default function ProjectPage({ params }) {
         budget: '$5,000',
         progress: 75,
         files: [
-          { id: 1, name: 'raw-footage.mp4', type: 'video', size: 2048576, uploadedAt: '2024-01-20' },
-          { id: 2, name: 'final-cut.mp4', type: 'video', size: 1048576, uploadedAt: '2024-01-25' },
-          { id: 3, name: 'storyboard.pdf', type: 'document', size: 512000, uploadedAt: '2024-01-18' },
-          { id: 4, name: 'behind-scenes.jpg', type: 'image', size: 256000, uploadedAt: '2024-01-22' }
+          {
+            id: 1,
+            name: 'raw-footage.mp4',
+            type: 'video',
+            size: 2048576,
+            uploadedAt: '2024-01-20',
+          },
+          {
+            id: 2,
+            name: 'final-cut.mp4',
+            type: 'video',
+            size: 1048576,
+            uploadedAt: '2024-01-25',
+          },
+          {
+            id: 3,
+            name: 'storyboard.pdf',
+            type: 'document',
+            size: 512000,
+            uploadedAt: '2024-01-18',
+          },
+          {
+            id: 4,
+            name: 'behind-scenes.jpg',
+            type: 'image',
+            size: 256000,
+            uploadedAt: '2024-01-22',
+          },
         ],
         comments: [
-          { id: 1, user: 'Client', message: 'Looking great so far!', timestamp: '2024-01-25T10:30:00Z' },
-          { id: 2, user: 'BV Studios', message: 'Thanks! We\'ll have the final version ready by next week.', timestamp: '2024-01-25T11:15:00Z' }
-        ]
+          {
+            id: 1,
+            user: 'Client',
+            message: 'Looking great so far!',
+            timestamp: '2024-01-25T10:30:00Z',
+          },
+          {
+            id: 2,
+            user: 'BV Studios',
+            message: "Thanks! We'll have the final version ready by next week.",
+            timestamp: '2024-01-25T11:15:00Z',
+          },
+        ],
       }
 
       setProject(mockProject)
@@ -89,7 +125,7 @@ export default function ProjectPage({ params }) {
         name: mockProject.name,
         description: mockProject.description,
         client: mockProject.client,
-        budget: mockProject.budget
+        budget: mockProject.budget,
       })
     } catch (error) {
       console.error('Error fetching project:', error)
@@ -106,7 +142,7 @@ export default function ProjectPage({ params }) {
       id: Date.now(),
       user: session.user.name,
       message: newComment,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }
 
     setComments([...comments, comment])
@@ -123,10 +159,10 @@ export default function ProjectPage({ params }) {
     try {
       // Generate shareable link
       const shareUrl = `${window.location.origin}/dashboard/project/${id}`
-      
+
       // Copy to clipboard
       await navigator.clipboard.writeText(shareUrl)
-      
+
       // Show success message
       alert('Project link copied to clipboard!')
       setShowShareModal(false)
@@ -174,17 +210,17 @@ export default function ProjectPage({ params }) {
       })
 
       if (response.ok) {
-        const result = await response.json()
-        
+        const result = await safeJson(response)
+
         // Add new file to the list
         const newFile = {
           id: result.file.id,
           name: result.file.name,
           type: result.file.type,
           size: result.file.size,
-          uploadedAt: new Date().toISOString().split('T')[0]
+          uploadedAt: new Date().toISOString().split('T')[0],
         }
-        
+
         setFiles([...files, newFile])
         setUploadFile(null)
         setShowUploadModal(false)
@@ -209,7 +245,7 @@ export default function ProjectPage({ params }) {
           const url = window.URL.createObjectURL(blob)
           const a = document.createElement('a')
           a.href = url
-          a.download = files.find(f => f.id === fileId)?.name || 'file'
+          a.download = files.find((f) => f.id === fileId)?.name || 'file'
           document.body.appendChild(a)
           a.click()
           window.URL.revokeObjectURL(url)
@@ -239,7 +275,7 @@ export default function ProjectPage({ params }) {
     if (!bytes) return 'Unknown'
     const sizes = ['Bytes', 'KB', 'MB', 'GB']
     const i = Math.floor(Math.log(bytes) / Math.log(1024))
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i]
+    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + ' ' + sizes[i]
   }
 
   const getStatusColor = (status) => {
@@ -289,18 +325,20 @@ export default function ProjectPage({ params }) {
                 <ArrowLeftIcon className="w-6 h-6 text-gray-300" />
               </Link>
               <div>
-                <h1 className="text-2xl font-bold text-white">{project.name}</h1>
+                <h1 className="text-2xl font-bold text-white">
+                  {project.name}
+                </h1>
                 <p className="text-gray-300">Project Details</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <button 
+              <button
                 onClick={handleShareProject}
                 className="px-4 py-2 border border-gray-700 text-gray-300 rounded-lg hover:bg-gray-800 transition-colors"
               >
                 <ShareIcon className="w-5 h-5" />
               </button>
-              <button 
+              <button
                 onClick={() => setIsEditing(!isEditing)}
                 className="px-4 py-2 bg-accent text-primary rounded-lg hover:bg-accent/90 transition-colors"
               >
@@ -321,39 +359,58 @@ export default function ProjectPage({ params }) {
               {isEditing ? (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-gray-300 text-sm mb-2">Project Name</label>
+                    <label className="block text-gray-300 text-sm mb-2">
+                      Project Name
+                    </label>
                     <input
                       type="text"
                       value={editData.name}
-                      onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                      onChange={(e) =>
+                        setEditData({ ...editData, name: e.target.value })
+                      }
                       className="w-full px-3 py-2 bg-black/20 border border-gray-700 rounded-lg text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm mb-2">Description</label>
+                    <label className="block text-gray-300 text-sm mb-2">
+                      Description
+                    </label>
                     <textarea
                       value={editData.description}
-                      onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                      onChange={(e) =>
+                        setEditData({
+                          ...editData,
+                          description: e.target.value,
+                        })
+                      }
                       rows={3}
                       className="w-full px-3 py-2 bg-black/20 border border-gray-700 rounded-lg text-white"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-gray-300 text-sm mb-2">Client</label>
+                      <label className="block text-gray-300 text-sm mb-2">
+                        Client
+                      </label>
                       <input
                         type="text"
                         value={editData.client}
-                        onChange={(e) => setEditData({ ...editData, client: e.target.value })}
+                        onChange={(e) =>
+                          setEditData({ ...editData, client: e.target.value })
+                        }
                         className="w-full px-3 py-2 bg-black/20 border border-gray-700 rounded-lg text-white"
                       />
                     </div>
                     <div>
-                      <label className="block text-gray-300 text-sm mb-2">Budget</label>
+                      <label className="block text-gray-300 text-sm mb-2">
+                        Budget
+                      </label>
                       <input
                         type="text"
                         value={editData.budget}
-                        onChange={(e) => setEditData({ ...editData, budget: e.target.value })}
+                        onChange={(e) =>
+                          setEditData({ ...editData, budget: e.target.value })
+                        }
                         className="w-full px-3 py-2 bg-black/20 border border-gray-700 rounded-lg text-white"
                       />
                     </div>
@@ -376,10 +433,18 @@ export default function ProjectPage({ params }) {
               ) : (
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-bold text-white">{project.name}</h2>
+                    <h2 className="text-xl font-bold text-white">
+                      {project.name}
+                    </h2>
                     <div className="flex items-center space-x-2">
-                      <div className={`w-3 h-3 rounded-full ${getStatusColor(project.status)}`}></div>
-                      <span className="text-gray-300 capitalize">{project.status}</span>
+                      <div
+                        className={`w-3 h-3 rounded-full ${getStatusColor(
+                          project.status
+                        )}`}
+                      ></div>
+                      <span className="text-gray-300 capitalize">
+                        {project.status}
+                      </span>
                     </div>
                   </div>
                   <p className="text-gray-300 mb-4">{project.description}</p>
@@ -394,11 +459,15 @@ export default function ProjectPage({ params }) {
                     </div>
                     <div>
                       <p className="text-gray-400 text-sm">Start Date</p>
-                      <p className="text-white font-medium">{project.startDate}</p>
+                      <p className="text-white font-medium">
+                        {project.startDate}
+                      </p>
                     </div>
                     <div>
                       <p className="text-gray-400 text-sm">End Date</p>
-                      <p className="text-white font-medium">{project.endDate}</p>
+                      <p className="text-white font-medium">
+                        {project.endDate}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -412,7 +481,7 @@ export default function ProjectPage({ params }) {
                 <span className="text-gray-300">{project.progress}%</span>
               </div>
               <div className="w-full bg-gray-700 rounded-full h-2">
-                <div 
+                <div
                   className="bg-accent h-2 rounded-full transition-all duration-300"
                   style={{ width: `${project.progress}%` }}
                 ></div>
@@ -423,7 +492,7 @@ export default function ProjectPage({ params }) {
             <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-white">Project Files</h3>
-                <button 
+                <button
                   onClick={() => setShowUploadModal(true)}
                   className="flex items-center space-x-2 text-accent hover:text-accent/80 transition-colors"
                 >
@@ -433,7 +502,10 @@ export default function ProjectPage({ params }) {
               </div>
               <div className="space-y-4">
                 {files.map((file) => (
-                  <div key={file.id} className="flex items-center justify-between p-4 bg-black/10 rounded-lg border border-gray-700">
+                  <div
+                    key={file.id}
+                    className="flex items-center justify-between p-4 bg-black/10 rounded-lg border border-gray-700"
+                  >
                     <div className="flex items-center space-x-4">
                       <div className="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center">
                         {getFileIcon(file.type)}
@@ -441,18 +513,19 @@ export default function ProjectPage({ params }) {
                       <div>
                         <p className="text-white font-medium">{file.name}</p>
                         <p className="text-gray-400 text-sm">
-                          {formatFileSize(file.size)} • {file.type} • {file.uploadedAt}
+                          {formatFileSize(file.size)} • {file.type} •{' '}
+                          {file.uploadedAt}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <button 
+                      <button
                         onClick={() => handleFileAction(file.id, 'view')}
                         className="p-2 text-gray-400 hover:text-white transition-colors"
                       >
                         <EyeIcon className="w-5 h-5" />
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleFileAction(file.id, 'download')}
                         className="p-2 text-gray-400 hover:text-white transition-colors"
                       >
@@ -475,7 +548,9 @@ export default function ProjectPage({ params }) {
                   <div key={comment.id} className="p-3 bg-black/10 rounded-lg">
                     <div className="flex items-center space-x-2 mb-2">
                       <UserIcon className="w-4 h-4 text-accent" />
-                      <span className="text-white font-medium">{comment.user}</span>
+                      <span className="text-white font-medium">
+                        {comment.user}
+                      </span>
                       <span className="text-gray-400 text-sm">
                         {new Date(comment.timestamp).toLocaleDateString()}
                       </span>
@@ -503,23 +578,25 @@ export default function ProjectPage({ params }) {
 
             {/* Quick Actions */}
             <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
-              <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
+              <h3 className="text-lg font-bold text-white mb-4">
+                Quick Actions
+              </h3>
               <div className="space-y-3">
-                <button 
+                <button
                   onClick={() => setShowUploadModal(true)}
                   className="w-full flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
                 >
                   <PlusIcon className="w-5 h-5 text-accent" />
                   <span className="text-white">Upload Files</span>
                 </button>
-                <button 
+                <button
                   onClick={handleShareProject}
                   className="w-full flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
                 >
                   <ChatBubbleLeftIcon className="w-5 h-5 text-accent" />
                   <span className="text-white">Share Project</span>
                 </button>
-                <button 
+                <button
                   onClick={() => setShowDeleteModal(true)}
                   className="w-full flex items-center space-x-3 p-3 bg-red-600/10 rounded-lg hover:bg-red-600/20 transition-colors"
                 >
@@ -568,9 +645,12 @@ export default function ProjectPage({ params }) {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-gray-900 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-bold text-white mb-4">Delete Project</h3>
+            <h3 className="text-xl font-bold text-white mb-4">
+              Delete Project
+            </h3>
             <p className="text-gray-300 mb-6">
-              Are you sure you want to delete "{project.name}"? This action cannot be undone.
+              Are you sure you want to delete "{project.name}"? This action
+              cannot be undone.
             </p>
             <div className="flex space-x-3">
               <button
@@ -591,4 +671,4 @@ export default function ProjectPage({ params }) {
       )}
     </div>
   )
-} 
+}

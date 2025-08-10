@@ -1,25 +1,23 @@
 import { NextResponse } from 'next/server'
 
-export default function middleware(req) {
-  const { pathname } = req.nextUrl
+export async function middleware(request) {
+  const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
+  const isAdminLoginPage = request.nextUrl.pathname === '/admin'
 
-  // Add basic security headers
-  const response = NextResponse.next()
-  
-  response.headers.set('X-Frame-Options', 'DENY')
-  response.headers.set('X-Content-Type-Options', 'nosniff')
-  response.headers.set('Referrer-Policy', 'origin-when-cross-origin')
+  // Use presence of admin token cookie as a simple check (optional)
+  const hasAdminToken = Boolean(request.cookies.get('adminToken')?.value)
 
-  // Log for debugging
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`[Simple Middleware] ${req.method} ${pathname}`)
+  if (isAdminRoute && !isAdminLoginPage && !hasAdminToken) {
+    return NextResponse.redirect(new URL('/admin', request.url))
   }
 
-  return response
+  if (isAdminLoginPage && hasAdminToken) {
+    return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+  }
+
+  return NextResponse.next()
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
-  ],
-} 
+  matcher: ['/admin/:path*', '/admin'],
+}

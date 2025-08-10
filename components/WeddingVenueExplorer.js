@@ -15,7 +15,7 @@ const WeddingVenueExplorer = () => {
       try {
         const response = await fetch('/api/wedding/venues')
         if (response.ok) {
-          const data = await response.json()
+          const data = await response.json().catch(() => ({ venues: [] }))
           setVenues(data.venues || [])
           setFilteredVenues(data.venues || [])
         }
@@ -34,29 +34,37 @@ const WeddingVenueExplorer = () => {
 
     // Filter by search term
     if (searchTerm) {
-      filtered = filtered.filter(venue =>
-        venue.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        venue.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        venue.address.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (venue) =>
+          venue.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          venue.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          venue.address.toLowerCase().includes(searchTerm.toLowerCase())
       )
     }
 
     // Filter by city
     if (selectedCity) {
-      filtered = filtered.filter(venue => venue.city === selectedCity)
+      filtered = filtered.filter((venue) => venue.city === selectedCity)
     }
 
     // Filter by type
     if (selectedType) {
-      filtered = filtered.filter(venue => {
+      filtered = filtered.filter((venue) => {
         const description = venue.description.toLowerCase()
         switch (selectedType) {
           case 'outdoor':
-            return description.includes('outdoor') || description.includes('garden')
+            return (
+              description.includes('outdoor') || description.includes('garden')
+            )
           case 'indoor':
-            return description.includes('ballroom') || description.includes('loft')
+            return (
+              description.includes('ballroom') || description.includes('loft')
+            )
           case 'church':
-            return description.includes('church') || description.includes('traditional')
+            return (
+              description.includes('church') ||
+              description.includes('traditional')
+            )
           default:
             return true
         }
@@ -67,7 +75,7 @@ const WeddingVenueExplorer = () => {
   }, [venues, searchTerm, selectedCity, selectedType])
 
   const getCities = () => {
-    const cities = [...new Set(venues.map(venue => venue.city))]
+    const cities = [...new Set(venues.map((venue) => venue.city))]
     return cities.sort()
   }
 
@@ -75,9 +83,15 @@ const WeddingVenueExplorer = () => {
     const description = venue.description.toLowerCase()
     if (description.includes('outdoor') || description.includes('garden')) {
       return 'outdoor'
-    } else if (description.includes('ballroom') || description.includes('loft')) {
+    } else if (
+      description.includes('ballroom') ||
+      description.includes('loft')
+    ) {
       return 'indoor'
-    } else if (description.includes('church') || description.includes('traditional')) {
+    } else if (
+      description.includes('church') ||
+      description.includes('traditional')
+    ) {
       return 'church'
     }
     return 'other'
@@ -85,10 +99,14 @@ const WeddingVenueExplorer = () => {
 
   const getTypeColor = (type) => {
     switch (type) {
-      case 'outdoor': return 'bg-green-100 text-green-800'
-      case 'indoor': return 'bg-blue-100 text-blue-800'
-      case 'church': return 'bg-purple-100 text-purple-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'outdoor':
+        return 'bg-green-100 text-green-800'
+      case 'indoor':
+        return 'bg-blue-100 text-blue-800'
+      case 'church':
+        return 'bg-purple-100 text-purple-800'
+      default:
+        return 'bg-gray-100 text-gray-800'
     }
   }
 
@@ -146,8 +164,10 @@ const WeddingVenueExplorer = () => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Cities</option>
-              {getCities().map(city => (
-                <option key={city} value={city}>{city}</option>
+              {getCities().map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
               ))}
             </select>
           </div>
@@ -209,39 +229,64 @@ const WeddingVenueExplorer = () => {
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredVenues.map((venue) => (
-            <div key={venue.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div
+              key={venue.id}
+              className="bg-white rounded-lg shadow-md overflow-hidden"
+            >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <h4 className="text-lg font-semibold text-gray-900">
                     {venue.name}
                   </h4>
-                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(getVenueType(venue))}`}>
+                  <span
+                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(
+                      getVenueType(venue)
+                    )}`}
+                  >
                     {getVenueType(venue)}
                   </span>
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex items-center text-sm text-gray-600">
-                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                    <svg
+                      className="w-4 h-4 mr-2"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     {venue.address}, {venue.city}, {venue.state}
                   </div>
 
-                  <p className="text-sm text-gray-600">
-                    {venue.description}
-                  </p>
+                  <p className="text-sm text-gray-600">{venue.description}</p>
 
                   <div className="space-y-1 text-sm text-gray-500">
                     <div className="flex items-center">
-                      <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <svg
+                        className="w-4 h-4 mr-2"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                       </svg>
                       {venue.phone}
                     </div>
                     <div className="flex items-center">
-                      <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5a2 2 0 112.828 2.828l-1.5 1.5a1 1 0 001.414 1.414l1.5-1.5a4 4 0 00-5.656 0l-3 3a4 4 0 00.707 5.707l3-3a1 1 0 011.414 1.414l-3 3a2 2 0 11-2.828-2.828l3-3a1 1 0 001.414-1.414l-3 3a2 2 0 01-2.828 0z" clipRule="evenodd" />
+                      <svg
+                        className="w-4 h-4 mr-2"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5a2 2 0 112.828 2.828l-1.5 1.5a1 1 0 001.414 1.414l1.5-1.5a4 4 0 00-5.656 0l-3 3a4 4 0 00.707 5.707l3-3a1 1 0 011.414 1.414l-3 3a2 2 0 11-2.828-2.828l3-3a1 1 0 001.414-1.414l-3 3a2 2 0 01-2.828 0z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                       <a
                         href={venue.website}
@@ -276,24 +321,26 @@ const WeddingVenueExplorer = () => {
         </h3>
         <div className="grid md:grid-cols-4 gap-4 text-center">
           <div>
-            <div className="text-2xl font-bold text-blue-600">{venues.length}</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {venues.length}
+            </div>
             <div className="text-sm text-gray-600">Total Venues</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-green-600">
-              {venues.filter(v => getVenueType(v) === 'outdoor').length}
+              {venues.filter((v) => getVenueType(v) === 'outdoor').length}
             </div>
             <div className="text-sm text-gray-600">Outdoor Venues</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-blue-600">
-              {venues.filter(v => getVenueType(v) === 'indoor').length}
+              {venues.filter((v) => getVenueType(v) === 'indoor').length}
             </div>
             <div className="text-sm text-gray-600">Indoor Venues</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-purple-600">
-              {venues.filter(v => getVenueType(v) === 'church').length}
+              {venues.filter((v) => getVenueType(v) === 'church').length}
             </div>
             <div className="text-sm text-gray-600">Church Venues</div>
           </div>
@@ -303,4 +350,4 @@ const WeddingVenueExplorer = () => {
   )
 }
 
-export default WeddingVenueExplorer 
+export default WeddingVenueExplorer

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { safeJson } from '../../../../lib/utils/safeJson'
 
 export default function VideoManagement() {
   const router = useRouter()
@@ -14,7 +15,7 @@ export default function VideoManagement() {
     { id: 'all', name: 'All Videos' },
     { id: 'weddings', name: 'Weddings' },
     { id: 'commercial', name: 'Commercial' },
-    { id: 'highlights', name: 'Highlights' }
+    { id: 'highlights', name: 'Highlights' },
   ]
 
   useEffect(() => {
@@ -24,31 +25,37 @@ export default function VideoManagement() {
   const loadVideos = async () => {
     try {
       setIsLoading(true)
-      
-      const response = await fetch('/api/admin/storage?bucket=media&prefix=media/', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('admin-token')}`
+
+      const response = await fetch(
+        '/api/admin/storage?bucket=media&prefix=media/',
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('admin-token')}`,
+          },
         }
-      })
-      
+      )
+
       if (!response.ok) {
         throw new Error('Failed to load videos')
       }
-      
-      const data = await response.json()
-      const videoFiles = data.files.filter(file => 
-        file.key.match(/\.(mp4|mov|avi|mkv|webm)$/i)
-      ).map(file => ({
-        id: file.key,
-        title: file.key.split('/').pop().replace(/\.[^/.]+$/, ''),
-        category: file.key.split('/')[1] || 'other',
-        url: file.url,
-        thumbnail: file.key.replace(/\.(mp4|mov|avi|mkv|webm)$/i, '.jpg'),
-        duration: 'Unknown',
-        uploadDate: new Date(file.lastModified).toISOString().split('T')[0],
-        size: file.size
-      }))
-      
+
+      const data = await safeJson(response, { files: [] })
+      const videoFiles = data.files
+        .filter((file) => file.key.match(/\.(mp4|mov|avi|mkv|webm)$/i))
+        .map((file) => ({
+          id: file.key,
+          title: file.key
+            .split('/')
+            .pop()
+            .replace(/\.[^/.]+$/, ''),
+          category: file.key.split('/')[1] || 'other',
+          url: file.url,
+          thumbnail: file.key.replace(/\.(mp4|mov|avi|mkv|webm)$/i, '.jpg'),
+          duration: 'Unknown',
+          uploadDate: new Date(file.lastModified).toISOString().split('T')[0],
+          size: file.size,
+        }))
+
       setVideos(videoFiles)
     } catch (error) {
       setMessage('Error loading videos')
@@ -63,19 +70,22 @@ export default function VideoManagement() {
 
     try {
       setIsLoading(true)
-      
-      const response = await fetch(`/api/admin/storage?key=${encodeURIComponent(videoId)}&bucket=media`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('admin-token')}`
+
+      const response = await fetch(
+        `/api/admin/storage?key=${encodeURIComponent(videoId)}&bucket=media`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('admin-token')}`,
+          },
         }
-      })
-      
+      )
+
       if (!response.ok) {
         throw new Error('Failed to delete video')
       }
-      
-      setVideos(prev => prev.filter(video => video.id !== videoId))
+
+      setVideos((prev) => prev.filter((video) => video.id !== videoId))
       setMessage('Video deleted successfully from Backblaze B2')
     } catch (error) {
       setMessage('Error deleting video')
@@ -90,9 +100,10 @@ export default function VideoManagement() {
     setMessage('Edit functionality coming soon')
   }
 
-  const filteredVideos = selectedCategory === 'all' 
-    ? videos 
-    : videos.filter(video => video.category === selectedCategory)
+  const filteredVideos =
+    selectedCategory === 'all'
+      ? videos
+      : videos.filter((video) => video.category === selectedCategory)
 
   const handleBack = () => {
     router.push('/admin/dashboard')
@@ -112,9 +123,11 @@ export default function VideoManagement() {
         </div>
 
         {message && (
-          <div className={`p-4 mb-6 rounded-lg ${
-            message.includes('Error') ? 'bg-red-600' : 'bg-green-600'
-          }`}>
+          <div
+            className={`p-4 mb-6 rounded-lg ${
+              message.includes('Error') ? 'bg-red-600' : 'bg-green-600'
+            }`}
+          >
             {message}
           </div>
         )}
@@ -127,7 +140,7 @@ export default function VideoManagement() {
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="px-4 py-2 bg-black/30 border border-gray-700 rounded-lg text-white focus:border-accent focus:outline-none"
             >
-              {categories.map(category => (
+              {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
                 </option>
@@ -142,24 +155,39 @@ export default function VideoManagement() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredVideos.map(video => (
-                <div key={video.id} className="bg-black/20 rounded-lg overflow-hidden border border-gray-700">
+              {filteredVideos.map((video) => (
+                <div
+                  key={video.id}
+                  className="bg-black/20 rounded-lg overflow-hidden border border-gray-700"
+                >
                   <div className="aspect-video bg-gray-800 flex items-center justify-center">
                     <div className="text-center">
                       <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-2">
-                        <svg className="w-8 h-8 text-black" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                        <svg
+                          className="w-8 h-8 text-black"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                       </div>
                       <p className="text-sm text-gray-400">{video.duration}</p>
                     </div>
                   </div>
-                  
+
                   <div className="p-4">
                     <h3 className="font-semibold mb-2">{video.title}</h3>
-                    <p className="text-sm text-gray-400 mb-2">Category: {video.category}</p>
-                    <p className="text-sm text-gray-400 mb-4">Uploaded: {video.uploadDate}</p>
-                    
+                    <p className="text-sm text-gray-400 mb-2">
+                      Category: {video.category}
+                    </p>
+                    <p className="text-sm text-gray-400 mb-4">
+                      Uploaded: {video.uploadDate}
+                    </p>
+
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEditVideo(video)}
@@ -189,4 +217,4 @@ export default function VideoManagement() {
       </div>
     </div>
   )
-} 
+}

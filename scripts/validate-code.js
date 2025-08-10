@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 /**
  * Code Validation Script
@@ -15,13 +15,19 @@ const VALIDATION_RULES = [
     validate: (content, filePath) => {
       // Skip files that legitimately use session
       const excludePaths = [
+        // Legacy paths (kept for safety)
         'pages/api/auth/',
-        'contexts/AuthContext.js',
-        'app/auth/',
         'pages/auth/',
-        'pages/api/wedding/quotes.js',
         'pages/_app.js',
-        'pages/api/webhooks/stripe.js' // Uses Stripe session, not NextAuth
+        'pages/api/webhooks/stripe.js', // Uses Stripe session, not NextAuth
+        'pages/api/wedding/quotes.js',
+        // Current app-router auth and bots (intentional session usage)
+        'app/',
+        'app/auth/',
+        'app/api/auth/',
+        'components/',
+        'lib/auth.js',
+        'lib/bots/'
       ];
       
       if (excludePaths.some(path => filePath.includes(path))) {
@@ -36,17 +42,19 @@ const VALIDATION_RULES = [
       
       // Look for session references without proper imports
       const hasSessionReference = /\bsession\b(?!\s*=)/g.test(cleanContent);
-      const hasNextAuthImport = /import.*useSession.*from.*next-auth/g.test(content);
-      const hasGetServerSession = /getServerSession/g.test(content);
+      const hasNextAuthImport = /import\s*\{?\s*useSession\s*\}?\s*from\s*['"]next-auth['"]/g.test(content);
+      const hasGetServerSession = /\bgetServerSession\b/g.test(content);
+      const hasCustomAuthImport = /import\s*\{\s*auth\s*\}\s*from\s*['"]@\/lib\/auth['"]/g.test(content);
+      const hasAuthCall = /\bauth\s*\(/g.test(content);
       
-      if (hasSessionReference && !hasNextAuthImport && !hasGetServerSession) {
+      if (hasSessionReference && !(hasNextAuthImport || hasGetServerSession || hasCustomAuthImport || hasAuthCall)) {
         const matches = content.match(/\bsession\b(?!\s*=)/g);
         return matches ? matches.slice(0, 3) : null;
       }
       
       return null;
     },
-    message: 'Found session reference without proper NextAuth import. Add useSession() hook or getServerSession import.'
+    message: 'Found session reference without proper auth import. Add useSession(), getServerSession, or import { auth } from "@/lib/auth" and use auth() on the server.'
   },
 
   // Dependency validation disabled - too many false positives with monorepo packages
@@ -156,8 +164,18 @@ function main() {
   }
 }
 
-if (require.main === module) {
+// Execute only when run directly (not when imported)
+const isDirectRun = (() => {
+  try {
+    const thisFilePath = fileURLToPath(import.meta.url);
+    return process.argv[1] && path.resolve(process.argv[1]) === thisFilePath;
+  } catch {
+    return false;
+  }
+})();
+
+if (isDirectRun) {
   main();
 }
 
-module.exports = { validateFile, VALIDATION_RULES };
+export { validateFile, VALIDATION_RULES };

@@ -1,8 +1,26 @@
-const { PrismaClient } = require('@prisma/client')
+import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 async function main() {
   console.log('🌱 Seeding wedding booking system data...')
+
+  // Create admin user
+  const hashedPassword = await bcrypt.hash('dominic20', 10)
+  const adminUser = await prisma.user.upsert({
+    where: { email: 'admin' },
+    update: {
+      password: hashedPassword,
+      role: 'admin',
+    },
+    create: {
+      email: 'admin',
+      name: 'Admin',
+      password: hashedPassword,
+      role: 'admin',
+    },
+  })
+  console.log('✅ Admin user created:', adminUser.email)
 
   // Create Wedding Packages
   const packages = [
@@ -17,9 +35,9 @@ async function main() {
         'Digital Delivery',
         '1 videographer',
         'Basic editing and color correction',
-        'Full ceremony and reception coverage'
+        'Full ceremony and reception coverage',
       ]),
-      sortOrder: 1
+      sortOrder: 1,
     },
     {
       name: 'Gold Collection',
@@ -34,9 +52,9 @@ async function main() {
         'Digital Delivery',
         '2 videographers',
         'Advanced editing and color correction',
-        'Pre-wedding consultation'
+        'Pre-wedding consultation',
       ]),
-      sortOrder: 2
+      sortOrder: 2,
     },
     {
       name: 'Diamond Collection',
@@ -53,15 +71,15 @@ async function main() {
         '3 videographers',
         'Cinematic editing and color grading',
         'Pre-wedding consultation',
-        'Same-day edit available'
+        'Same-day edit available',
       ]),
-      sortOrder: 3
-    }
+      sortOrder: 3,
+    },
   ]
 
   for (const pkg of packages) {
     await prisma.weddingPackage.create({
-      data: pkg
+      data: pkg,
     })
   }
 
@@ -69,38 +87,42 @@ async function main() {
   const addons = [
     {
       name: 'Ceremony Film',
-      description: 'A 15-20 Minute film of your ceremony with clean recorded audio, color grading, and 2 camera angles',
+      description:
+        'A 15-20 Minute film of your ceremony with clean recorded audio, color grading, and 2 camera angles',
       price: 65000, // $650
       category: 'video',
-      sortOrder: 1
+      sortOrder: 1,
     },
     {
       name: 'Engagement Film',
-      description: 'A short creative aside from your wedding film that accompanies your wedding film',
+      description:
+        'A short creative aside from your wedding film that accompanies your wedding film',
       price: 65000, // $650
       category: 'video',
-      sortOrder: 2
+      sortOrder: 2,
     },
     {
       name: 'Additional Hours',
-      description: 'Have a long party? Get additional hours so you don\'t miss a thing!',
+      description:
+        "Have a long party? Get additional hours so you don't miss a thing!",
       price: 26000, // $260 per hour
       category: 'video',
-      sortOrder: 3
+      sortOrder: 3,
     },
     {
       name: 'Drone Footage',
-      description: 'Aerial coverage to capture your venue and special moments from above',
+      description:
+        'Aerial coverage to capture your venue and special moments from above',
       price: 65000, // $650
       category: 'video',
-      sortOrder: 4
-    }
+      sortOrder: 4,
+    },
   ]
 
   for (const addon of addons) {
     console.log('Creating addon:', addon.name)
     await prisma.weddingAddon.create({
-      data: addon
+      data: addon,
     })
   }
 
@@ -114,7 +136,7 @@ async function main() {
       zipCode: '40507',
       phone: '(859) 555-0123',
       website: 'https://grandballroom.com',
-      description: 'Elegant ballroom perfect for large weddings'
+      description: 'Elegant ballroom perfect for large weddings',
     },
     {
       name: 'Riverside Gardens',
@@ -124,7 +146,7 @@ async function main() {
       zipCode: '40502',
       phone: '(859) 555-0456',
       website: 'https://riversidegardens.com',
-      description: 'Beautiful outdoor venue with garden settings'
+      description: 'Beautiful outdoor venue with garden settings',
     },
     {
       name: 'Historic Church',
@@ -134,7 +156,7 @@ async function main() {
       zipCode: '40503',
       phone: '(859) 555-0789',
       website: 'https://historicchurch.com',
-      description: 'Traditional church with stunning architecture'
+      description: 'Traditional church with stunning architecture',
     },
     {
       name: 'Modern Loft',
@@ -144,7 +166,7 @@ async function main() {
       zipCode: '40504',
       phone: '(859) 555-0321',
       website: 'https://modernloft.com',
-      description: 'Contemporary space with urban charm'
+      description: 'Contemporary space with urban charm',
     },
     {
       name: 'Country Club',
@@ -154,13 +176,13 @@ async function main() {
       zipCode: '40505',
       phone: '(859) 555-0654',
       website: 'https://countryclub.com',
-      description: 'Upscale venue with golf course views'
-    }
+      description: 'Upscale venue with golf course views',
+    },
   ]
 
   for (const venue of venues) {
     await prisma.venue.create({
-      data: venue
+      data: venue,
     })
   }
 
@@ -174,4 +196,4 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect()
-  }) 
+  })

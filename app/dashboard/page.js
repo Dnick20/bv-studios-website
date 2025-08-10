@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { safeFetchJson } from '../../lib/utils/safeJson'
 import {
   UserIcon,
   FolderIcon,
@@ -14,7 +15,7 @@ import {
   PlusIcon,
   ArrowRightIcon,
   CalendarIcon,
-  ClockIcon
+  ClockIcon,
 } from '@heroicons/react/24/outline'
 
 export default function Dashboard() {
@@ -42,29 +43,29 @@ export default function Dashboard() {
   const fetchDashboardData = async () => {
     try {
       // Fetch user files
-      const filesResponse = await fetch('/api/files')
-      if (filesResponse.ok) {
-        const filesData = await filesResponse.json()
-        setUserFiles(filesData.files || [])
-        
-        // Calculate storage used
-        const totalSize = filesData.files?.reduce((sum, file) => sum + (file.size || 0), 0) || 0
-        setStorageUsed(totalSize)
-      }
+      const filesData = await safeFetchJson('/api/files', {}, { files: [] })
+      setUserFiles(filesData.files || [])
+
+      // Calculate storage used
+      const totalSize =
+        filesData.files?.reduce((sum, file) => sum + (file.size || 0), 0) || 0
+      setStorageUsed(totalSize)
 
       // Fetch user projects
-      const projectsResponse = await fetch('/api/projects')
-      if (projectsResponse.ok) {
-        const projectsData = await projectsResponse.json()
-        setUserProjects(projectsData.projects || [])
-      }
+      const projectsData = await safeFetchJson(
+        '/api/projects',
+        {},
+        { projects: [] }
+      )
+      setUserProjects(projectsData.projects || [])
 
       // Fetch recent activity
-      const activityResponse = await fetch('/api/activity')
-      if (activityResponse.ok) {
-        const activityData = await activityResponse.json()
-        setRecentActivity(activityData.activities || [])
-      }
+      const activityData = await safeFetchJson(
+        '/api/activity',
+        {},
+        { activities: [] }
+      )
+      setRecentActivity(activityData.activities || [])
     } catch (error) {
       console.error('Error fetching dashboard data:', error)
     } finally {
@@ -89,7 +90,7 @@ export default function Dashboard() {
     if (!bytes) return 'Unknown'
     const sizes = ['Bytes', 'KB', 'MB', 'GB']
     const i = Math.floor(Math.log(bytes) / Math.log(1024))
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i]
+    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + ' ' + sizes[i]
   }
 
   const handleUploadFile = async () => {
@@ -101,7 +102,7 @@ export default function Dashboard() {
 
       const response = await fetch('/api/files/upload', {
         method: 'POST',
-        body: formData
+        body: formData,
       })
 
       if (response.ok) {
@@ -139,7 +140,7 @@ export default function Dashboard() {
   const deleteFile = async (fileId) => {
     try {
       const response = await fetch(`/api/files/${fileId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       })
 
       if (response.ok) {
@@ -181,7 +182,9 @@ export default function Dashboard() {
                 <UserIcon className="w-6 h-6 text-accent" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">Welcome back, {session.user.name || 'User'}!</h1>
+                <h1 className="text-2xl font-bold text-white">
+                  Welcome back, {session.user.name || 'User'}!
+                </h1>
                 <p className="text-gray-300">Manage your projects and files</p>
               </div>
             </div>
@@ -209,7 +212,9 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-300 text-sm">Total Files</p>
-                    <p className="text-3xl font-bold text-white">{userFiles.length}</p>
+                    <p className="text-3xl font-bold text-white">
+                      {userFiles.length}
+                    </p>
                   </div>
                   <FolderIcon className="w-8 h-8 text-accent" />
                 </div>
@@ -224,7 +229,9 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-300 text-sm">Active Projects</p>
-                    <p className="text-3xl font-bold text-white">{userProjects.length}</p>
+                    <p className="text-3xl font-bold text-white">
+                      {userProjects.length}
+                    </p>
                   </div>
                   <CalendarIcon className="w-8 h-8 text-accent" />
                 </div>
@@ -239,7 +246,9 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-300 text-sm">Storage Used</p>
-                    <p className="text-3xl font-bold text-white">{formatFileSize(storageUsed)}</p>
+                    <p className="text-3xl font-bold text-white">
+                      {formatFileSize(storageUsed)}
+                    </p>
                   </div>
                   <ClockIcon className="w-8 h-8 text-accent" />
                 </div>
@@ -250,7 +259,7 @@ export default function Dashboard() {
             <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-white">Recent Files</h2>
-                <button 
+                <button
                   onClick={() => setShowUploadModal(true)}
                   className="flex items-center space-x-2 text-accent hover:text-accent/80 transition-colors"
                 >
@@ -263,7 +272,7 @@ export default function Dashboard() {
                 <div className="text-center py-12">
                   <FolderIcon className="w-16 h-16 text-gray-500 mx-auto mb-4" />
                   <p className="text-gray-400 mb-4">No files uploaded yet</p>
-                  <button 
+                  <button
                     onClick={() => setShowUploadModal(true)}
                     className="px-4 py-2 bg-accent text-primary rounded-lg hover:bg-accent/90 transition-colors"
                   >
@@ -292,14 +301,14 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <button 
+                        <button
                           onClick={() => handleFileAction(file.id, 'view')}
                           className="text-gray-400 hover:text-white transition-colors p-1"
                           title="View file"
                         >
                           <ArrowRightIcon className="w-4 h-4" />
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleFileAction(file.id, 'download')}
                           className="text-gray-400 hover:text-white transition-colors p-1"
                           title="Download file"
@@ -318,7 +327,9 @@ export default function Dashboard() {
           <div className="space-y-6">
             {/* Quick Actions */}
             <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
-              <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
+              <h3 className="text-lg font-bold text-white mb-4">
+                Quick Actions
+              </h3>
               <div className="space-y-3">
                 <Link
                   href="/wedding-booking"
@@ -335,20 +346,20 @@ export default function Dashboard() {
                   <span className="text-white">My Quotes</span>
                 </Link>
                 <Link
-                  href="/dashboard/project/new"
+                  href="/dashboard"
                   className="flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
                 >
                   <PlusIcon className="w-5 h-5 text-accent" />
                   <span className="text-white">New Project</span>
                 </Link>
-                <button 
+                <button
                   onClick={() => setShowUploadModal(true)}
                   className="w-full flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
                 >
                   <PhotoIcon className="w-5 h-5 text-accent" />
                   <span className="text-white">Upload Files</span>
                 </button>
-                <button 
+                <button
                   onClick={handleViewReports}
                   className="w-full flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
                 >
@@ -360,7 +371,9 @@ export default function Dashboard() {
 
             {/* Recent Activity */}
             <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
-              <h3 className="text-lg font-bold text-white mb-4">Recent Activity</h3>
+              <h3 className="text-lg font-bold text-white mb-4">
+                Recent Activity
+              </h3>
               <div className="space-y-4">
                 {recentActivity.length === 0 ? (
                   <p className="text-gray-400 text-sm">No recent activity</p>
@@ -368,7 +381,9 @@ export default function Dashboard() {
                   recentActivity.map((activity, index) => (
                     <div key={index} className="flex items-center space-x-3">
                       <div className="w-2 h-2 bg-accent rounded-full"></div>
-                      <p className="text-gray-300 text-sm">{activity.message}</p>
+                      <p className="text-gray-300 text-sm">
+                        {activity.message}
+                      </p>
                     </div>
                   ))
                 )}
@@ -411,4 +426,4 @@ export default function Dashboard() {
       )}
     </div>
   )
-} 
+}
