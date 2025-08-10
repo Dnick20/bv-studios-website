@@ -43,6 +43,26 @@ export async function GET() {
     // Check NODE_ENV
     envStatus.NODE_ENV = process.env.NODE_ENV || 'NOT SET'
 
+    // Derive safe DATABASE_URL diagnostics (host/port and key flags only)
+    const dbDiagnostics = {}
+    const rawDbUrl = process.env.DATABASE_URL
+    if (rawDbUrl) {
+      try {
+        // Support postgres:// and postgresql:// schemes
+        const normalized = rawDbUrl.replace(/^postgres:\/\//, 'postgresql://')
+        const url = new URL(normalized)
+        dbDiagnostics.host = url.hostname
+        dbDiagnostics.port = url.port || '5432'
+        const params = url.searchParams
+        dbDiagnostics.pgbouncer = params.get('pgbouncer') === 'true'
+        dbDiagnostics.sslmode = params.get('sslmode') || 'missing'
+      } catch {
+        dbDiagnostics.parseError = 'Could not parse DATABASE_URL'
+      }
+    } else {
+      dbDiagnostics.missing = true
+    }
+
     // Determine overall status
     const isHealthy = missingVars.length === 0
     const status = isHealthy ? 'healthy' : 'unhealthy'
@@ -52,6 +72,7 @@ export async function GET() {
       status,
       timestamp: new Date().toISOString(),
       environment: envStatus,
+      database: dbDiagnostics,
       missing: missingVars,
       recommendations: missingVars.length > 0 ? [
         'Set all critical environment variables',
