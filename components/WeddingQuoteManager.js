@@ -43,8 +43,25 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
         const response = await fetch(endpoint)
         if (response.ok) {
           const data = await safeJson(response, { quotes: [] })
-          setQuotes(data.quotes || [])
-          setFilteredQuotes(data.quotes || [])
+          const fromApi = data.quotes || data.data || []
+
+          // Fallback: include last submitted quote from localStorage so user sees it immediately
+          let augmented = fromApi
+          try {
+            if (typeof window !== 'undefined') {
+              const last = localStorage.getItem('lastSubmittedQuote')
+              if (last) {
+                const parsed = JSON.parse(last)
+                const exists = fromApi.some((q) => q.id === parsed.id)
+                if (!exists) {
+                  augmented = [parsed, ...fromApi]
+                }
+              }
+            }
+          } catch {}
+
+          setQuotes(augmented)
+          setFilteredQuotes(augmented)
         } else {
           const errorData = await safeJson(response, {})
           setError(errorData.message || 'Failed to fetch quotes')

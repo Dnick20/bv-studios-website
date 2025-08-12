@@ -3,7 +3,10 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { weddingAnalytics as analytics, analyticsHelpers } from '../../lib/analytics'
+import {
+  weddingAnalytics as analytics,
+  analyticsHelpers,
+} from '../../lib/analytics'
 import { safeJson } from '../../lib/utils/safeJson'
 
 const WeddingBookingPage = () => {
@@ -137,7 +140,10 @@ const WeddingBookingPage = () => {
 
     if (!session) {
       // Track conversion abandonment
-      analytics.conversionAbandoned('authentication_required', 'user_not_logged_in')
+      analytics.conversionAbandoned(
+        'authentication_required',
+        'user_not_logged_in'
+      )
       router.push('/auth')
       return
     }
@@ -211,6 +217,35 @@ const WeddingBookingPage = () => {
         // Track user engagement
         analytics.userEngagement('quote_completed', sessionDuration)
 
+        try {
+          if (typeof window !== 'undefined' && result) {
+            const last = {
+              id: result.quote?.id || Date.now(),
+              createdAt: new Date().toISOString(),
+              eventDate: quoteData.eventDate,
+              eventTime: quoteData.eventTime,
+              venueName,
+              guestCount: quoteData.guestCount || null,
+              totalPrice,
+              status: 'pending',
+              package: {
+                id: selectedPackage.id,
+                name: selectedPackage.name,
+                price: selectedPackage.price,
+                duration: selectedPackage.duration,
+              },
+              quoteAddons: selectedAddons.map((a) => ({
+                id: a.addonId,
+                addon: data.addons.find((x) => x.id === a.addonId) || null,
+              })),
+              specialRequests: quoteData.specialRequests || '',
+              venue: venueName ? { name: venueName } : null,
+              user: session?.user || null,
+            }
+            localStorage.setItem('lastSubmittedQuote', JSON.stringify(last))
+          }
+        } catch {}
+
         alert('Quote submitted successfully!')
         router.push('/my-quotes')
       } else {
@@ -276,9 +311,7 @@ const WeddingBookingPage = () => {
                     : 'hover:shadow-xl'
                 }`}
                 onClick={() => handlePackageSelect(pkg)}
-                onMouseEnter={() =>
-                  analytics.packageViewed(pkg)
-                }
+                onMouseEnter={() => analytics.packageViewed(pkg)}
               >
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
                   {pkg.name}
@@ -372,9 +405,7 @@ const WeddingBookingPage = () => {
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                   onClick={() => handleAddonToggle(addon)}
-                  onMouseEnter={() =>
-                  analytics.addonViewed(addon)
-                  }
+                  onMouseEnter={() => analytics.addonViewed(addon)}
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
@@ -418,9 +449,7 @@ const WeddingBookingPage = () => {
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
                 onClick={() => setSelectedVenue(venue.id)}
-                onMouseEnter={() =>
-                  analytics.venueViewed(venue)
-                }
+                onMouseEnter={() => analytics.venueViewed(venue)}
               >
                 <div className="flex items-start mb-2">
                   <input
