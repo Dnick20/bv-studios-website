@@ -18,6 +18,8 @@ All notable changes to this project will be documented in this file.
 - **Updated all API routes** to use `import { auth } from '@/lib/auth'` instead of `getServerSession`
 - **Fixed import paths** from relative paths to absolute imports using `@` alias
 - `app/api/wedding/packages/route.js`: normalized price units (cents), provided JSON string features, added `packages` key to response
+- `app/api/wedding/packages/route.js`: align package names with Weddings page (Silver/Gold/Diamond), keep booking prices as source of truth
+- `app/weddings/page.js`: load packages from `/api/wedding/packages` to ensure same data and numbers as booking
 - `app/api/wedding/addons/route.js`: normalized price units (cents), added `addons` key to response
 - `app/api/wedding/venues/route.js`: verified endpoint used by booking page
 - `lib/bots/handlers/WeddingDataBot.js`: new bot to seed/sync wedding packages, addons, and venues via Prisma

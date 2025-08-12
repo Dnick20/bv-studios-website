@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import Navigation from '../../components/Navigation'
 import WeddingPortfolio from '../../components/weddings/WeddingPortfolio'
 import {
@@ -11,40 +12,31 @@ import {
 } from '@heroicons/react/24/outline'
 
 export default function WeddingsPage() {
-  const packages = [
-    {
-      name: 'Silver Collection',
-      price: '$2,200',
-      description: 'Perfect for intimate celebrations',
-      features: ['4 hours of coverage', 'Short Film', 'Digital Delivery'],
-    },
-    {
-      name: 'Gold Collection',
-      price: '$3,100',
-      description: 'Our most popular package',
-      features: [
-        '6 hours of coverage',
-        'Short Film',
-        'Ceremony',
-        'Instagram Trailer',
-        'Digital Delivery',
-      ],
-    },
-    {
-      name: 'Diamond Collection',
-      price: '$4,500',
-      description: 'Complete wedding story',
-      featured: true,
-      features: [
-        '8 hours of coverage',
-        'Short Film',
-        'Ceremony and Reception Film',
-        'Drone Coverage',
-        'Instagram Trailer',
-        'Digital Delivery',
-      ],
-    },
-  ]
+  // Packages now come from the same API as wedding-booking to keep names and prices in sync
+  const [packages, setPackages] = React.useState([])
+  React.useEffect(() => {
+    fetch('/api/wedding/packages')
+      .then((res) => res.json())
+      .then((json) => {
+        const list = json?.packages || json?.data || []
+        // Map API shape to UI (format dollars for display)
+        const mapped = list.map((p) => ({
+          name: p.name,
+          price: `$${(p.price / 100).toLocaleString()}`,
+          description: p.description,
+          featured: !!p.popular,
+          features: (() => {
+            try {
+              return JSON.parse(p.features)
+            } catch {
+              return []
+            }
+          })(),
+        }))
+        setPackages(mapped)
+      })
+      .catch(() => setPackages([]))
+  }, [])
 
   const extraServices = [
     {
