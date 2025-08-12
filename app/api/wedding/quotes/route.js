@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 export async function GET(request) {
   try {
     const session = await auth()
-    
+
     if (!session) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
     }
@@ -27,8 +27,9 @@ export async function GET(request) {
         package: 'Premium Wedding Package',
         status: 'pending',
         budget: 3000,
-        message: 'Looking for a beautiful wedding video that captures our special day.',
-        createdAt: '2024-08-01T10:00:00Z'
+        message:
+          'Looking for a beautiful wedding video that captures our special day.',
+        createdAt: '2024-08-01T10:00:00Z',
       },
       {
         id: 2,
@@ -41,14 +42,14 @@ export async function GET(request) {
         status: 'approved',
         budget: 2000,
         message: 'Need wedding coverage for our intimate ceremony.',
-        createdAt: '2024-08-05T14:30:00Z'
-      }
+        createdAt: '2024-08-05T14:30:00Z',
+      },
     ]
 
     // Filter quotes based on status
     let filteredQuotes = allQuotes
     if (status) {
-      filteredQuotes = allQuotes.filter(q => q.status === status)
+      filteredQuotes = allQuotes.filter((q) => q.status === status)
     }
 
     // Pagination
@@ -63,10 +64,9 @@ export async function GET(request) {
         currentPage: parseInt(page),
         totalPages: Math.ceil(filteredQuotes.length / parseInt(limit)),
         totalItems: filteredQuotes.length,
-        itemsPerPage: parseInt(limit)
-      }
+        itemsPerPage: parseInt(limit),
+      },
     })
-
   } catch (error) {
     console.error('Wedding Quotes API Error:', error)
     return NextResponse.json(
@@ -98,7 +98,8 @@ export async function POST(request) {
         (isBookingPayload ? body.venueName : body.venue) ||
         (isBookingPayload && body.venueId ? `venue:${body.venueId}` : ''),
       package:
-        (isBookingPayload ? body.packageName : body.package) || 'Selected Package',
+        (isBookingPayload ? body.packageName : body.package) ||
+        'Selected Package',
       budget: body.budget || 0,
       message: (isBookingPayload ? body.specialRequests : body.message) || '',
       // Booking-specific extras
@@ -117,7 +118,6 @@ export async function POST(request) {
       },
       { status: 201 }
     )
-
   } catch (error) {
     console.error('Wedding Quotes API Error:', error)
     return NextResponse.json(
