@@ -12,8 +12,6 @@ export async function GET(request) {
         id: 1,
         name: 'Silver Collection',
         category: 'silver',
-        // Use cents to match UI formatter (price / 100)
-        // Keep pricing aligned with booking page (source of truth)
         price: 210000, // $2,100
         duration: 4,
         description: 'Perfect for intimate celebrations',

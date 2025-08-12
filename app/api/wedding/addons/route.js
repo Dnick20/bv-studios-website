@@ -7,98 +7,53 @@ export async function GET(request) {
     const category = searchParams.get('category')
 
     // Mock wedding addons data - replace with actual database query
-    const allAddons = [
+  const allAddons = [
       {
-        id: 1,
-        name: 'Drone Coverage',
-        category: 'aerial',
-        // Use cents to match UI formatter (price / 100)
-        price: 30000,
-        description: 'Beautiful aerial shots of your venue and ceremony',
+        id: 101,
+        name: 'Ceremony Film',
+        category: 'film',
+        price: 65000, // $650
+        description:
+          'A 15-20 minute film of your ceremony with clean recorded audio, color grading, and two cameras',
         features: [
-          'Aerial venue shots',
-          'Ceremony overview',
-          'Group photos from above',
-          'HD quality footage',
+          'Two cameras',
+          'Clean recorded audio',
+          'Color grading',
         ],
-        duration: '1-2 hours',
+        duration: '15-20 minutes',
         popular: true,
       },
       {
-        id: 2,
-        name: 'Photo Slideshow',
-        category: 'media',
-        price: 15000,
+        id: 102,
+        name: 'Engagement Film',
+        category: 'film',
+        price: 65000, // $650
         description:
-          'Create a beautiful slideshow with your photos and video clips',
-        features: [
-          'Photo integration',
-          'Custom music selection',
-          'Smooth transitions',
-          'Digital delivery',
-        ],
-        duration: '3-5 minutes',
-        popular: false,
-      },
-      {
-        id: 3,
-        name: 'Same Day Edit',
-        category: 'rush',
-        price: 50000,
-        description: 'Get a highlight video ready for your reception',
-        features: [
-          'Quick turnaround',
-          'Reception highlights',
-          'Basic editing',
-          'Same day delivery',
-        ],
+          'A short creative film aside from your wedding film that accompanies your story',
+        features: ['Creative session', 'Story-driven', 'Graded delivery'],
         duration: '2-3 minutes',
-        popular: false,
+        popular: true,
       },
       {
-        id: 4,
+        id: 103,
         name: 'Additional Hours',
         category: 'coverage',
-        price: 20000,
-        description: 'Extend your coverage time for more comprehensive filming',
-        features: [
-          'Extra filming time',
-          'More footage captured',
-          'Extended editing',
-          'Flexible scheduling',
-        ],
+        price: 26000, // $260 per hour
+        description: "Add more hours of coverage so you don't miss a thing",
+        features: ['Per hour add-on'],
         duration: 'Per hour',
         popular: true,
       },
       {
-        id: 5,
-        name: 'Wedding Trailer',
-        category: 'media',
-        price: 25000,
-        description: 'Short cinematic trailer perfect for social media',
-        features: [
-          'Cinematic style',
-          'Social media ready',
-          'Custom length',
-          'Professional editing',
-        ],
-        duration: '30-60 seconds',
+        id: 104,
+        name: 'Drone Footage',
+        category: 'aerial',
+        price: 65000, // $650
+        description:
+          'Aerial coverage to capture your venue and special moments from above',
+        features: ['FAA compliant', '4K aerial footage'],
+        duration: '1-2 hours',
         popular: true,
-      },
-      {
-        id: 6,
-        name: 'Guest Messages',
-        category: 'interactive',
-        price: 10000,
-        description: 'Record messages from your wedding guests',
-        features: [
-          'Guest interviews',
-          'Well wishes captured',
-          'Integrated into final video',
-          'Memorable keepsake',
-        ],
-        duration: 'Throughout event',
-        popular: false,
       },
     ]
 

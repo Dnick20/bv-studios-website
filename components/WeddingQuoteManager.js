@@ -40,26 +40,52 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
         : Number.isFinite(Number(raw.budget))
         ? Number(raw.budget) * 100
         : 0
-      const eventDate = raw.eventDate || raw.weddingDate || raw.createdAt || new Date().toISOString()
+      const eventDate =
+        raw.eventDate ||
+        raw.weddingDate ||
+        raw.createdAt ||
+        new Date().toISOString()
       const pkg =
         typeof raw.package === 'object'
           ? raw.package
-          : { name: raw.package || 'Package', duration: raw.duration || '', price: raw.price || 0, features: raw.features || [] }
-      const venue = raw.venue?.name ? raw.venue : raw.venueName ? { name: raw.venueName } : null
+          : {
+              name: raw.package || 'Package',
+              duration: raw.duration || '',
+              price: raw.price || 0,
+              features: raw.features || [],
+            }
+      const venue = raw.venue?.name
+        ? raw.venue
+        : raw.venueName
+        ? { name: raw.venueName }
+        : null
       return {
         id: raw.id || Date.now(),
         status: raw.status || 'pending',
         createdAt: raw.createdAt || new Date().toISOString(),
         updatedAt: raw.updatedAt || raw.createdAt || new Date().toISOString(),
-        user: raw.user || (raw.email ? { email: raw.email, name: raw.clientName || '' } : null),
+        user:
+          raw.user ||
+          (raw.email ? { email: raw.email, name: raw.clientName || '' } : null),
         package: pkg,
+        quoteAddons:
+          raw.quoteAddons ||
+          (Array.isArray(raw.addons)
+            ? raw.addons.map((a) => ({
+                id: a.addonId || a.id,
+                addon: {
+                  id: a.addonId || a.id,
+                  name: a.name,
+                  price: a.price,
+                },
+              }))
+            : []),
         totalPrice,
         eventDate,
         eventTime: raw.eventTime || '',
         venue,
         guestCount: raw.guestCount || null,
         specialRequests: raw.specialRequests || raw.message || '',
-        quoteAddons: raw.quoteAddons || [],
       }
     }
 
