@@ -20,8 +20,8 @@ All notable changes to this project will be documented in this file.
 - `app/api/wedding/packages/route.js`: normalized price units (cents), provided JSON string features, added `packages` key to response
 - `app/api/wedding/addons/route.js`: normalized price units (cents), added `addons` key to response
 - `app/api/wedding/venues/route.js`: verified endpoint used by booking page
- - `lib/bots/handlers/WeddingDataBot.js`: new bot to seed/sync wedding packages, addons, and venues via Prisma
- - `lib/bots/core/BotManager.js`: helper to register `wedding-data` bot
+- `lib/bots/handlers/WeddingDataBot.js`: new bot to seed/sync wedding packages, addons, and venues via Prisma
+- `lib/bots/core/BotManager.js`: helper to register `wedding-data` bot
 
 #### **Files Modified**
 
@@ -73,6 +73,8 @@ All notable changes to this project will be documented in this file.
   - Booking UI expects `packages`, `addons`, `venues` properties
   - Price values are cents and displayed via `(price / 100).toLocaleString()`
   - `features` provided as JSON string array for resilient parsing
+  - Time windows on booking page now adapt to selected package duration (4h/8h/12h)
+  - Booking page theme aligned with Weddings page and uses wedding hero background
 
 #### **Deployment Notes**
 

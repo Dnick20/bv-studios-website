@@ -23,6 +23,29 @@ const WeddingBookingPage = () => {
     specialRequests: '',
   })
 
+  // Derive time windows based on package duration (hours)
+  const getTimeWindows = (hours) => {
+    const h = Number(hours || 4)
+    if (h <= 4) {
+      return [
+        { label: 'Morning (8 AM - 12 PM)', value: '08:00-12:00' },
+        { label: 'Afternoon (12 PM - 4 PM)', value: '12:00-16:00' },
+        { label: 'Evening (4 PM - 8 PM)', value: '16:00-20:00' },
+      ]
+    }
+    if (h <= 8) {
+      return [
+        { label: 'Morning (9 AM - 5 PM)', value: '09:00-17:00' },
+        { label: 'Afternoon (12 PM - 8 PM)', value: '12:00-20:00' },
+        { label: 'Evening (2 PM - 10 PM)', value: '14:00-22:00' },
+      ]
+    }
+    return [
+      { label: 'All Day (10 AM - 10 PM)', value: '10:00-22:00' },
+      { label: 'Early Day (8 AM - 8 PM)', value: '08:00-20:00' },
+    ]
+  }
+
   useEffect(() => {
     // Track page view
     analytics.pageView('Wedding Booking', {
@@ -74,6 +97,8 @@ const WeddingBookingPage = () => {
 
   const handlePackageSelect = (pkg) => {
     setSelectedPackage(pkg)
+    // Reset event time so user must choose a compatible window for this package
+    setQuoteData((prev) => ({ ...prev, eventTime: '' }))
 
     // Track package selection
     analytics.userEngagement('package_selected', { package: pkg })
@@ -513,9 +538,11 @@ const WeddingBookingPage = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                 >
                   <option value="">Select time</option>
-                  <option value="Morning">Morning (8 AM - 12 PM)</option>
-                  <option value="Afternoon">Afternoon (12 PM - 4 PM)</option>
-                  <option value="Evening">Evening (4 PM - 8 PM)</option>
+                  {getTimeWindows(selectedPackage?.duration).map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
