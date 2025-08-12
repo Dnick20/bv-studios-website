@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { analytics, analyticsHelpers } from '../../lib/analytics'
+import { weddingAnalytics as analytics, analyticsHelpers } from '../../lib/analytics'
 import { safeJson } from '../../lib/utils/safeJson'
 
 const WeddingBookingPage = () => {
@@ -101,11 +101,11 @@ const WeddingBookingPage = () => {
     setQuoteData((prev) => ({ ...prev, eventTime: '' }))
 
     // Track package selection
-    analytics.userEngagement('package_selected', { package: pkg })
+    analytics.packageSelected(pkg)
 
     // If this is their first package selection, track quote started
     if (!selectedPackage) {
-      analytics.userEngagement('quote_started', { package: pkg })
+      analytics.quoteStarted(pkg)
     }
   }
 
@@ -114,17 +114,11 @@ const WeddingBookingPage = () => {
       const exists = prev.find((a) => a.addonId === addon.id)
       if (exists) {
         // Track addon removal
-        analytics.userEngagement('addon_removed', {
-          addon,
-          package: selectedPackage,
-        })
+        analytics.addonRemoved(addon, selectedPackage)
         return prev.filter((a) => a.addonId !== addon.id)
       } else {
         // Track addon addition
-        analytics.userEngagement('addon_added', {
-          addon,
-          package: selectedPackage,
-        })
+        analytics.addonAdded(addon, selectedPackage)
         return [...prev, { addonId: addon.id, price: addon.price }]
       }
     })
@@ -143,28 +137,19 @@ const WeddingBookingPage = () => {
 
     if (!session) {
       // Track conversion abandonment
-      analytics.userEngagement('conversion_abandoned', {
-        reason: 'authentication_required',
-        details: 'user_not_logged_in',
-      })
+      analytics.conversionAbandoned('authentication_required', 'user_not_logged_in')
       router.push('/auth')
       return
     }
 
     if (!selectedPackage) {
-      analytics.userEngagement('conversion_abandoned', {
-        reason: 'package_selection',
-        details: 'no_package_selected',
-      })
+      analytics.conversionAbandoned('package_selection', 'no_package_selected')
       alert('Please select a package')
       return
     }
 
     if (!quoteData.eventDate || !quoteData.eventTime) {
-      analytics.userEngagement('conversion_abandoned', {
-        reason: 'form_completion',
-        details: 'missing_date_time',
-      })
+      analytics.conversionAbandoned('form_completion', 'missing_date_time')
       alert('Please select event date and time')
       return
     }
@@ -178,12 +163,12 @@ const WeddingBookingPage = () => {
 
       if (selectedVenue === 'other') {
         venueName = otherVenue
-        analytics.userEngagement('custom_venue_selected', { venue: otherVenue })
+        analytics.customVenueSelected(otherVenue)
       } else if (selectedVenue) {
         const venue = data.venues.find((v) => v.id === selectedVenue)
         venueName = venue?.name
         venueId = selectedVenue
-        analytics.userEngagement('venue_selected', { venue })
+        analytics.venueSelected(venue)
       }
 
       const totalPrice = calculateTotalPrice()
@@ -212,39 +197,30 @@ const WeddingBookingPage = () => {
         const result = await safeJson(response)
 
         // Track successful quote submission
-        analytics.userEngagement('quote_submitted', {
+        analytics.quoteSubmitted({
           id: result.quote?.id,
           packageId: selectedPackage.id,
-          totalPrice: totalPrice,
+          totalPrice,
           guestCount: quoteData.guestCount,
           eventDate: quoteData.eventDate,
           eventTime: quoteData.eventTime,
-          venueId: venueId,
+          venueId,
           addons: selectedAddons,
-          sessionDuration: sessionDuration,
-          packageName: selectedPackage.name,
-          venueName: venueName,
         })
 
         // Track user engagement
-        analytics.userEngagement('quote_completed', { sessionDuration })
+        analytics.userEngagement('quote_completed', sessionDuration)
 
         alert('Quote submitted successfully!')
         router.push('/my-quotes')
       } else {
         const error = await safeJson(response)
-        analytics.userEngagement('conversion_abandoned', {
-          reason: 'submission_error',
-          details: error.message,
-        })
+        analytics.conversionAbandoned('submission_error', error.message)
         alert(`Error: ${error.message}`)
       }
     } catch (error) {
       console.error('Error submitting quote:', error)
-      analytics.userEngagement('conversion_abandoned', {
-        reason: 'technical_error',
-        details: error.message,
-      })
+      analytics.conversionAbandoned('technical_error', error.message)
       alert('Error submitting quote. Please try again.')
     } finally {
       setSubmitting(false)
@@ -301,7 +277,7 @@ const WeddingBookingPage = () => {
                 }`}
                 onClick={() => handlePackageSelect(pkg)}
                 onMouseEnter={() =>
-                  analytics.userEngagement('package_viewed', { package: pkg })
+                  analytics.packageViewed(pkg)
                 }
               >
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
@@ -397,7 +373,7 @@ const WeddingBookingPage = () => {
                   }`}
                   onClick={() => handleAddonToggle(addon)}
                   onMouseEnter={() =>
-                    analytics.userEngagement('addon_viewed', { addon })
+                  analytics.addonViewed(addon)
                   }
                 >
                   <div className="flex justify-between items-start">
@@ -443,7 +419,7 @@ const WeddingBookingPage = () => {
                 }`}
                 onClick={() => setSelectedVenue(venue.id)}
                 onMouseEnter={() =>
-                  analytics.userEngagement('venue_viewed', { venue })
+                  analytics.venueViewed(venue)
                 }
               >
                 <div className="flex items-start mb-2">
@@ -524,10 +500,7 @@ const WeddingBookingPage = () => {
                   value={quoteData.eventDate}
                   onChange={(e) => {
                     setQuoteData({ ...quoteData, eventDate: e.target.value })
-                    analytics.userEngagement('form_field_filled', {
-                      field: 'event_date',
-                      value: e.target.value,
-                    })
+                    analytics.quoteFormFilled('event_date', e.target.value)
                   }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                 />
@@ -541,10 +514,7 @@ const WeddingBookingPage = () => {
                   value={quoteData.eventTime}
                   onChange={(e) => {
                     setQuoteData({ ...quoteData, eventTime: e.target.value })
-                    analytics.userEngagement('form_field_filled', {
-                      field: 'event_time',
-                      value: e.target.value,
-                    })
+                    analytics.quoteFormFilled('event_time', e.target.value)
                   }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                 >
