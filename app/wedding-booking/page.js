@@ -265,6 +265,17 @@ const WeddingBookingPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header with Back to Weddings */}
+        <div className="mb-6 flex items-center justify-between">
+          <a
+            href="/weddings"
+            className="inline-flex items-center text-blue-600 hover:text-blue-700 underline"
+            aria-label="Back to Weddings page"
+          >
+            ← Back to Weddings
+          </a>
+        </div>
+
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Wedding Booking

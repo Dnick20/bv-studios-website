@@ -68,6 +68,52 @@ export async function GET(request) {
           '/images/venues/shaker-village-2.jpg'
         ],
         coordinates: { lat: 37.8231, lng: -84.8477 }
+      },
+      // Additional venues shown on Weddings page
+      {
+        id: 5,
+        name: 'The Stone House at Silver Creek',
+        location: 'Berea, KY',
+        address: '',
+        capacity: 200,
+        description: 'Historic stone house venue at Silver Creek',
+        features: ['Indoor/Outdoor', 'Historic site'],
+        priceRange: '$$',
+        url: 'https://thestonehouseatsilvercreek.com',
+        email: 'bookings@thestonehouseatsilvercreek.com',
+      },
+      {
+        id: 6,
+        name: 'Silo Farms',
+        location: 'Shelby County, KY',
+        address: '',
+        capacity: 250,
+        description: 'Rustic event barn with modern construction',
+        features: ['Barn', 'Lake views'],
+        priceRange: '$$',
+        url: 'https://silofarmsky.com/',
+      },
+      {
+        id: 7,
+        name: 'Barn at 7 Gables',
+        location: 'Kentucky',
+        address: '',
+        capacity: 200,
+        description: 'Rustic barn at Seven Gables Farm & Orchard',
+        features: ['Barn', 'Rustic'],
+        priceRange: '$$',
+        url: 'https://www.facebook.com/p/Barn-at-Seven-Gables-Farm-and-Orchard-Venue-100039614774879/',
+      },
+      {
+        id: 8,
+        name: 'Copper Roux',
+        location: 'Lexington, KY',
+        address: '861 S Broadway #110, Lexington, KY 40504',
+        capacity: 180,
+        description: 'Elegant venue by Bayou Bluegrass Catering',
+        features: ['Catering', 'Indoor reception'],
+        priceRange: '$$$',
+        url: 'https://bayoubluegrass.com/copper-roux/',
       }
     ]
 
@@ -88,6 +134,7 @@ export async function GET(request) {
     return NextResponse.json({
       success: true,
       data: filteredVenues,
+      venues: filteredVenues, // for booking page convenience
       total: filteredVenues.length,
       filters: { location, capacity }
     })
