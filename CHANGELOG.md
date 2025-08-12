@@ -20,6 +20,8 @@ All notable changes to this project will be documented in this file.
 - `app/api/wedding/packages/route.js`: normalized price units (cents), provided JSON string features, added `packages` key to response
 - `app/api/wedding/addons/route.js`: normalized price units (cents), added `addons` key to response
 - `app/api/wedding/venues/route.js`: verified endpoint used by booking page
+ - `lib/bots/handlers/WeddingDataBot.js`: new bot to seed/sync wedding packages, addons, and venues via Prisma
+ - `lib/bots/core/BotManager.js`: helper to register `wedding-data` bot
 
 #### **Files Modified**
 
