@@ -22,6 +22,8 @@ All notable changes to this project will be documented in this file.
 - `app/api/wedding/venues/route.js`: verified endpoint used by booking page
 - `lib/bots/handlers/WeddingDataBot.js`: new bot to seed/sync wedding packages, addons, and venues via Prisma
 - `lib/bots/core/BotManager.js`: helper to register `wedding-data` bot
+- `app/api/admin/wedding-data/sync/route.js`: admin-only endpoint to trigger WeddingDataBot (auth via NextAuth admin or `x-admin-token`)
+- `app/admin/dashboard/page.js`: added "Sync Wedding Data" button under Bots tab
 
 #### **Files Modified**
 

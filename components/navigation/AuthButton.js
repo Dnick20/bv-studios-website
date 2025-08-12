@@ -63,7 +63,7 @@ export default function AuthButton() {
 
   return (
     <Link
-      href="/auth"
+      href="/auth/signin"
       className="px-4 py-2 bg-accent text-primary rounded-full font-medium hover:bg-accent/90 transition-colors"
     >
       Get Started

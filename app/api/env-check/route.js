@@ -3,16 +3,12 @@ import { NextResponse } from 'next/server'
 export async function GET() {
   try {
     // Check critical environment variables
-    const criticalVars = [
-      'NEXTAUTH_URL',
-      'NEXTAUTH_SECRET',
-      'DATABASE_URL'
-    ]
+    const criticalVars = ['NEXTAUTH_URL', 'NEXTAUTH_SECRET', 'DATABASE_URL']
 
     const envStatus = {}
     const missingVars = []
 
-    criticalVars.forEach(varName => {
+    criticalVars.forEach((varName) => {
       if (process.env[varName]) {
         envStatus[varName] = 'SET'
       } else {
@@ -29,10 +25,10 @@ export async function GET() {
       'POSTHOG_KEY',
       'POSTHOG_HOST',
       'JWT_SECRET',
-      'ADMIN_TOKEN'
+      'ADMIN_TOKEN',
     ]
 
-    optionalVars.forEach(varName => {
+    optionalVars.forEach((varName) => {
       if (process.env[varName]) {
         envStatus[varName] = 'SET'
       } else {
@@ -74,23 +70,25 @@ export async function GET() {
       environment: envStatus,
       database: dbDiagnostics,
       missing: missingVars,
-      recommendations: missingVars.length > 0 ? [
-        'Set all critical environment variables',
-        'Check your .env.local file',
-        'Verify Vercel environment variables'
-      ] : [
-        'All critical environment variables are set',
-        'System is ready for production'
-      ]
+      recommendations:
+        missingVars.length > 0
+          ? [
+              'Set all critical environment variables',
+              'Check your .env.local file',
+              'Verify Vercel environment variables',
+            ]
+          : [
+              'All critical environment variables are set',
+              'System is ready for production',
+            ],
     })
-
   } catch (error) {
     console.error('Env Check API Error:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         message: 'Internal server error',
-        error: error.message 
+        error: error.message,
       },
       { status: 500 }
     )

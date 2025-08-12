@@ -7,17 +7,20 @@ import Providers from '../components/Providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  metadataBase: new URL('https://bvstudios.com'),
+  metadataBase: new URL('https://www.bluevstudio.com'),
   title: 'BV Studios | Professional Video Production in Lexington, KY',
   description: 'Expert video production services in Lexington, Kentucky. We create compelling video content that drives results for your business.',
   keywords: 'video production, commercial video, brand story, event coverage, Lexington, Kentucky',
   openGraph: {
     title: 'BV Studios | Professional Video Production in Lexington, KY',
     description: 'Expert video production services in Lexington, Kentucky. We create compelling video content that drives results for your business.',
-    url: 'https://bvstudios.com',
+    url: 'https://www.bluevstudio.com',
     siteName: 'BV Studios',
     locale: 'en_US',
     type: 'website',
+  },
+  alternates: {
+    canonical: 'https://www.bluevstudio.com',
   },
 }
 

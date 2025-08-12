@@ -19,25 +19,26 @@ export async function GET(request) {
           'Aerial venue shots',
           'Ceremony overview',
           'Group photos from above',
-          'HD quality footage'
+          'HD quality footage',
         ],
         duration: '1-2 hours',
-        popular: true
+        popular: true,
       },
       {
         id: 2,
         name: 'Photo Slideshow',
         category: 'media',
         price: 15000,
-        description: 'Create a beautiful slideshow with your photos and video clips',
+        description:
+          'Create a beautiful slideshow with your photos and video clips',
         features: [
           'Photo integration',
           'Custom music selection',
           'Smooth transitions',
-          'Digital delivery'
+          'Digital delivery',
         ],
         duration: '3-5 minutes',
-        popular: false
+        popular: false,
       },
       {
         id: 3,
@@ -49,10 +50,10 @@ export async function GET(request) {
           'Quick turnaround',
           'Reception highlights',
           'Basic editing',
-          'Same day delivery'
+          'Same day delivery',
         ],
         duration: '2-3 minutes',
-        popular: false
+        popular: false,
       },
       {
         id: 4,
@@ -64,10 +65,10 @@ export async function GET(request) {
           'Extra filming time',
           'More footage captured',
           'Extended editing',
-          'Flexible scheduling'
+          'Flexible scheduling',
         ],
         duration: 'Per hour',
-        popular: true
+        popular: true,
       },
       {
         id: 5,
@@ -79,10 +80,10 @@ export async function GET(request) {
           'Cinematic style',
           'Social media ready',
           'Custom length',
-          'Professional editing'
+          'Professional editing',
         ],
         duration: '30-60 seconds',
-        popular: true
+        popular: true,
       },
       {
         id: 6,
@@ -94,17 +95,17 @@ export async function GET(request) {
           'Guest interviews',
           'Well wishes captured',
           'Integrated into final video',
-          'Memorable keepsake'
+          'Memorable keepsake',
         ],
         duration: 'Throughout event',
-        popular: false
-      }
+        popular: false,
+      },
     ]
 
     // Filter addons by category if specified
     let filteredAddons = allAddons
     if (category) {
-      filteredAddons = allAddons.filter(addon => addon.category === category)
+      filteredAddons = allAddons.filter((addon) => addon.category === category)
     }
 
     return NextResponse.json({
@@ -114,7 +115,6 @@ export async function GET(request) {
       total: filteredAddons.length,
       category: category || 'all',
     })
-
   } catch (error) {
     console.error('Wedding Addons API Error:', error)
     return NextResponse.json(

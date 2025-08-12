@@ -23,15 +23,37 @@ export default function ContactForm() {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     
+    // Track form submission attempt
     analytics.contactFormSubmitted(formData)
     analytics.leadGenerated('contact_form', 'inquiry', formData)
     
-    alert('Thank you for your message! We\'ll get back to you soon.')
-    setFormData({ name: '', email: '', message: '' })
-    setFormStarted(false)
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to send message')
+      }
+
+      // Success
+      alert(result.message || 'Thank you for your message! We\'ll get back to you soon.')
+      setFormData({ name: '', email: '', message: '' })
+      setFormStarted(false)
+
+    } catch (error) {
+      console.error('Contact form submission error:', error)
+      alert('Sorry, there was an error sending your message. Please try again or contact us directly.')
+    }
   }
 
   return (

@@ -71,7 +71,7 @@ export default function MobileMenu({ isOpen, setIsOpen, navItems, handleClick })
                 </div>
               ) : (
                 <Link
-                  href="/auth"
+                  href="/auth/signin"
                   onClick={() => setIsOpen(false)}
                   className="block px-4 py-2 bg-accent text-primary rounded-full font-medium hover:bg-accent/90 transition-colors text-center"
                 >

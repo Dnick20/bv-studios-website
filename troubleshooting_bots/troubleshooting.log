@@ -20,3 +20,8 @@
 {"bot_name": "network_diagnostic", "operation": "diagnostic", "error_type": "Exception", "error_message": "Lead bot API endpoint returning internal server errors", "severity": "high", "event": "Error recorded", "logger": "error_tracker", "level": "error", "timestamp": "2025-08-10T12:46:00.150234Z"}
 {"filepath": "integration_test_results.json", "event": "Monitoring data exported", "logger": "monitoring_system", "level": "info", "timestamp": "2025-08-10T12:46:00.150965Z"}
 {"event": "Monitoring system initialized", "logger": "monitoring_system", "level": "info", "timestamp": "2025-08-10T16:35:36.643584Z"}
+{"base_path": "/var/folders/j5/crnz76qd6j12xv_xpmzycwrm0000gn/T/tmpkkkspa_e", "event": "Starting Cursor AI pattern detection scan", "logger": "cursor_ai_patterns", "level": "info", "timestamp": "2025-08-10T19:37:43.266273Z"}
+{"pattern_id": "n_plus_one_query_pattern", "file_path": "n_plus_one.js", "line_number": 6, "event": "Cursor AI pattern detected", "logger": "cursor_ai_patterns", "level": "info", "timestamp": "2025-08-10T19:37:43.267262Z"}
+{"pattern_id": "old_nextauth_pattern", "file_path": "old_auth.js", "line_number": 6, "event": "Cursor AI pattern detected", "logger": "cursor_ai_patterns", "level": "info", "timestamp": "2025-08-10T19:37:43.267430Z"}
+{"pattern_id": "prisma_singleton_violation", "file_path": "prisma_violation.js", "line_number": 5, "event": "Cursor AI pattern detected", "logger": "cursor_ai_patterns", "level": "info", "timestamp": "2025-08-10T19:37:43.267755Z"}
+{"issues_found": 3, "base_path": "/var/folders/j5/crnz76qd6j12xv_xpmzycwrm0000gn/T/tmpkkkspa_e", "event": "Cursor AI pattern scan completed", "logger": "cursor_ai_patterns", "level": "info", "timestamp": "2025-08-10T19:37:43.268127Z"}

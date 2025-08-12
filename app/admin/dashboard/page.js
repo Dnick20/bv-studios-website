@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import AnalyticsDashboard from '../../../components/AnalyticsDashboard'
 import WeddingQuoteManager from '../../../components/WeddingQuoteManager'
 import { analytics } from '../../../lib/analytics'
-import { safeFetchJson, safeJson } from '../../../lib/utils/safeJson'
+import { safeJson } from '../../../lib/utils/safeJson'
+// NOTE: safeFetchJson already re-exported from safeJson module; avoid duplicate imports
 
 export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true)
@@ -153,6 +154,21 @@ export default function AdminDashboard() {
   const handleTabChange = (tab) => {
     console.log('Tab changed to:', tab)
     setActiveTab(tab)
+  }
+
+  const handleSyncWeddingData = async () => {
+    try {
+      const response = await fetch('/api/admin/wedding-data/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      const data = await safeJson(response)
+      if (!response.ok) throw new Error(data?.message || 'Sync failed')
+      alert('Wedding data synced successfully')
+    } catch (error) {
+      console.error('Sync error:', error)
+      alert('Failed to sync wedding data')
+    }
   }
 
   const handleUserAction = async (action, userId) => {
@@ -493,7 +509,32 @@ export default function AdminDashboard() {
         {activeTab === 'users' && renderUsers()}
         {activeTab === 'projects' && renderProjects()}
         {activeTab === 'content' && renderContent()}
-        {activeTab === 'bots' && renderBots()}
+        {activeTab === 'bots' && (
+          <div
+            style={{
+              backgroundColor: '#111',
+              padding: '20px',
+              borderRadius: '5px',
+              border: '1px solid #333',
+            }}
+          >
+            <h2 style={{ color: '#00ff00', marginBottom: '20px' }}>Bots</h2>
+            <button
+              onClick={handleSyncWeddingData}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#00ff00',
+                color: '#000',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+              }}
+            >
+              Sync Wedding Data
+            </button>
+          </div>
+        )}
         {activeTab === 'analytics' && renderAnalytics()}
         {activeTab === 'reports' && renderReports()}
         {activeTab === 'wedding-quotes' && (
