@@ -14,7 +14,7 @@ export async function GET(request) {
         category: 'silver',
         // Use cents to match UI formatter (price / 100)
         // Keep pricing aligned with booking page (source of truth)
-        price: 150000, // $1,500
+        price: 210000, // $2,100
         duration: 4,
         description: 'Perfect for intimate celebrations',
         features: JSON.stringify([
@@ -29,7 +29,7 @@ export async function GET(request) {
         id: 2,
         name: 'Gold Collection',
         category: 'gold',
-        price: 250000, // $2,500
+        price: 294000, // $2,940 (40% more than 2,100)
         duration: 6,
         description: 'Our most popular package',
         features: JSON.stringify([
@@ -46,7 +46,7 @@ export async function GET(request) {
         id: 3,
         name: 'Diamond Collection',
         category: 'diamond',
-        price: 400000, // $4,000
+        price: 411600, // $4,116 (40% more than 2,940)
         duration: 8,
         description: 'Complete wedding story',
         features: JSON.stringify([
