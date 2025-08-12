@@ -12,15 +12,18 @@ export async function GET(request) {
         id: 1,
         name: 'Standard Wedding Package',
         category: 'basic',
-        price: 1500,
+        // Use cents to match UI formatter (price / 100)
+        price: 150000,
+        duration: 4,
         description: 'Perfect for intimate weddings and elopements',
-        features: [
+        // UI attempts JSON.parse first; provide JSON string for compatibility
+        features: JSON.stringify([
           '4 hours of coverage',
           'Ceremony and reception highlights',
           'Basic editing and color correction',
           'Digital delivery',
-          '30-day revision period'
-        ],
+          '30-day revision period',
+        ]),
         deliveryTime: '2-3 weeks',
         popular: false
       },
@@ -28,9 +31,10 @@ export async function GET(request) {
         id: 2,
         name: 'Premium Wedding Package',
         category: 'premium',
-        price: 2500,
+        price: 250000,
+        duration: 8,
         description: 'Comprehensive coverage for your special day',
-        features: [
+        features: JSON.stringify([
           '8 hours of coverage',
           'Full ceremony and reception',
           'Getting ready footage',
@@ -38,8 +42,8 @@ export async function GET(request) {
           'Multiple camera angles',
           'Drone footage (if applicable)',
           'Digital delivery + USB backup',
-          '60-day revision period'
-        ],
+          '60-day revision period',
+        ]),
         deliveryTime: '3-4 weeks',
         popular: true
       },
@@ -47,9 +51,10 @@ export async function GET(request) {
         id: 3,
         name: 'Luxury Wedding Package',
         category: 'luxury',
-        price: 4000,
+        price: 400000,
+        duration: 12,
         description: 'Ultimate wedding video experience',
-        features: [
+        features: JSON.stringify([
           '12 hours of coverage',
           'Multi-day coverage available',
           'Cinematic storytelling approach',
@@ -60,8 +65,8 @@ export async function GET(request) {
           'Full feature film (60-90 minutes)',
           'Digital delivery + USB + Blu-ray',
           '90-day revision period',
-          'Consultation and planning session'
-        ],
+          'Consultation and planning session',
+        ]),
         deliveryTime: '4-6 weeks',
         popular: false
       }
@@ -76,7 +81,9 @@ export async function GET(request) {
     return NextResponse.json({
       success: true,
       data: filteredPackages,
-      total: filteredPackages.length
+      // Also return packages field for the booking page's expected shape
+      packages: filteredPackages,
+      total: filteredPackages.length,
     })
 
   } catch (error) {
