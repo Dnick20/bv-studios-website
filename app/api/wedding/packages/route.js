@@ -29,7 +29,7 @@ export async function GET(request) {
         id: 2,
         name: 'Gold Collection',
         category: 'gold',
-        price: 294000, // $2,940 (40% more than 2,100)
+        price: 350000, // $3,500
         duration: 6,
         description: 'Our most popular package',
         features: JSON.stringify([
@@ -46,7 +46,7 @@ export async function GET(request) {
         id: 3,
         name: 'Diamond Collection',
         category: 'diamond',
-        price: 411600, // $4,116 (40% more than 2,940)
+        price: 620000, // $6,200
         duration: 8,
         description: 'Complete wedding story',
         features: JSON.stringify([
