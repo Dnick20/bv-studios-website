@@ -78,45 +78,45 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    const session = await auth().catch(() => null)
     const body = await request.json()
-    const { 
-      clientName, 
-      email, 
-      phone, 
-      weddingDate, 
-      venue, 
-      package: packageType, 
-      budget, 
-      message 
-    } = body
 
-    // Validate required fields
-    if (!clientName || !email || !weddingDate || !venue) {
-      return NextResponse.json(
-        { success: false, message: 'Missing required fields' },
-        { status: 400 }
-      )
-    }
+    // Support both booking payload and legacy payload
+    const isBookingPayload =
+      'packageId' in body || 'eventDate' in body || 'venueName' in body
 
-    // Mock quote creation - replace with actual database insert
     const newQuote = {
       id: Date.now(),
-      clientName,
-      email,
-      phone: phone || '',
-      weddingDate,
-      venue,
-      package: packageType || 'Standard Wedding Package',
       status: 'pending',
-      budget: budget || 0,
-      message: message || '',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      // Common/legacy fields
+      clientName: session?.user?.name || body.clientName || '',
+      email: session?.user?.email || body.email || '',
+      phone: body.phone || '',
+      weddingDate: (isBookingPayload ? body.eventDate : body.weddingDate) || '',
+      venue:
+        (isBookingPayload ? body.venueName : body.venue) ||
+        (isBookingPayload && body.venueId ? `venue:${body.venueId}` : ''),
+      package:
+        (isBookingPayload ? body.packageName : body.package) || 'Selected Package',
+      budget: body.budget || 0,
+      message: (isBookingPayload ? body.specialRequests : body.message) || '',
+      // Booking-specific extras
+      eventTime: isBookingPayload ? body.eventTime || '' : '',
+      packageId: isBookingPayload ? body.packageId || null : null,
+      venueId: isBookingPayload ? body.venueId || null : null,
+      addons: isBookingPayload ? body.addons || [] : [],
+      guestCount: isBookingPayload ? body.guestCount || null : null,
+      totalPrice: isBookingPayload ? body.totalPrice || null : null,
     }
 
-    return NextResponse.json({
-      success: true,
-      data: newQuote
-    }, { status: 201 })
+    return NextResponse.json(
+      {
+        success: true,
+        data: newQuote,
+      },
+      { status: 201 }
+    )
 
   } catch (error) {
     console.error('Wedding Quotes API Error:', error)
