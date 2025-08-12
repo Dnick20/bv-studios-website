@@ -2,41 +2,7 @@
 
 import React, { useState } from 'react'
 import { PlayIcon } from '@heroicons/react/24/outline'
-
-const weddingVideos = [
-  {
-    id: 1,
-    title: 'Sarah & David',
-    description: 'A beautiful spring wedding at the Kentucky Horse Park',
-    thumbnail: '/images/optimized/weddings/sarah-david.webp',
-    videoUrl: 'https://www.youtube.com/embed/SRBc8SJ3jLk',
-    duration: '5:32'
-  },
-  {
-    id: 2,
-    title: 'Christian & Hailee',
-    description: 'Intimate ceremony at Keeneland with stunning sunset',
-    thumbnail: '/images/optimized/weddings/christian-hailee.webp',
-    videoUrl: 'https://www.youtube.com/embed/SRBc8SJ3jLk',
-    duration: '6:15'
-  },
-  {
-    id: 3,
-    title: 'Kaitlin & Andy',
-    description: 'Elegant reception at the Lexington Opera House',
-    thumbnail: '/images/optimized/weddings/kaitlin-andy.webp',
-    videoUrl: 'https://www.youtube.com/embed/SRBc8SJ3jLk',
-    duration: '4:48'
-  },
-  {
-    id: 4,
-    title: 'Niki & Matt',
-    description: 'Rustic barn wedding with country charm',
-    thumbnail: '/images/optimized/weddings/niki-matt.webp',
-    videoUrl: 'https://www.youtube.com/embed/SRBc8SJ3jLk',
-    duration: '7:22'
-  }
-]
+import { weddingVideos } from '@/lib/weddings/portfolioData'
 
 export default function WeddingPortfolio() {
   const [selectedVideo, setSelectedVideo] = useState(null)
@@ -117,8 +83,41 @@ export default function WeddingPortfolio() {
 
             {/* Video Info */}
             <div className="p-6">
-              <h3 className="text-xl font-semibold text-wedding-dark mb-3">{video.title}</h3>
-              <p className="text-wedding-muted">{video.description}</p>
+              <h3 className="text-xl font-semibold text-wedding-dark mb-1">{video.title}</h3>
+              <p className="text-wedding-muted mb-2">{video.description}</p>
+              {(video.venueName || video.venueUrl || video.venueEmail) && (
+                <div className="text-sm text-wedding-muted">
+                  {video.venueName && (
+                    <span className="font-medium text-wedding-dark">{video.venueName}</span>
+                  )}
+                  {video.venueUrl && (
+                    <>
+                      {' '}
+                      ·{' '}
+                      <a
+                        href={video.venueUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:text-wedding-accent"
+                      >
+                        Venue site
+                      </a>
+                    </>
+                  )}
+                  {video.venueEmail && (
+                    <>
+                      {' '}
+                      ·{' '}
+                      <a
+                        href={`mailto:${video.venueEmail}`}
+                        className="underline hover:text-wedding-accent"
+                      >
+                        {video.venueEmail}
+                      </a>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         ))}
