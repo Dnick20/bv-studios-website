@@ -42,6 +42,37 @@ export default function WeddingPortfolio() {
   const [selectedVideo, setSelectedVideo] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
+  const toYouTubeEmbedUrl = (url) => {
+    if (!url) return ''
+    try {
+      // Extract ID from various YouTube URL formats
+      // Examples:
+      // https://www.youtube.com/watch?v=VIDEOID
+      // https://youtu.be/VIDEOID
+      // https://www.youtube.com/embed/VIDEOID
+      const patterns = [
+        /[?&]v=([a-zA-Z0-9_-]{6,})/, // watch?v=
+        /youtu\.be\/([a-zA-Z0-9_-]{6,})/, // youtu.be/
+        /\/embed\/([a-zA-Z0-9_-]{6,})/, // /embed/
+      ]
+      let videoId = ''
+      for (const p of patterns) {
+        const m = url.match(p)
+        if (m && m[1]) {
+          videoId = m[1]
+          break
+        }
+      }
+      // If no match and input looks like an ID already
+      if (!videoId && /^[a-zA-Z0-9_-]{6,}$/.test(url)) videoId = url
+      if (!videoId) return url
+      // Use privacy-enhanced domain and sane params
+      return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1`
+    } catch {
+      return url
+    }
+  }
+
   const openVideo = (video) => {
     setSelectedVideo(video)
     setIsModalOpen(true)
@@ -110,7 +141,7 @@ export default function WeddingPortfolio() {
             {/* Video Player */}
             <div className="relative aspect-video bg-wedding-dark rounded-lg overflow-hidden">
               <iframe
-                src={selectedVideo.videoUrl}
+                src={toYouTubeEmbedUrl(selectedVideo.videoUrl)}
                 title={selectedVideo.title}
                 className="w-full h-full"
                 frameBorder="0"
