@@ -12,7 +12,8 @@ export async function GET(request) {
         id: 1,
         name: 'Drone Coverage',
         category: 'aerial',
-        price: 300,
+        // Use cents to match UI formatter (price / 100)
+        price: 30000,
         description: 'Beautiful aerial shots of your venue and ceremony',
         features: [
           'Aerial venue shots',
@@ -27,7 +28,7 @@ export async function GET(request) {
         id: 2,
         name: 'Photo Slideshow',
         category: 'media',
-        price: 150,
+        price: 15000,
         description: 'Create a beautiful slideshow with your photos and video clips',
         features: [
           'Photo integration',
@@ -42,7 +43,7 @@ export async function GET(request) {
         id: 3,
         name: 'Same Day Edit',
         category: 'rush',
-        price: 500,
+        price: 50000,
         description: 'Get a highlight video ready for your reception',
         features: [
           'Quick turnaround',
@@ -57,7 +58,7 @@ export async function GET(request) {
         id: 4,
         name: 'Additional Hours',
         category: 'coverage',
-        price: 200,
+        price: 20000,
         description: 'Extend your coverage time for more comprehensive filming',
         features: [
           'Extra filming time',
@@ -72,7 +73,7 @@ export async function GET(request) {
         id: 5,
         name: 'Wedding Trailer',
         category: 'media',
-        price: 250,
+        price: 25000,
         description: 'Short cinematic trailer perfect for social media',
         features: [
           'Cinematic style',
@@ -87,7 +88,7 @@ export async function GET(request) {
         id: 6,
         name: 'Guest Messages',
         category: 'interactive',
-        price: 100,
+        price: 10000,
         description: 'Record messages from your wedding guests',
         features: [
           'Guest interviews',
@@ -109,8 +110,9 @@ export async function GET(request) {
     return NextResponse.json({
       success: true,
       data: filteredAddons,
+      addons: filteredAddons, // booking page expects `addons`
       total: filteredAddons.length,
-      category: category || 'all'
+      category: category || 'all',
     })
 
   } catch (error) {

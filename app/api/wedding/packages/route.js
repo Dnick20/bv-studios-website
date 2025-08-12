@@ -25,7 +25,7 @@ export async function GET(request) {
           '30-day revision period',
         ]),
         deliveryTime: '2-3 weeks',
-        popular: false
+        popular: false,
       },
       {
         id: 2,
@@ -45,7 +45,7 @@ export async function GET(request) {
           '60-day revision period',
         ]),
         deliveryTime: '3-4 weeks',
-        popular: true
+        popular: true,
       },
       {
         id: 3,
@@ -68,14 +68,14 @@ export async function GET(request) {
           'Consultation and planning session',
         ]),
         deliveryTime: '4-6 weeks',
-        popular: false
-      }
+        popular: false,
+      },
     ]
 
     // Filter packages by category if specified
     let filteredPackages = allPackages
     if (category) {
-      filteredPackages = allPackages.filter(pkg => pkg.category === category)
+      filteredPackages = allPackages.filter((pkg) => pkg.category === category)
     }
 
     return NextResponse.json({
@@ -85,7 +85,6 @@ export async function GET(request) {
       packages: filteredPackages,
       total: filteredPackages.length,
     })
-
   } catch (error) {
     console.error('Wedding Packages API Error:', error)
     return NextResponse.json(

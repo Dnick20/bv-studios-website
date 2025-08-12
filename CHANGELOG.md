@@ -17,6 +17,9 @@ All notable changes to this project will be documented in this file.
 - **Created centralized auth configuration** in `lib/auth.js`
 - **Updated all API routes** to use `import { auth } from '@/lib/auth'` instead of `getServerSession`
 - **Fixed import paths** from relative paths to absolute imports using `@` alias
+- `app/api/wedding/packages/route.js`: normalized price units (cents), provided JSON string features, added `packages` key to response
+- `app/api/wedding/addons/route.js`: normalized price units (cents), added `addons` key to response
+- `app/api/wedding/venues/route.js`: verified endpoint used by booking page
 
 #### **Files Modified**
 
@@ -49,6 +52,8 @@ All notable changes to this project will be documented in this file.
 - ✅ **Module resolution errors** for auth imports
 - ✅ **Variable name conflicts** in notification routes
 - ✅ **Build failures** preventing Vercel deployment
+- ✅ Wedding booking page stuck on "Loading wedding packages..." (response shape mismatch)
+- ✅ Addons prices off by 100x (dollars vs cents)
 
 #### **Technical Details**
 
@@ -62,6 +67,10 @@ All notable changes to this project will be documented in this file.
 - **Import Path Resolution**:
   - Changed from relative imports (`../../../../lib/auth`) to absolute imports (`@/lib/auth`)
   - Updated `tsconfig.json` or `jsconfig.json` to support `@` alias
+- **Wedding Booking Data Contract**:
+  - Booking UI expects `packages`, `addons`, `venues` properties
+  - Price values are cents and displayed via `(price / 100).toLocaleString()`
+  - `features` provided as JSON string array for resilient parsing
 
 #### **Deployment Notes**
 
