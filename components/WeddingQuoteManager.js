@@ -1169,7 +1169,7 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
       {/* Quick View Modal */}
       {showQuickView && quickViewQuote && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg p-6 max-w-2xl mx-4 max-h-[90vh] overflow-y-auto text-gray-900">
             <div className="flex justify-between items-start mb-4">
               <h3 className="text-lg font-medium text-gray-900">
                 Quote Details - {quickViewQuote.package?.name}
@@ -1203,7 +1203,7 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
                 <h4 className="font-medium text-gray-900 mb-3">
                   Client Information
                 </h4>
-                <div className="space-y-2 text-sm">
+                <div className="space-y-2 text-sm text-gray-800">
                   <p>
                     <strong>Name:</strong> {quickViewQuote.user?.name || 'N/A'}
                   </p>
@@ -1251,7 +1251,7 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
                 <h4 className="font-medium text-gray-900 mb-3">
                   Event Information
                 </h4>
-                <div className="space-y-2 text-sm">
+                <div className="space-y-2 text-sm text-gray-800">
                   <p>
                     <strong>Date:</strong>{' '}
                     {new Date(quickViewQuote.eventDate).toLocaleDateString()}
@@ -1283,7 +1283,7 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
                 <h4 className="font-medium text-gray-900 mb-3">
                   Package Details
                 </h4>
-                <div className="space-y-2 text-sm">
+                <div className="space-y-2 text-sm text-gray-800">
                   <p>
                     <strong>Package:</strong> {quickViewQuote.package?.name}
                   </p>
@@ -1320,7 +1320,7 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-sm">No addons selected</p>
+                  <p className="text-gray-700 text-sm">No addons selected</p>
                 )}
               </div>
             </div>
@@ -1331,7 +1331,7 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
                 <h4 className="font-medium text-gray-900 mb-3">
                   Special Requests
                 </h4>
-                <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">
+                <p className="text-sm text-gray-800 bg-gray-50 p-3 rounded-md">
                   {quickViewQuote.specialRequests}
                 </p>
               </div>
@@ -1339,7 +1339,7 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
 
             {/* Timestamps */}
             <div className="mt-6 pt-4 border-t border-gray-200">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-500">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
                 <p>
                   <strong>Created:</strong>{' '}
                   {new Date(quickViewQuote.createdAt).toLocaleString()}
