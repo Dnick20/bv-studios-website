@@ -191,7 +191,8 @@ const WeddingBookingPage = () => {
           packageId: selectedPackage.id,
           eventDate: quoteData.eventDate,
           eventTime: quoteData.eventTime,
-          venueId: selectedVenue === 'other' ? null : selectedVenue,
+          // Always include venueName; include venueId only if not 'other'
+          venueId: selectedVenue && selectedVenue !== 'other' ? selectedVenue : null,
           venueName: venueName,
           guestCount: quoteData.guestCount || null,
           specialRequests: quoteData.specialRequests || null,
