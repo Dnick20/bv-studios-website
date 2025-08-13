@@ -34,10 +34,27 @@ export async function GET(request) {
       name: q.package.name,
       price: q.package.price,
       duration: q.package.duration,
-      features: (() => { try { return JSON.parse(q.package.features) } catch { return [] } })(),
+      features: (() => {
+        try {
+          return JSON.parse(q.package.features)
+        } catch {
+          return []
+        }
+      })(),
     },
-    venue: q.venue ? { id: q.venue.id, name: q.venue.name } : q.venueName ? { name: q.venueName } : null,
-    quoteAddons: q.quoteAddons.map((qa) => ({ id: qa.id, addon: { id: qa.addon.id, name: qa.addon.name, price: qa.price ?? qa.addon.price } })),
+    venue: q.venue
+      ? { id: q.venue.id, name: q.venue.name }
+      : q.venueName
+      ? { name: q.venueName }
+      : null,
+    quoteAddons: q.quoteAddons.map((qa) => ({
+      id: qa.id,
+      addon: {
+        id: qa.addon.id,
+        name: qa.addon.name,
+        price: qa.price ?? qa.addon.price,
+      },
+    })),
   }))
 
   return NextResponse.json({ success: true, quotes: shaped })

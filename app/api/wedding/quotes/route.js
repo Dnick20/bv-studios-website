@@ -47,13 +47,25 @@ export async function GET(request) {
         price: q.package.price,
         duration: q.package.duration,
         features: (() => {
-          try { return JSON.parse(q.package.features) } catch { return [] }
+          try {
+            return JSON.parse(q.package.features)
+          } catch {
+            return []
+          }
         })(),
       },
-      venue: q.venue ? { id: q.venue.id, name: q.venue.name } : q.venueName ? { name: q.venueName } : null,
+      venue: q.venue
+        ? { id: q.venue.id, name: q.venue.name }
+        : q.venueName
+        ? { name: q.venueName }
+        : null,
       quoteAddons: q.quoteAddons.map((qa) => ({
         id: qa.id,
-        addon: { id: qa.addon.id, name: qa.addon.name, price: qa.price ?? qa.addon.price },
+        addon: {
+          id: qa.addon.id,
+          name: qa.addon.name,
+          price: qa.price ?? qa.addon.price,
+        },
       })),
     }))
 
@@ -79,40 +91,84 @@ export async function POST(request) {
       'packageId' in body || 'eventDate' in body || 'venueName' in body
 
     if (!isBookingPayload) {
-      return NextResponse.json(
-        { message: 'Invalid payload' },
-        { status: 400 }
-      )
+      return NextResponse.json({ message: 'Invalid payload' }, { status: 400 })
     }
 
-    const pkg = await prisma.weddingPackage.findUnique({
-      where: { id: String(body.packageId) },
-    })
+    // Resolve package: allow legacy numeric IDs by mapping to catalog
+    const packageCatalog = [
+      { legacyId: 1, name: 'Silver Collection', price: 210000, duration: 4, features: JSON.stringify(['4 hours of coverage','Short Film','Digital Delivery']) },
+      { legacyId: 2, name: 'Gold Collection', price: 350000, duration: 6, features: JSON.stringify(['6 hours of coverage','Short Film','Ceremony','Instagram Trailer','Digital Delivery']) },
+      { legacyId: 3, name: 'Diamond Collection', price: 620000, duration: 8, features: JSON.stringify(['8 hours of coverage','Short Film','Ceremony and Reception Film','Drone Coverage','Instagram Trailer','Digital Delivery']) },
+    ]
+
+    let pkg = null
+    // First try by exact id (cuid)
+    pkg = await prisma.weddingPackage.findUnique({ where: { id: String(body.packageId) } })
     if (!pkg) {
-      return NextResponse.json(
-        { message: 'Package not found' },
-        { status: 400 }
-      )
+      // Fallback to legacy mapping by numeric id
+      const mapped = packageCatalog.find((p) => String(p.legacyId) === String(body.packageId))
+      if (mapped) {
+        pkg = await prisma.weddingPackage.findFirst({ where: { name: mapped.name } })
+        if (!pkg) {
+          pkg = await prisma.weddingPackage.create({
+            data: {
+              name: mapped.name,
+              description: mapped.name,
+              price: mapped.price,
+              duration: mapped.duration,
+              features: mapped.features,
+            },
+          })
+        }
+      }
+    }
+    if (!pkg) {
+      return NextResponse.json({ message: 'Package not found' }, { status: 400 })
     }
 
     // Resolve addons from DB
-    const addonIds = Array.isArray(body.addons)
-      ? body.addons.map((a) => String(a.addonId))
-      : []
-    const addons = addonIds.length
-      ? await prisma.weddingAddon.findMany({ where: { id: { in: addonIds } } })
-      : []
+    const addonCatalog = [
+      { legacyId: 101, name: 'Ceremony Film', price: 65000, category: 'film' },
+      { legacyId: 102, name: 'Engagement Film', price: 65000, category: 'film' },
+      { legacyId: 103, name: 'Additional Hours', price: 26000, category: 'coverage' },
+      { legacyId: 104, name: 'Drone Footage', price: 65000, category: 'aerial' },
+    ]
+
+    const addonIds = Array.isArray(body.addons) ? body.addons.map((a) => String(a.addonId)) : []
+    let addons = []
+    if (addonIds.length) {
+      addons = await prisma.weddingAddon.findMany({ where: { id: { in: addonIds } } })
+      // For any legacy addon ids not present in DB, create by mapping
+      const toEnsure = addonIds.filter((id) => !addons.find((x) => x.id === id))
+      for (const missingId of toEnsure) {
+        const mapped = addonCatalog.find((a) => String(a.legacyId) === String(missingId))
+        if (mapped) {
+          const existingByName = await prisma.weddingAddon.findFirst({ where: { name: mapped.name } })
+          const created = existingByName || (await prisma.weddingAddon.create({
+            data: {
+              name: mapped.name,
+              description: mapped.name,
+              price: mapped.price,
+              category: mapped.category,
+            },
+          }))
+          addons.push(created)
+        }
+      }
+    }
 
     const addonsWithPrice = Array.isArray(body.addons)
       ? body.addons.map((a) => {
-          const db = addons.find((x) => x.id === String(a.addonId))
+          const db = addons.find((x) => x.id === String(a.addonId)) || addonCatalog.find((x) => String(x.legacyId) === String(a.addonId))
           const price = Number(a.price ?? db?.price ?? 0)
-          return { addonId: String(a.addonId), price }
+          const resolvedId = (db && 'id' in db) ? db.id : String(a.addonId)
+          return { addonId: resolvedId, price }
         })
       : []
 
     const totalPrice =
-      Number(pkg.price) + addonsWithPrice.reduce((s, x) => s + Number(x.price), 0)
+      Number(pkg.price) +
+      addonsWithPrice.reduce((s, x) => s + Number(x.price), 0)
 
     const created = await prisma.weddingQuote.create({
       data: {
@@ -127,7 +183,10 @@ export async function POST(request) {
         status: 'pending',
         totalPrice,
         quoteAddons: {
-          create: addonsWithPrice.map((a) => ({ addonId: a.addonId, price: a.price })),
+          create: addonsWithPrice.map((a) => ({
+            addonId: a.addonId,
+            price: a.price,
+          })),
         },
       },
       include: {
@@ -153,10 +212,23 @@ export async function POST(request) {
         name: created.package.name,
         price: created.package.price,
         duration: created.package.duration,
-        features: (() => { try { return JSON.parse(created.package.features) } catch { return [] } })(),
+        features: (() => {
+          try {
+            return JSON.parse(created.package.features)
+          } catch {
+            return []
+          }
+        })(),
       },
-      venue: created.venue ? { id: created.venue.id, name: created.venue.name } : created.venueName ? { name: created.venueName } : null,
-      quoteAddons: created.quoteAddons.map((qa) => ({ id: qa.id, addon: { id: qa.addon.id, name: qa.addon.name, price: qa.price } })),
+      venue: created.venue
+        ? { id: created.venue.id, name: created.venue.name }
+        : created.venueName
+        ? { name: created.venueName }
+        : null,
+      quoteAddons: created.quoteAddons.map((qa) => ({
+        id: qa.id,
+        addon: { id: qa.addon.id, name: qa.addon.name, price: qa.price },
+      })),
     }
 
     return NextResponse.json({ success: true, quote: shaped }, { status: 201 })

@@ -1,20 +1,35 @@
 import { NextResponse } from 'next/server'
+import { auth } from '@/lib/auth'
+import { prisma } from '../../../../../lib/prisma.js'
 
-// In-memory placeholder store for deletes/updates in this mock setup
-const deletedIds = new Set()
-
-export async function PUT(_request, { params }) {
+export async function PUT(request, { params }) {
+  const session = await auth().catch(() => null)
+  if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
   const { id } = params
-  // Accept and pretend to update
-  if (deletedIds.has(id)) {
-    return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 })
+  const body = await request.json().catch(() => ({}))
+
+  const quote = await prisma.weddingQuote.findUnique({ where: { id } })
+  if (!quote) return NextResponse.json({ message: 'Not found' }, { status: 404 })
+  if (session.user.role !== 'admin' && quote.userId !== session.user.id) {
+    return NextResponse.json({ message: 'Forbidden' }, { status: 403 })
   }
-  return NextResponse.json({ success: true })
+
+  const { status } = body
+  const updated = await prisma.weddingQuote.update({ where: { id }, data: { status } })
+  return NextResponse.json({ success: true, quote: { id: updated.id, status: updated.status } })
 }
 
 export async function DELETE(_request, { params }) {
+  const session = await auth().catch(() => null)
+  if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
   const { id } = params
-  deletedIds.add(id)
+  const quote = await prisma.weddingQuote.findUnique({ where: { id } })
+  if (!quote) return NextResponse.json({ message: 'Not found' }, { status: 404 })
+  if (session.user.role !== 'admin' && quote.userId !== session.user.id) {
+    return NextResponse.json({ message: 'Forbidden' }, { status: 403 })
+  }
+  await prisma.quoteAddon.deleteMany({ where: { quoteId: id } })
+  await prisma.weddingQuote.delete({ where: { id } })
   return NextResponse.json({ success: true })
 }
 

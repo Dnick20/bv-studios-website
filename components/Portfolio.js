@@ -15,7 +15,7 @@ export default function Portfolio() {
       image: '/images/portfolio/wedding-highlights.webp',
       description: 'Beautiful wedding cinematography capturing special moments',
       videoUrl: 'https://www.youtube.com/embed/SRBc8SJ3jLk',
-      thumbnail: '/images/portfolio/wedding-highlights.webp'
+      thumbnail: '/images/portfolio/wedding-highlights.webp',
     },
     {
       title: 'Commercial Production',
@@ -23,7 +23,7 @@ export default function Portfolio() {
       image: '/images/optimized/commercial/stuttgart.webp',
       description: 'Professional commercial video production for businesses',
       videoUrl: 'https://www.youtube.com/embed/isO7D5PLyRo',
-      thumbnail: '/images/optimized/commercial/stuttgart.webp'
+      thumbnail: '/images/optimized/commercial/stuttgart.webp',
     },
     {
       title: 'Real Estate & Events',
@@ -31,8 +31,8 @@ export default function Portfolio() {
       image: '/images/optimized/commercial/tim-regus.webp',
       description: 'Professional real estate videography and event coverage',
       videoUrl: 'https://www.youtube.com/embed/XqX9JotLUb0',
-      thumbnail: '/images/optimized/commercial/tim-regus.webp'
-    }
+      thumbnail: '/images/optimized/commercial/tim-regus.webp',
+    },
   ]
 
   const openVideo = (videoUrl) => {
@@ -57,7 +57,8 @@ export default function Portfolio() {
             <span className="text-accent block">Portfolio</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Showcasing our best work across different video production categories
+            Showcasing our best work across different video production
+            categories
           </p>
         </motion.div>
 
@@ -76,19 +77,29 @@ export default function Portfolio() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-12">
           <div className="p-4 bg-gray-50 rounded-xl shadow-sm">
             <strong>🏛 Venue Owners</strong>
-            <div>Showcase weddings & events held at your location with cinematic reels.</div>
+            <div>
+              Showcase weddings & events held at your location with cinematic
+              reels.
+            </div>
           </div>
           <div className="p-4 bg-gray-50 rounded-xl shadow-sm">
             <strong>📈 Marketing Managers</strong>
-            <div>Data-driven case studies designed to boost your campaign ROI.</div>
+            <div>
+              Data-driven case studies designed to boost your campaign ROI.
+            </div>
           </div>
           <div className="p-4 bg-gray-50 rounded-xl shadow-sm">
             <strong>💙 Nonprofits</strong>
-            <div>Impact-driven storytelling to inspire action and amplify your mission.</div>
+            <div>
+              Impact-driven storytelling to inspire action and amplify your
+              mission.
+            </div>
           </div>
           <div className="p-4 bg-gray-50 rounded-xl shadow-sm">
             <strong>🚀 Product Launch Teams</strong>
-            <div>High-energy launch films and demos for tech & consumer brands.</div>
+            <div>
+              High-energy launch films and demos for tech & consumer brands.
+            </div>
           </div>
         </div>
       </div>
@@ -101,4 +112,4 @@ export default function Portfolio() {
       />
     </section>
   )
-} 
+}
