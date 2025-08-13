@@ -71,6 +71,26 @@ export default function Portfolio() {
             />
           ))}
         </div>
+
+        {/* Audience tiles (light version) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-12">
+          <div className="p-4 bg-gray-50 rounded-xl shadow-sm">
+            <strong>🏛 Venue Owners</strong>
+            <div>Showcase weddings & events held at your location with cinematic reels.</div>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-xl shadow-sm">
+            <strong>📈 Marketing Managers</strong>
+            <div>Data-driven case studies designed to boost your campaign ROI.</div>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-xl shadow-sm">
+            <strong>💙 Nonprofits</strong>
+            <div>Impact-driven storytelling to inspire action and amplify your mission.</div>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-xl shadow-sm">
+            <strong>🚀 Product Launch Teams</strong>
+            <div>High-energy launch films and demos for tech & consumer brands.</div>
+          </div>
+        </div>
       </div>
 
       {/* Optimized Video Modal */}
