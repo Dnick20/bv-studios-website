@@ -60,6 +60,16 @@ All notable changes to this project will be documented in this file.
 - ✅ **Build failures** preventing Vercel deployment
 - ✅ Wedding booking page stuck on "Loading wedding packages..." (response shape mismatch)
 - ✅ Addons prices off by 100x (dollars vs cents)
+ - ✅ Wedding booking "Internal server error" on Submit caused by legacy IDs and venue handling
+
+   - Quote POST now fully DB-backed with legacy-to-cuid fallback:
+     - Maps legacy package/addon IDs to canonical records; creates them if missing
+     - Uses the resolved package cuid for `packageId` (not the legacy numeric id)
+     - Creates/connects `Venue` when selecting a real venue; preserves `venueName` for "Other Venue"
+     - Computes total from package + addons; stores `QuoteAddon` rows
+   - Client payload fixes in `app/wedding-booking/page.js`:
+     - Always sends `venueName`; only sends `venueId` when an actual venue is selected
+   - Added explicit error mapping (Prisma codes) and event date validation so users see actionable messages instead of a generic 500.
 
 #### **Technical Details**
 
