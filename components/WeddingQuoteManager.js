@@ -115,7 +115,20 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
             }
           } catch {}
 
-          const normalized = augmented.map(normalizeQuote)
+          let normalized = augmented.map(normalizeQuote)
+
+          // Filter out quotes the user deleted locally (persists across refresh)
+          try {
+            if (typeof window !== 'undefined') {
+              const deleted = JSON.parse(
+                localStorage.getItem('deletedQuoteIds') || '[]'
+              )
+              if (Array.isArray(deleted) && deleted.length > 0) {
+                normalized = normalized.filter((q) => !deleted.includes(q.id))
+              }
+            }
+          } catch {}
+
           setQuotes(normalized)
           setFilteredQuotes(normalized)
         } else {
@@ -270,6 +283,25 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
         setTimeout(() => setSuccessMessage(null), 3000)
         setShowDeleteConfirm(false)
         setQuoteToDelete(null)
+
+        // Persist deletion so a refresh does not bring it back (mock API)
+        try {
+          if (typeof window !== 'undefined') {
+            const key = 'deletedQuoteIds'
+            const deleted = JSON.parse(localStorage.getItem(key) || '[]')
+            if (!deleted.includes(quoteId)) {
+              localStorage.setItem(key, JSON.stringify([...deleted, quoteId]))
+            }
+            // Also remove from lastSubmittedQuote cache if it matches
+            const last = localStorage.getItem('lastSubmittedQuote')
+            if (last) {
+              const parsed = JSON.parse(last)
+              if (parsed?.id === quoteId) {
+                localStorage.removeItem('lastSubmittedQuote')
+              }
+            }
+          }
+        } catch {}
       } else {
         const errorData = await safeJson(response, {})
         setError(errorData.message || 'Failed to delete quote')
@@ -600,7 +632,7 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
               placeholder="Search quotes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500 bg-white"
             />
           </div>
 
@@ -612,7 +644,7 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             >
               <option value="all">All Statuses</option>
               <option value="pending">Pending</option>
@@ -630,7 +662,7 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
             <select
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             >
               <option value="all">All Time</option>
               <option value="today">Today</option>
@@ -648,7 +680,7 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             >
               <option value="createdAt">Created Date</option>
               <option value="eventDate">Event Date</option>
@@ -665,7 +697,7 @@ const WeddingQuoteManager = ({ isAdmin = false }) => {
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             >
               <option value="desc">Newest First</option>
               <option value="asc">Oldest First</option>
