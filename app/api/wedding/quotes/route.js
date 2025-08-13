@@ -244,20 +244,26 @@ export async function POST(request) {
     // Resolve/normalize venue
     let venueConnectId = null
     if (body.venueId) {
-      const existingVenue = await prisma.venue.findUnique({ where: { id: String(body.venueId) } })
+      const existingVenue = await prisma.venue.findUnique({
+        where: { id: String(body.venueId) },
+      })
       if (existingVenue) {
         venueConnectId = existingVenue.id
       } else if (body.venueName) {
-        const byName = await prisma.venue.findFirst({ where: { name: body.venueName } })
-        const createdVenue = byName || (await prisma.venue.create({
-          data: {
-            name: body.venueName,
-            address: '',
-            city: '',
-            state: '',
-            zipCode: '',
-          },
-        }))
+        const byName = await prisma.venue.findFirst({
+          where: { name: body.venueName },
+        })
+        const createdVenue =
+          byName ||
+          (await prisma.venue.create({
+            data: {
+              name: body.venueName,
+              address: '',
+              city: '',
+              state: '',
+              zipCode: '',
+            },
+          }))
         venueConnectId = createdVenue.id
       }
     }
@@ -265,11 +271,11 @@ export async function POST(request) {
     const created = await prisma.weddingQuote.create({
       data: {
         userId: session.user.id,
-        packageId: String(body.packageId),
+        packageId: pkg.id,
         eventDate: new Date(body.eventDate),
         eventTime: body.eventTime,
         venueId: venueConnectId,
-        venueName: venueConnectId ? null : (body.venueName || null),
+        venueName: venueConnectId ? null : body.venueName || null,
         guestCount: body.guestCount ? Number(body.guestCount) : null,
         specialRequests: body.specialRequests || null,
         status: 'pending',
