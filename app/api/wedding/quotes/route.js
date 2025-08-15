@@ -226,13 +226,31 @@ export async function POST(request) {
       }
     }
 
+    // Normalize addon references: map legacy addonIds (101, 102, ...) to the
+    // actual DB ids we either found or created above. If a body addon already
+    // references a real DB id, keep it as-is.
     const addonsWithPrice = Array.isArray(body.addons)
       ? body.addons.map((a) => {
-          const db =
-            addons.find((x) => x.id === String(a.addonId)) ||
-            addonCatalog.find((x) => String(x.legacyId) === String(a.addonId))
-          const price = Number(a.price ?? db?.price ?? 0)
-          const resolvedId = db && 'id' in db ? db.id : String(a.addonId)
+          const addonIdStr = String(a.addonId)
+          // Try to find a DB addon by exact id first (for real cuid ids)
+          let dbAddon = addons.find((x) => x.id === addonIdStr) || null
+          // If not found, see if this is a legacy id and match by catalog name
+          if (!dbAddon) {
+            const legacy = addonCatalog.find(
+              (x) => String(x.legacyId) === addonIdStr
+            )
+            if (legacy) {
+              dbAddon = addons.find((x) => x.name === legacy.name) || null
+            }
+          }
+          const price = Number(
+            a.price ??
+              dbAddon?.price ??
+              addonCatalog.find((x) => String(x.legacyId) === addonIdStr)
+                ?.price ??
+              0
+          )
+          const resolvedId = dbAddon?.id ?? addonIdStr
           return { addonId: resolvedId, price }
         })
       : []
@@ -268,11 +286,20 @@ export async function POST(request) {
       }
     }
 
+    // Validate event date
+    const dt = new Date(body.eventDate)
+    if (isNaN(dt.getTime())) {
+      return NextResponse.json(
+        { message: 'Invalid event date' },
+        { status: 400 }
+      )
+    }
+
     const created = await prisma.weddingQuote.create({
       data: {
         userId: session.user.id,
         packageId: pkg.id,
-        eventDate: new Date(body.eventDate),
+        eventDate: dt,
         eventTime: body.eventTime,
         venueId: venueConnectId,
         venueName: venueConnectId ? null : body.venueName || null,
@@ -331,10 +358,14 @@ export async function POST(request) {
 
     return NextResponse.json({ success: true, quote: shaped }, { status: 201 })
   } catch (error) {
-    console.error('Wedding Quotes API Error:', error)
-    return NextResponse.json(
-      { success: false, message: 'Internal server error' },
-      { status: 500 }
-    )
+    console.error('Wedding Quotes API Error (POST):', error)
+    const code = error?.code || null
+    const message =
+      code === 'P2021'
+        ? 'Database table missing. Run migrations.'
+        : code === 'P2003'
+        ? 'Invalid relation id (package/addon/venue).'
+        : error?.message || 'Internal server error'
+    return NextResponse.json({ success: false, message, code }, { status: 500 })
   }
 }
