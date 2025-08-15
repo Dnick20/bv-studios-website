@@ -79,6 +79,9 @@ export default function BrideDashboardPage() {
       if (!res.ok) throw new Error(data?.message || 'Save failed')
       setQuestionnaire(data.data)
       alert('Saved! Your responses were sent to admin.')
+      if (data?.code === 'P2021') {
+        alert('Heads up: The questionnaire table is not migrated yet. Please run database migrations in production to persist responses.')
+      }
       router.push('/dashboard/bride/overview')
     } catch (e) {
       alert(e.message)
@@ -136,13 +139,17 @@ export default function BrideDashboardPage() {
                 placeholder="Bride name"
                 className="w-full px-3 py-2 bg-black/30 border border-gray-700 rounded text-white"
                 value={prep.brideName || ''}
-                onChange={(e) => setPrep({ ...prep, brideName: e.target.value })}
+                onChange={(e) =>
+                  setPrep({ ...prep, brideName: e.target.value })
+                }
               />
               <input
                 placeholder="Groom name"
                 className="w-full px-3 py-2 bg-black/30 border border-gray-700 rounded text-white"
                 value={prep.groomName || ''}
-                onChange={(e) => setPrep({ ...prep, groomName: e.target.value })}
+                onChange={(e) =>
+                  setPrep({ ...prep, groomName: e.target.value })
+                }
               />
               <input
                 placeholder="Names"
