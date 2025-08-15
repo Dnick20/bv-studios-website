@@ -79,6 +79,7 @@ export default function BrideDashboardPage() {
       if (!res.ok) throw new Error(data?.message || 'Save failed')
       setQuestionnaire(data.data)
       alert('Saved! Your responses were sent to admin.')
+      router.push('/dashboard/bride/overview')
     } catch (e) {
       alert(e.message)
     } finally {
@@ -131,6 +132,18 @@ export default function BrideDashboardPage() {
               Preparations
             </h3>
             <div className="space-y-3">
+              <input
+                placeholder="Bride name"
+                className="w-full px-3 py-2 bg-black/30 border border-gray-700 rounded text-white"
+                value={prep.brideName || ''}
+                onChange={(e) => setPrep({ ...prep, brideName: e.target.value })}
+              />
+              <input
+                placeholder="Groom name"
+                className="w-full px-3 py-2 bg-black/30 border border-gray-700 rounded text-white"
+                value={prep.groomName || ''}
+                onChange={(e) => setPrep({ ...prep, groomName: e.target.value })}
+              />
               <input
                 placeholder="Names"
                 className="w-full px-3 py-2 bg-black/30 border border-gray-700 rounded text-white"
