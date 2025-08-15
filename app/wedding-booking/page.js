@@ -192,7 +192,8 @@ const WeddingBookingPage = () => {
           eventDate: quoteData.eventDate,
           eventTime: quoteData.eventTime,
           // Always include venueName; include venueId only if not 'other'
-          venueId: selectedVenue && selectedVenue !== 'other' ? selectedVenue : null,
+          venueId:
+            selectedVenue && selectedVenue !== 'other' ? selectedVenue : null,
           venueName: venueName,
           guestCount: quoteData.guestCount || null,
           specialRequests: quoteData.specialRequests || null,
@@ -252,7 +253,8 @@ const WeddingBookingPage = () => {
       } else {
         const error = await safeJson(response)
         analytics.conversionAbandoned('submission_error', error.message)
-        alert(`Error: ${error.message}`)
+        console.error('Quote submission failed:', error)
+        alert(`Error: ${error.message}${error.code ? ` (code: ${error.code})` : ''}`)
       }
     } catch (error) {
       console.error('Error submitting quote:', error)
