@@ -332,6 +332,13 @@ export default function Dashboard() {
               </h3>
               <div className="space-y-3">
                 <Link
+                  href="/dashboard/bride"
+                  className="flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
+                >
+                  <VideoCameraIcon className="w-5 h-5 text-accent" />
+                  <span className="text-white">Wedding Dashboard (KY Brides)</span>
+                </Link>
+                <Link
                   href="/wedding-booking"
                   className="flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
                 >
