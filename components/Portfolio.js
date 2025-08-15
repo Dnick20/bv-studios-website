@@ -73,51 +73,7 @@ export default function Portfolio() {
           ))}
         </div>
 
-        {/* Audience tiles (dark theme to match page) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-12">
-          <div
-            className="p-5 bg-black/30 backdrop-blur-sm rounded-xl border border-gray-800 hover:border-accent/50 transition-colors"
-            role="region"
-            aria-label="Venue Owners audience"
-          >
-            <div className="text-white font-semibold">🏛 Venue Owners</div>
-            <div className="text-gray-300">
-              Showcase weddings & events held at your location with cinematic
-              reels.
-            </div>
-          </div>
-          <div
-            className="p-5 bg-black/30 backdrop-blur-sm rounded-xl border border-gray-800 hover:border-accent/50 transition-colors"
-            role="region"
-            aria-label="Marketing Managers audience"
-          >
-            <div className="text-white font-semibold">📈 Marketing Managers</div>
-            <div className="text-gray-300">
-              Data-driven case studies designed to boost your campaign ROI.
-            </div>
-          </div>
-          <div
-            className="p-5 bg-black/30 backdrop-blur-sm rounded-xl border border-gray-800 hover:border-accent/50 transition-colors"
-            role="region"
-            aria-label="Nonprofits audience"
-          >
-            <div className="text-white font-semibold">💙 Nonprofits</div>
-            <div className="text-gray-300">
-              Impact-driven storytelling to inspire action and amplify your
-              mission.
-            </div>
-          </div>
-          <div
-            className="p-5 bg-black/30 backdrop-blur-sm rounded-xl border border-gray-800 hover:border-accent/50 transition-colors"
-            role="region"
-            aria-label="Product Launch Teams audience"
-          >
-            <div className="text-white font-semibold">🚀 Product Launch Teams</div>
-            <div className="text-gray-300">
-              High-energy launch films and demos for tech & consumer brands.
-            </div>
-          </div>
-        </div>
+        {/* Audience tiles removed per request */}
       </div>
 
       {/* Optimized Video Modal */}
