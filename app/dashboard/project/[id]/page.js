@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { use } from 'react'
 import Link from 'next/link'
-import { safeJson } from '../../../../lib/utils/safeJson'
+import { safeJson } from '../../../../lib/imports.js'
 import { motion } from 'framer-motion'
 import {
   ArrowLeftIcon,

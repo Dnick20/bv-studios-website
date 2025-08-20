@@ -1,6 +1,6 @@
 'use client'
 
-import Navigation from '../../../components/Navigation'
+import { Navigation } from '../../../lib/imports.js'
 import { motion } from 'framer-motion'
 import { EnvelopeIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 
@@ -8,7 +8,7 @@ export default function VerifyRequestPage() {
   return (
     <div className="min-h-screen bg-primary">
       <Navigation />
-      
+
       <div className="pt-20 pb-16 min-h-screen flex items-center justify-center">
         <div className="w-full max-w-md">
           <motion.div
@@ -27,7 +27,7 @@ export default function VerifyRequestPage() {
             <h1 className="text-2xl font-bold text-white mb-4">
               Check Your Email
             </h1>
-            
+
             <p className="text-gray-300 mb-6">
               A sign in link has been sent to your email address.
             </p>
@@ -40,11 +40,13 @@ export default function VerifyRequestPage() {
             {/* Instructions */}
             <div className="text-left space-y-3 mb-6">
               <p className="text-gray-300 text-sm">
-                If you don't see it, check your spam folder. The link will expire in 24 hours.
+                If you don't see it, check your spam folder. The link will
+                expire in 24 hours.
               </p>
-              
+
               <p className="text-gray-300 text-sm">
-                You can close this window and return to it once you've clicked the link in your email.
+                You can close this window and return to it once you've clicked
+                the link in your email.
               </p>
             </div>
 
@@ -56,7 +58,7 @@ export default function VerifyRequestPage() {
               >
                 Back to Sign In
               </a>
-              
+
               <a
                 href="/"
                 className="w-full block py-3 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-600 transition-colors"

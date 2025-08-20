@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth'
 import { NextResponse } from 'next/server'
-import { prisma } from '../../../../lib/prisma.js'
+import { prisma } from '../../../../lib/imports.js'
 
 export async function GET(request) {
   try {
@@ -360,12 +360,18 @@ export async function POST(request) {
   } catch (error) {
     console.error('Wedding Quotes API Error (POST):', error)
     const code = error?.code || null
-    const message =
-      code === 'P2021'
-        ? 'Database table missing. Run migrations.'
-        : code === 'P2003'
-        ? 'Invalid relation id (package/addon/venue).'
-        : error?.message || 'Internal server error'
+    let message = 'Internal server error'
+    if (code === 'P2021') message = 'Database table missing. Run migrations.'
+    else if (code === 'P2003')
+      message = 'Invalid relation id (package/addon/venue).'
+    else if (code === 'P2002') message = 'Duplicate record conflict.'
+    else if (code === 'P1001')
+      message = 'Database not reachable. Check DATABASE_URL and network.'
+    else if (code === 'P1010')
+      message = 'User not authorized to access the database.'
+    else if (code === 'P1017')
+      message = 'Server closed the connection. Check DB availability.'
+    else if (error?.message) message = error.message
     return NextResponse.json({ success: false, message, code }, { status: 500 })
   }
 }

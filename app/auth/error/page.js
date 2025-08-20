@@ -3,7 +3,7 @@
 import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
-import Navigation from '../../../components/Navigation'
+import { Navigation } from '../../../lib/imports.js'
 import { motion } from 'framer-motion'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
@@ -37,7 +37,7 @@ function AuthErrorContent() {
   return (
     <div className="min-h-screen bg-primary">
       <Navigation />
-      
+
       <div className="pt-20 pb-16 min-h-screen flex items-center justify-center">
         <div className="w-full max-w-md">
           <motion.div
@@ -56,10 +56,8 @@ function AuthErrorContent() {
             <h1 className="text-2xl font-bold text-white mb-4">
               Authentication Error
             </h1>
-            
-            <p className="text-gray-300 mb-6">
-              {getErrorMessage(error)}
-            </p>
+
+            <p className="text-gray-300 mb-6">{getErrorMessage(error)}</p>
 
             {/* Action Buttons */}
             <div className="space-y-3">
@@ -69,7 +67,7 @@ function AuthErrorContent() {
               >
                 Try Again
               </button>
-              
+
               <button
                 onClick={handleGoHome}
                 className="w-full py-3 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-600 transition-colors"
@@ -91,12 +89,14 @@ function AuthErrorContent() {
 
 export default function AuthErrorPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-primary flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-primary flex items-center justify-center">
+          <div className="text-white text-xl">Loading...</div>
+        </div>
+      }
+    >
       <AuthErrorContent />
     </Suspense>
   )
-} 
+}

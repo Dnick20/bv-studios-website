@@ -16,6 +16,14 @@ import {
   ArrowRightIcon,
   CalendarIcon,
   ClockIcon,
+  HeartIcon,
+  CreditCardIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  StarIcon,
+  ChatBubbleLeftRightIcon,
+  BanknotesIcon,
+  GiftIcon,
 } from '@heroicons/react/24/outline'
 
 export default function Dashboard() {
@@ -23,11 +31,16 @@ export default function Dashboard() {
   const router = useRouter()
   const [userFiles, setUserFiles] = useState([])
   const [userProjects, setUserProjects] = useState([])
+  const [weddingData, setWeddingData] = useState(null)
+  const [contracts, setContracts] = useState([])
+  const [payments, setPayments] = useState([])
+  const [subscriptionStatus, setSubscriptionStatus] = useState(null)
   const [storageUsed, setStorageUsed] = useState(0)
   const [recentActivity, setRecentActivity] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [uploadFile, setUploadFile] = useState(null)
+  const [activeTab, setActiveTab] = useState('overview')
 
   useEffect(() => {
     if (status === 'loading') return
@@ -42,7 +55,23 @@ export default function Dashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      // Fetch user files
+      // Fetch wedding data
+      const weddingResponse = await safeFetchJson('/api/wedding/quotes', {}, { quotes: [] })
+      setWeddingData(weddingResponse.quotes?.[0] || null)
+
+      // Fetch contracts
+      const contractsData = await safeFetchJson('/api/contracts', {}, { contracts: [] })
+      setContracts(contractsData.contracts || [])
+
+      // Fetch payments
+      const paymentsData = await safeFetchJson('/api/payments', {}, { payments: [] })
+      setPayments(paymentsData.payments || [])
+
+      // Fetch subscription status
+      const subData = await safeFetchJson('/api/subscription', {}, { subscription: null })
+      setSubscriptionStatus(subData.subscription)
+
+      // Fetch user files (wedding deliverables)
       const filesData = await safeFetchJson('/api/files', {}, { files: [] })
       setUserFiles(filesData.files || [])
 
@@ -50,14 +79,6 @@ export default function Dashboard() {
       const totalSize =
         filesData.files?.reduce((sum, file) => sum + (file.size || 0), 0) || 0
       setStorageUsed(totalSize)
-
-      // Fetch user projects
-      const projectsData = await safeFetchJson(
-        '/api/projects',
-        {},
-        { projects: [] }
-      )
-      setUserProjects(projectsData.projects || [])
 
       // Fetch recent activity
       const activityData = await safeFetchJson(
@@ -185,7 +206,27 @@ export default function Dashboard() {
                 <h1 className="text-2xl font-bold text-white">
                   Welcome back, {session.user.name || 'User'}!
                 </h1>
-                <p className="text-gray-300">Manage your projects and files</p>
+                <p className="text-gray-300">
+                  {weddingData ? 
+                    `Your wedding: ${new Date(weddingData.eventDate).toLocaleDateString()}` : 
+                    'Your wedding portal'
+                  }
+                </p>
+                {subscriptionStatus && (
+                  <div className="flex items-center mt-2">
+                    <div className={`px-2 py-1 rounded-full text-xs ${
+                      subscriptionStatus.status === 'trial' ? 'bg-green-500/20 text-green-400' :
+                      subscriptionStatus.status === 'active' ? 'bg-blue-500/20 text-blue-400' :
+                      'bg-red-500/20 text-red-400'
+                    }`}>
+                      {subscriptionStatus.status === 'trial' ? 
+                        `${subscriptionStatus.daysLeft} days free remaining` :
+                        subscriptionStatus.status === 'active' ? 'Premium Access' :
+                        'Subscription Expired'
+                      }
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
             <Link
@@ -198,11 +239,56 @@ export default function Dashboard() {
         </div>
       </header>
 
+      {/* Navigation Tabs */}
+      <div className="bg-black/10 border-b border-gray-800">
+        <div className="container mx-auto px-4">
+          <nav className="flex space-x-8">
+            {[
+              { id: 'overview', name: 'Overview', icon: UserIcon },
+              { id: 'contracts', name: 'Contracts', icon: DocumentIcon },
+              { id: 'payments', name: 'Payments', icon: CreditCardIcon },
+              { id: 'files', name: 'Your Files', icon: FolderIcon },
+              { id: 'timeline', name: 'Timeline', icon: CalendarIcon },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center space-x-2 px-4 py-4 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === tab.id
+                    ? 'border-accent text-accent'
+                    : 'border-transparent text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                <tab.icon className="w-4 h-4" />
+                <span>{tab.name}</span>
+              </button>
+            ))}
+          </nav>
+        </div>
+      </div>
+
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Stats Cards */}
-          <div className="lg:col-span-2">
+        {/* Overview Tab */}
+        {activeTab === 'overview' && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Stats Cards */}
+            <div className="lg:col-span-2">
+            {/* Wedding Status Card */}
+            {weddingData && (
+              <div className="bg-gradient-to-r from-wedding-accent/20 to-accent/10 rounded-lg p-6 border border-wedding-accent/30 mb-8">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-2">Your Wedding</h3>
+                    <p className="text-gray-300">Date: {new Date(weddingData.eventDate).toLocaleDateString()}</p>
+                    <p className="text-gray-300">Package: {weddingData.package?.name}</p>
+                    <p className="text-gray-300">Status: {weddingData.status}</p>
+                  </div>
+                  <HeartIcon className="w-12 h-12 text-wedding-accent" />
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -211,12 +297,12 @@ export default function Dashboard() {
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-300 text-sm">Total Files</p>
+                    <p className="text-gray-300 text-sm">Your Deliverables</p>
                     <p className="text-3xl font-bold text-white">
                       {userFiles.length}
                     </p>
                   </div>
-                  <FolderIcon className="w-8 h-8 text-accent" />
+                  <GiftIcon className="w-8 h-8 text-accent" />
                 </div>
               </motion.div>
 
@@ -228,12 +314,13 @@ export default function Dashboard() {
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-300 text-sm">Active Projects</p>
+                    <p className="text-gray-300 text-sm">Contracts Status</p>
                     <p className="text-3xl font-bold text-white">
-                      {userProjects.length}
+                      {contracts.filter(c => c.status === 'signed').length}/{contracts.length}
                     </p>
+                    <p className="text-xs text-gray-400">Signed</p>
                   </div>
-                  <CalendarIcon className="w-8 h-8 text-accent" />
+                  <DocumentIcon className="w-8 h-8 text-accent" />
                 </div>
               </motion.div>
 
@@ -245,28 +332,63 @@ export default function Dashboard() {
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-300 text-sm">Storage Used</p>
+                    <p className="text-gray-300 text-sm">Payment Status</p>
                     <p className="text-3xl font-bold text-white">
-                      {formatFileSize(storageUsed)}
+                      {payments.filter(p => p.status === 'paid').length}/{payments.length}
                     </p>
+                    <p className="text-xs text-gray-400">Completed</p>
                   </div>
-                  <ClockIcon className="w-8 h-8 text-accent" />
+                  <BanknotesIcon className="w-8 h-8 text-accent" />
                 </div>
               </motion.div>
             </div>
 
-            {/* Recent Files */}
+            {/* Quick Actions */}
             <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-white">Recent Files</h2>
+              <h2 className="text-xl font-bold text-white mb-6">Quick Actions</h2>
+              <div className="grid grid-cols-2 gap-4">
                 <button
-                  onClick={() => setShowUploadModal(true)}
-                  className="flex items-center space-x-2 text-accent hover:text-accent/80 transition-colors"
+                  onClick={() => setActiveTab('contracts')}
+                  className="flex items-center space-x-3 p-4 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
                 >
-                  <PlusIcon className="w-5 h-5" />
-                  <span>Upload File</span>
+                  <DocumentIcon className="w-6 h-6 text-accent" />
+                  <div className="text-left">
+                    <p className="font-medium text-white">Review Contracts</p>
+                    <p className="text-xs text-gray-400">{contracts.filter(c => c.status === 'pending').length} pending</p>
+                  </div>
                 </button>
+                <button
+                  onClick={() => setActiveTab('payments')}
+                  className="flex items-center space-x-3 p-4 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
+                >
+                  <CreditCardIcon className="w-6 h-6 text-accent" />
+                  <div className="text-left">
+                    <p className="font-medium text-white">Make Payment</p>
+                    <p className="text-xs text-gray-400">{payments.filter(p => p.status === 'pending').length} due</p>
+                  </div>
+                </button>
+                <button
+                  onClick={() => setActiveTab('files')}
+                  className="flex items-center space-x-3 p-4 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
+                >
+                  <FolderIcon className="w-6 h-6 text-accent" />
+                  <div className="text-left">
+                    <p className="font-medium text-white">View Files</p>
+                    <p className="text-xs text-gray-400">{userFiles.length} deliverables</p>
+                  </div>
+                </button>
+                <Link
+                  href="/my-quotes"
+                  className="flex items-center space-x-3 p-4 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
+                >
+                  <StarIcon className="w-6 h-6 text-accent" />
+                  <div className="text-left">
+                    <p className="font-medium text-white">My Quotes</p>
+                    <p className="text-xs text-gray-400">View details</p>
+                  </div>
+                </Link>
               </div>
+            </div>
 
               {userFiles.length === 0 ? (
                 <div className="text-center py-12">
@@ -325,56 +447,45 @@ export default function Dashboard() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Quick Actions */}
-            <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
-              <h3 className="text-lg font-bold text-white mb-4">
-                Quick Actions
-              </h3>
-              <div className="space-y-3">
-                <Link
-                  href="/dashboard/bride"
-                  className="flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
-                >
-                  <VideoCameraIcon className="w-5 h-5 text-accent" />
-                  <span className="text-white">Wedding Dashboard (KY Brides)</span>
-                </Link>
-                <Link
-                  href="/wedding-booking"
-                  className="flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
-                >
-                  <VideoCameraIcon className="w-5 h-5 text-accent" />
-                  <span className="text-white">Book Wedding</span>
-                </Link>
-                <Link
-                  href="/my-quotes"
-                  className="flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
-                >
-                  <DocumentIcon className="w-5 h-5 text-accent" />
-                  <span className="text-white">My Quotes</span>
-                </Link>
-                <Link
-                  href="/dashboard"
-                  className="flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
-                >
-                  <PlusIcon className="w-5 h-5 text-accent" />
-                  <span className="text-white">New Project</span>
-                </Link>
-                <button
-                  onClick={() => setShowUploadModal(true)}
-                  className="w-full flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
-                >
-                  <PhotoIcon className="w-5 h-5 text-accent" />
-                  <span className="text-white">Upload Files</span>
-                </button>
-                <button
-                  onClick={handleViewReports}
-                  className="w-full flex items-center space-x-3 p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
-                >
-                  <DocumentIcon className="w-5 h-5 text-accent" />
-                  <span className="text-white">View Reports</span>
-                </button>
+            {/* Subscription Status */}
+            {subscriptionStatus && (
+              <div className="bg-gradient-to-r from-blue-500/20 to-green-500/20 rounded-lg p-6 border border-blue-500/30">
+                <h3 className="text-lg font-bold text-white mb-4">
+                  Access Status
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-300">Current Plan</span>
+                    <span className="text-white font-medium">
+                      {subscriptionStatus.status === 'trial' ? 'Free Trial' : 'Premium'}
+                    </span>
+                  </div>
+                  {subscriptionStatus.status === 'trial' && (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-300">Days Remaining</span>
+                        <span className="text-green-400 font-bold">
+                          {subscriptionStatus.daysLeft}
+                        </span>
+                      </div>
+                      <div className="bg-black/20 rounded-full h-2">
+                        <div 
+                          className="bg-green-400 h-2 rounded-full"
+                          style={{ width: `${(subscriptionStatus.daysLeft / 60) * 100}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-xs text-gray-400">
+                        Continue for $10/month after trial
+                      </p>
+                    </div>
+                  )}\n                  {subscriptionStatus.status === 'expired' && (
+                    <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                      Renew Access - $10/month
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Recent Activity */}
             <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
@@ -398,6 +509,175 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+        )}\n\n        {/* Contracts Tab */}
+        {activeTab === 'contracts' && (
+          <div className="space-y-6">
+            <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
+              <h2 className="text-xl font-bold text-white mb-6">Your Contracts</h2>
+              {contracts.length === 0 ? (
+                <div className="text-center py-12">
+                  <DocumentIcon className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                  <p className="text-gray-400 mb-4">No contracts available yet</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {contracts.map((contract, index) => (
+                    <div key={contract.id} className="bg-black/10 rounded-lg p-6 border border-gray-700">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold text-white">{contract.title}</h3>
+                          <p className="text-gray-400">Created: {new Date(contract.createdAt).toLocaleDateString()}</p>
+                        </div>
+                        <div className={`px-3 py-1 rounded-full text-sm ${\n                          contract.status === 'signed' ? 'bg-green-500/20 text-green-400' :\n                          contract.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :\n                          'bg-gray-500/20 text-gray-400'\n                        }`}>
+                          {contract.status}
+                        </div>
+                      </div>
+                      <p className="text-gray-300 mb-4">{contract.description}</p>
+                      <div className="flex space-x-3">
+                        <button className="px-4 py-2 bg-accent text-primary rounded hover:bg-accent/90 transition-colors">
+                          View Contract
+                        </button>
+                        {contract.status === 'pending' && (
+                          <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
+                            Sign Contract
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Payments Tab */}
+        {activeTab === 'payments' && (
+          <div className="space-y-6">
+            <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
+              <h2 className="text-xl font-bold text-white mb-6">Payment Schedule</h2>
+              {payments.length === 0 ? (
+                <div className="text-center py-12">
+                  <CreditCardIcon className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                  <p className="text-gray-400 mb-4">No payments scheduled</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {payments.map((payment, index) => (
+                    <div key={payment.id} className="bg-black/10 rounded-lg p-6 border border-gray-700">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold text-white">{payment.description}</h3>
+                          <p className="text-gray-400">Due: {new Date(payment.dueDate).toLocaleDateString()}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-white">${payment.amount}</p>
+                          <div className={`px-3 py-1 rounded-full text-sm ${\n                            payment.status === 'paid' ? 'bg-green-500/20 text-green-400' :\n                            payment.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :\n                            'bg-red-500/20 text-red-400'\n                          }`}>
+                            {payment.status}
+                          </div>
+                        </div>
+                      </div>
+                      {payment.status === 'pending' && (
+                        <div className="flex space-x-3">
+                          <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
+                            Pay Now
+                          </button>
+                          <button className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">
+                            Set up Payment Plan
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Files Tab */}
+        {activeTab === 'files' && (
+          <div className="space-y-6">
+            <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-white">Your Wedding Deliverables</h2>
+                <div className="text-right">
+                  <p className="text-sm text-gray-400">Storage Used</p>
+                  <p className="font-semibold text-white">{formatFileSize(storageUsed)}</p>
+                </div>
+              </div>
+              {userFiles.length === 0 ? (
+                <div className="text-center py-12">
+                  <FolderIcon className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                  <p className="text-gray-400 mb-4">Your wedding files will appear here once ready</p>
+                  <p className="text-sm text-gray-500">Files are typically delivered within 6-8 weeks after your wedding</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {userFiles.map((file, index) => (
+                    <div key={file.id} className="bg-black/10 rounded-lg p-4 border border-gray-700">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center">
+                          {getFileIcon(file.type)}
+                        </div>
+                        {file.isNew && (
+                          <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">New</span>
+                        )}
+                      </div>
+                      <h3 className="font-medium text-white mb-1">{file.name}</h3>
+                      <p className="text-sm text-gray-400 mb-3">{formatFileSize(file.size)}</p>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleFileAction(file.id, 'view')}
+                          className="flex-1 px-3 py-2 bg-accent/20 text-accent rounded text-sm hover:bg-accent/30 transition-colors"
+                        >
+                          Preview
+                        </button>
+                        <button
+                          onClick={() => handleFileAction(file.id, 'download')}
+                          className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-sm hover:bg-gray-700 transition-colors"
+                        >
+                          Download
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Timeline Tab */}
+        {activeTab === 'timeline' && (
+          <div className="space-y-6">
+            <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
+              <h2 className="text-xl font-bold text-white mb-6">Wedding Timeline</h2>
+              <div className="space-y-6">
+                {[\n                  { status: 'completed', title: 'Initial Consultation', date: '2024-01-15', description: 'Met to discuss your vision and requirements' },\n                  { status: 'completed', title: 'Contract Signed', date: '2024-01-22', description: 'Wedding videography contract executed' },\n                  { status: 'completed', title: 'Deposit Received', date: '2024-01-22', description: 'Initial payment processed' },\n                  { status: 'current', title: 'Pre-Wedding Planning', date: '2024-08-15', description: 'Timeline planning and shot list creation' },\n                  { status: 'upcoming', title: 'Wedding Day', date: weddingData?.eventDate || '2024-10-15', description: 'Your special day - full videography coverage' },\n                  { status: 'upcoming', title: 'Post-Production', date: '2024-10-22', description: 'Video editing and color correction (6-8 weeks)' },\n                  { status: 'upcoming', title: 'Final Delivery', date: '2024-12-10', description: 'Wedding film and all deliverables ready' },\n                ].map((item, index) => (
+                  <div key={index} className="flex items-start space-x-4">
+                    <div className={`w-4 h-4 rounded-full mt-1 ${\n                      item.status === 'completed' ? 'bg-green-500' :\n                      item.status === 'current' ? 'bg-accent' :\n                      'bg-gray-500'\n                    }`}></div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <h3 className="font-semibold text-white">{item.title}</h3>
+                        <span className="text-sm text-gray-400">{new Date(item.date).toLocaleDateString()}</span>
+                      </div>
+                      <p className="text-gray-300 text-sm">{item.description}</p>
+                      {item.status === 'current' && (
+                        <div className="mt-2">
+                          <div className="bg-black/20 rounded-full h-2">
+                            <div className="bg-accent h-2 rounded-full w-1/3"></div>
+                          </div>
+                          <p className="text-xs text-accent mt-1">In Progress</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Upload Modal */}

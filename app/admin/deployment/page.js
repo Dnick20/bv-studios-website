@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import AdminLayout from '../../../components/AdminLayout'
-import { safeJson } from '../../../lib/utils/safeJson'
+import { AdminLayout, safeJson } from '../../../lib/imports.js'
 import {
   RocketLaunchIcon,
   PlayIcon,
@@ -13,7 +12,7 @@ import {
   ClockIcon,
   CheckCircleIcon,
   XCircleIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline'
 
 export default function DeploymentPage() {
@@ -44,7 +43,7 @@ export default function DeploymentPage() {
         setDeploymentData(data)
         setConfig({
           deploymentDelay: data.status?.deploymentDelay || 30000,
-          maxDeploymentsPerHour: data.status?.maxDeploymentsPerHour || 5
+          maxDeploymentsPerHour: data.status?.maxDeploymentsPerHour || 5,
         })
       }
     } catch (error) {
@@ -64,17 +63,17 @@ export default function DeploymentPage() {
         },
         body: JSON.stringify({
           action,
-          ...additionalData
+          ...additionalData,
         }),
       })
 
       if (response.ok) {
         const result = await safeJson(response)
         console.log(`${action} result:`, result)
-        
+
         // Refresh data
         await fetchDeploymentData()
-        
+
         // Show success message
         alert(`Action "${action}" completed successfully!`)
       } else {
@@ -132,7 +131,8 @@ export default function DeploymentPage() {
             Auto-Deployment Management
           </h1>
           <p className="mt-2 text-gray-600">
-            Monitor and control automatic deployments triggered by bot activities
+            Monitor and control automatic deployments triggered by bot
+            activities
           </p>
         </div>
 
@@ -140,7 +140,13 @@ export default function DeploymentPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
-              <div className={`p-2 rounded-full ${deploymentData?.status?.enabled ? 'bg-green-100' : 'bg-red-100'}`}>
+              <div
+                className={`p-2 rounded-full ${
+                  deploymentData?.status?.enabled
+                    ? 'bg-green-100'
+                    : 'bg-red-100'
+                }`}
+              >
                 {deploymentData?.status?.enabled ? (
                   <CheckCircleIcon className="h-6 w-6 text-green-600" />
                 ) : (
@@ -149,7 +155,13 @@ export default function DeploymentPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Status</p>
-                <p className={`text-lg font-semibold ${deploymentData?.status?.enabled ? 'text-green-600' : 'text-red-600'}`}>
+                <p
+                  className={`text-lg font-semibold ${
+                    deploymentData?.status?.enabled
+                      ? 'text-green-600'
+                      : 'text-red-600'
+                  }`}
+                >
                   {deploymentData?.status?.enabled ? 'Enabled' : 'Disabled'}
                 </p>
               </div>
@@ -162,7 +174,9 @@ export default function DeploymentPage() {
                 <ClockIcon className="h-6 w-6 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Pending Deployments</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Pending Deployments
+                </p>
                 <p className="text-lg font-semibold text-gray-900">
                   {deploymentData?.status?.pendingDeployments?.length || 0}
                 </p>
@@ -176,9 +190,12 @@ export default function DeploymentPage() {
                 <RocketLaunchIcon className="h-6 w-6 text-purple-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Deployments This Hour</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Deployments This Hour
+                </p>
                 <p className="text-lg font-semibold text-gray-900">
-                  {deploymentData?.status?.deploymentCount || 0} / {deploymentData?.status?.maxDeploymentsPerHour || 5}
+                  {deploymentData?.status?.deploymentCount || 0} /{' '}
+                  {deploymentData?.status?.maxDeploymentsPerHour || 5}
                 </p>
               </div>
             </div>
@@ -186,12 +203,30 @@ export default function DeploymentPage() {
 
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
-              <div className={`p-2 rounded-full ${deploymentData?.isDeploying ? 'bg-yellow-100' : 'bg-gray-100'}`}>
-                <ExclamationTriangleIcon className={`h-6 w-6 ${deploymentData?.isDeploying ? 'text-yellow-600' : 'text-gray-600'}`} />
+              <div
+                className={`p-2 rounded-full ${
+                  deploymentData?.isDeploying ? 'bg-yellow-100' : 'bg-gray-100'
+                }`}
+              >
+                <ExclamationTriangleIcon
+                  className={`h-6 w-6 ${
+                    deploymentData?.isDeploying
+                      ? 'text-yellow-600'
+                      : 'text-gray-600'
+                  }`}
+                />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Currently Deploying</p>
-                <p className={`text-lg font-semibold ${deploymentData?.isDeploying ? 'text-yellow-600' : 'text-gray-600'}`}>
+                <p className="text-sm font-medium text-gray-500">
+                  Currently Deploying
+                </p>
+                <p
+                  className={`text-lg font-semibold ${
+                    deploymentData?.isDeploying
+                      ? 'text-yellow-600'
+                      : 'text-gray-600'
+                  }`}
+                >
                   {deploymentData?.isDeploying ? 'Yes' : 'No'}
                 </p>
               </div>
@@ -244,25 +279,33 @@ export default function DeploymentPage() {
         {/* Last Deployment */}
         {deploymentData?.lastDeployment && (
           <div className="bg-white rounded-lg shadow p-6 mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Last Deployment</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              Last Deployment
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm font-medium text-gray-500">Status</p>
-                <p className="text-lg font-semibold text-gray-900">{deploymentData.lastDeployment.status}</p>
+                <p className="text-lg font-semibold text-gray-900">
+                  {deploymentData.lastDeployment.status}
+                </p>
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">Duration</p>
-                <p className="text-lg font-semibold text-gray-900">{formatDuration(deploymentData.lastDeployment.duration)}</p>
+                <p className="text-lg font-semibold text-gray-900">
+                  {formatDuration(deploymentData.lastDeployment.duration)}
+                </p>
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">Timestamp</p>
-                <p className="text-lg font-semibold text-gray-900">{formatTimestamp(deploymentData.lastDeployment.timestamp)}</p>
+                <p className="text-lg font-semibold text-gray-900">
+                  {formatTimestamp(deploymentData.lastDeployment.timestamp)}
+                </p>
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">URL</p>
-                <a 
-                  href={deploymentData.lastDeployment.url} 
-                  target="_blank" 
+                <a
+                  href={deploymentData.lastDeployment.url}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:text-blue-800 break-all"
                 >
@@ -274,53 +317,79 @@ export default function DeploymentPage() {
         )}
 
         {/* Deployment History */}
-        {deploymentData?.deploymentHistory && deploymentData.deploymentHistory.length > 0 && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Deployment History</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Environment</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trigger</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {deploymentData.deploymentHistory.slice(-10).reverse().map((deployment, index) => (
-                    <tr key={index}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {formatTimestamp(deployment.timestamp)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{deployment.type}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{deployment.environment}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{deployment.trigger || 'N/A'}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          deployment.status === 'success' 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {deployment.status}
-                        </span>
-                      </td>
+        {deploymentData?.deploymentHistory &&
+          deploymentData.deploymentHistory.length > 0 && (
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Deployment History
+              </h2>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Timestamp
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Type
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Environment
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Trigger
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {deploymentData.deploymentHistory
+                      .slice(-10)
+                      .reverse()
+                      .map((deployment, index) => (
+                        <tr key={index}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {formatTimestamp(deployment.timestamp)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {deployment.type}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {deployment.environment}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {deployment.trigger || 'N/A'}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span
+                              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                deployment.status === 'success'
+                                  ? 'bg-green-100 text-green-800'
+                                  : 'bg-red-100 text-red-800'
+                              }`}
+                            >
+                              {deployment.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Configuration Modal */}
         {configModal && (
           <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
             <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
               <div className="mt-3">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Auto-Deployment Configuration</h3>
-                
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Auto-Deployment Configuration
+                </h3>
+
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Deployment Delay (ms)
@@ -328,7 +397,12 @@ export default function DeploymentPage() {
                   <input
                     type="number"
                     value={config.deploymentDelay}
-                    onChange={(e) => setConfig({...config, deploymentDelay: parseInt(e.target.value)})}
+                    onChange={(e) =>
+                      setConfig({
+                        ...config,
+                        deploymentDelay: parseInt(e.target.value),
+                      })
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -340,7 +414,12 @@ export default function DeploymentPage() {
                   <input
                     type="number"
                     value={config.maxDeploymentsPerHour}
-                    onChange={(e) => setConfig({...config, maxDeploymentsPerHour: parseInt(e.target.value)})}
+                    onChange={(e) =>
+                      setConfig({
+                        ...config,
+                        maxDeploymentsPerHour: parseInt(e.target.value),
+                      })
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>

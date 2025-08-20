@@ -254,7 +254,9 @@ const WeddingBookingPage = () => {
         const error = await safeJson(response)
         analytics.conversionAbandoned('submission_error', error.message)
         console.error('Quote submission failed:', error)
-        alert(`Error: ${error.message}${error.code ? ` (code: ${error.code})` : ''}`)
+        alert(
+          `Error: ${error.message}${error.code ? ` (code: ${error.code})` : ''}`
+        )
       }
     } catch (error) {
       console.error('Error submitting quote:', error)

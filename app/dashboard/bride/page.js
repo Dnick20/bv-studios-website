@@ -80,7 +80,9 @@ export default function BrideDashboardPage() {
       setQuestionnaire(data.data)
       alert('Saved! Your responses were sent to admin.')
       if (data?.code === 'P2021') {
-        alert('Heads up: The questionnaire table is not migrated yet. Please run database migrations in production to persist responses.')
+        alert(
+          'Heads up: The questionnaire table is not migrated yet. Please run database migrations in production to persist responses.'
+        )
       }
       router.push('/dashboard/bride/overview')
     } catch (e) {

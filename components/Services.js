@@ -127,7 +127,9 @@ export default function Services() {
             role="region"
             aria-label="Marketing Managers audience"
           >
-            <div className="text-white font-semibold">📈 Marketing Managers</div>
+            <div className="text-white font-semibold">
+              📈 Marketing Managers
+            </div>
             <div className="text-gray-300">
               Data-driven case studies designed to boost your campaign ROI.
             </div>
@@ -148,7 +150,9 @@ export default function Services() {
             role="region"
             aria-label="Product Launch Teams audience"
           >
-            <div className="text-white font-semibold">🚀 Product Launch Teams</div>
+            <div className="text-white font-semibold">
+              🚀 Product Launch Teams
+            </div>
             <div className="text-gray-300">
               High-energy launch films and demos for tech & consumer brands.
             </div>

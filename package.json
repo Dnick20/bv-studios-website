@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma generate && prisma migrate deploy && next build",
+    "build": "prisma generate && next build",
     "migrate:deploy": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev --name add-wedding-questionnaire",
     "start": "next start",
@@ -18,7 +18,12 @@
     "pre-commit": "npm run validate",
     "prepare": "husky",
     "spell:add": "node scripts/add-spell-check-word.js",
-    "postinstall": "prisma generate"
+    "check-duplicates": "node scripts/duplicate-checker.js",
+    "claude:check": "npm run check-duplicates && echo '\n✅ Claude Code: Safe to proceed - No duplicates detected'",
+    "claude:search": "node scripts/claude-helper.js",
+    "claude:imports": "echo '\n📦 Available Centralized Imports:' && cat lib/imports.js 2>/dev/null || echo 'lib/imports.js not found'",
+    "claude:structure": "echo '\n📁 Project Structure:' && find . -type f -name '*.js' -not -path './node_modules/*' | head -20 && echo '...(truncated)'",
+    "claude:components": "echo '\n🧩 Available Components:' && find ./components -name '*.js' 2>/dev/null | sed 's|./components/||' | sed 's|.js$||' || echo 'No components directory found'"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

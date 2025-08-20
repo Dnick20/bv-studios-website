@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { safeJson } from '../../../../lib/utils/safeJson'
+import { safeJson } from '../../../../lib/imports.js'
 
 export default function MediaUploadManagement() {
   const router = useRouter()

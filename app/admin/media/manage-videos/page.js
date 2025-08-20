@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { safeJson } from '../../../../lib/utils/safeJson'
+import { safeJson } from '../../../../lib/imports.js'
 
 export default function VideoManagement() {
   const router = useRouter()

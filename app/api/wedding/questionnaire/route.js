@@ -44,8 +44,12 @@ export async function GET(request) {
           : null
         return NextResponse.json({
           success: true,
-          data: { questionnaire: null, defaultWeddingDate: firstQuote?.eventDate ?? null },
-          message: 'Wedding questionnaire not yet set up. Please run database migrations.',
+          data: {
+            questionnaire: null,
+            defaultWeddingDate: firstQuote?.eventDate ?? null,
+          },
+          message:
+            'Wedding questionnaire not yet set up. Please run database migrations.',
           code: 'P2021',
         })
       } catch {}
@@ -94,9 +98,13 @@ export async function POST(request) {
   } catch (error) {
     console.error('Questionnaire POST error:', error)
     let message = 'Internal server error'
-    if (error?.code === 'P2021') message = 'Wedding questionnaire not yet set up. Please run database migrations.'
-    else if (error?.code === 'P2002') message = 'Unique constraint violation while saving questionnaire.'
-    else if (error?.code === 'P1001') message = 'Database not reachable. Check DATABASE_URL.'
+    if (error?.code === 'P2021')
+      message =
+        'Wedding questionnaire not yet set up. Please run database migrations.'
+    else if (error?.code === 'P2002')
+      message = 'Unique constraint violation while saving questionnaire.'
+    else if (error?.code === 'P1001')
+      message = 'Database not reachable. Check DATABASE_URL.'
     return NextResponse.json(
       { success: false, message, code: error?.code || null },
       { status: 500 }
