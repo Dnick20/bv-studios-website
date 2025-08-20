@@ -4,18 +4,18 @@
 
 ### **Before Creating ANY New Component/File:**
 
-1. **🔍 Search Existing Codebase (Claude Code Workflow)**
-
-   ```bash
-   # Claude Code enhanced workflow (recommended)
-   npm run claude:check                    # Full duplicate analysis
-   npm run claude:search [ComponentName]   # Intelligent search
-   npm run claude:imports                  # View available imports
-   
-   # Traditional search commands
-   grep -r "function.*ComponentName" .
-   grep -r "export.*ComponentName" .
-   find . -name "*ComponentName*"
+1. **🔍 Search Existing Codebase (Cursor AI Workflow)**
+ 
+    ```bash
+    # Cursor AI enhanced workflow (recommended)
+    npm run cursor:check                    # Full duplicate analysis
+    npm run cursor:search [ComponentName]   # Intelligent search
+    npm run cursor:imports                  # View available imports
+    
+    # Traditional search commands
+    grep -r "function.*ComponentName" .
+    grep -r "export.*ComponentName" .
+    find . -name "*ComponentName*"
    ```
 
 2. **📁 Check Directory Structure**
@@ -159,13 +159,13 @@ image-optimizer.sh
 
 ## 🛠️ **Tools & Commands for Prevention**
 
-### **1. Search Before Create (Claude Code Enhanced)**
-
-```bash
-# Claude Code workflow (preferred)
-npm run claude:search ComponentName  # Comprehensive analysis
-npm run claude:check                 # Full duplicate check
-npm run claude:components           # List all components
+### **1. Search Before Create (Cursor AI Enhanced)**
+ 
+ ```bash
+ # Cursor AI workflow (preferred)
+ npm run cursor:search ComponentName  # Comprehensive analysis
+ npm run cursor:check                 # Full duplicate check
+ npm run cursor:components           # List all components
 
 # Traditional search for existing functionality
 grep -r "function.*ComponentName" .
@@ -256,26 +256,26 @@ grep -r "import.*from.*lib/" .
 4. **Scripts**: Group by functionality
 
 ## 🚀 **Implementation Workflow**
-
-### **Claude Code Workflow:**
-
-1. **Pre-Check Phase**
-   ```bash
-   npm run claude:check          # Verify no duplicates
-   npm run claude:search [term]  # Search specific feature
-   ```
-
-2. **Share Context with Claude Code**
-   ```
-   "Ran duplicate check: [paste results]
-   Please extend existing vs create new"
-   ```
-
-3. **Post-Implementation**
-   ```bash
-   npm run check-duplicates  # Verify no new duplicates
-   npm run build            # Ensure builds correctly
-   ```
+ 
+ ### **Cursor AI Workflow:**
+ 
+ 1. **Pre-Check Phase**
+    ```bash
+    npm run cursor:check          # Verify no duplicates
+    npm run cursor:search [term]  # Search specific feature
+    ```
+ 
+ 2. **Share Context with Cursor AI**
+    ```
+    "Ran duplicate check: [paste results]
+    Please extend existing vs create new"
+    ```
+ 
+ 3. **Post-Implementation**
+    ```bash
+    npm run check-duplicates  # Verify no new duplicates
+    npm run build            # Ensure builds correctly
+    ```
 
 ### **Standard Workflow:**
 

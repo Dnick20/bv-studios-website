@@ -1,25 +1,25 @@
 # Quick Reference - Duplicate Prevention
 
-## 🚀 Claude Code Quick Commands
+## 🚀 Cursor AI Quick Commands
 
 ### Before Every Request
 ```bash
-npm run claude:check          # Full duplicate analysis
-npm run claude:search [term]  # Search for specific functionality
-npm run claude:imports        # Show available imports
+npm run cursor:check          # Full duplicate analysis
+npm run cursor:search [term]  # Search for specific functionality
+npm run cursor:imports        # Show available imports
 ```
 
 ### Essential Workflow
-1. **Check**: `npm run claude:check`
-2. **Search**: `npm run claude:search auth` (replace 'auth' with your feature)
-3. **Share**: Copy results to Claude Code
-4. **Request**: Ask Claude Code to extend existing vs create new
+1. **Check**: `npm run cursor:check`
+2. **Search**: `npm run cursor:search auth` (replace 'auth' with your feature)
+3. **Share**: Copy results to Cursor AI
+4. **Request**: Ask Cursor AI to extend existing vs create new
 
 ## 📋 Quick Templates
 
 ### New Component Request
 ```
-Pre-check: `npm run claude:search ComponentName` shows [results]
+Pre-check: `npm run cursor:search ComponentName` shows [results]
 Request: Create ComponentName that [functionality]
 Requirements: Use lib/imports.js, follow existing patterns
 ```
@@ -77,7 +77,7 @@ npm run claude:search payment
 ## 🎯 Success Pattern
 
 1. ✅ Run duplicate check
-2. ✅ Share results with Claude Code  
+2. ✅ Share results with Cursor AI  
 3. ✅ Reference existing patterns
 4. ✅ Extend rather than create new
 5. ✅ Use centralized imports
@@ -95,11 +95,11 @@ Stop and check if creating:
 ## 📊 Available Scripts
 
 ```bash
-npm run claude:check      # Full analysis
-npm run claude:search     # Feature search  
-npm run claude:imports    # Show imports
-npm run claude:structure  # Project overview
-npm run claude:components # List components
+npm run cursor:check      # Full analysis
+npm run cursor:search     # Feature search  
+npm run cursor:imports    # Show imports
+npm run cursor:structure  # Project overview
+npm run cursor:components # List components
 npm run check-duplicates  # Base duplicate check
 npm run validate         # Code validation
 npm run test            # Run tests

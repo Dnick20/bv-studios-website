@@ -19,11 +19,11 @@
     "prepare": "husky",
     "spell:add": "node scripts/add-spell-check-word.js",
     "check-duplicates": "node scripts/duplicate-checker.js",
-    "claude:check": "npm run check-duplicates && echo '\n✅ Claude Code: Safe to proceed - No duplicates detected'",
-    "claude:search": "node scripts/claude-helper.js",
-    "claude:imports": "echo '\n📦 Available Centralized Imports:' && cat lib/imports.js 2>/dev/null || echo 'lib/imports.js not found'",
-    "claude:structure": "echo '\n📁 Project Structure:' && find . -type f -name '*.js' -not -path './node_modules/*' | head -20 && echo '...(truncated)'",
-    "claude:components": "echo '\n🧩 Available Components:' && find ./components -name '*.js' 2>/dev/null | sed 's|./components/||' | sed 's|.js$||' || echo 'No components directory found'"
+    "cursor:check": "npm run check-duplicates && echo '\n✅ Cursor AI: Safe to proceed - No duplicates detected'",
+    "cursor:search": "node scripts/cursor-helper.js",
+    "cursor:imports": "echo '\n📦 Available Centralized Imports:' && cat lib/imports.js 2>/dev/null || echo 'lib/imports.js not found'",
+    "cursor:structure": "echo '\n📁 Project Structure:' && find . -type f -name '*.js' -not -path './node_modules/*' | head -20 && echo '...(truncated)'",
+    "cursor:components": "echo '\n🧩 Available Components:' && find ./components -name '*.js' 2>/dev/null | sed 's|./components/||' | sed 's|.js$||' || echo 'No components directory found'"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
