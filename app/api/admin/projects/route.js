@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '../../../../lib/imports.js'
+import { prisma } from '../../../../lib/prisma.js'
 
 export async function GET() {
   try {
@@ -15,22 +15,22 @@ export async function GET() {
         user: {
           select: {
             name: true,
-            email: true
-          }
-        }
+            email: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: 'desc',
+      },
     })
 
     return NextResponse.json(projects)
   } catch (error) {
     console.error('Error fetching projects:', error)
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch projects',
-        message: error.message 
+        message: error.message,
       },
       { status: 500 }
     )
@@ -54,17 +54,17 @@ export async function POST(request) {
         title,
         description,
         budget: budget || 0,
-        status
-      }
+        status,
+      },
     })
 
     return NextResponse.json(project, { status: 201 })
   } catch (error) {
     console.error('Error creating project:', error)
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to create project',
-        message: error.message 
+        message: error.message,
       },
       { status: 500 }
     )

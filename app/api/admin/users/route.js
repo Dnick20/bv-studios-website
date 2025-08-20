@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '../../../../lib/imports.js'
+import { prisma } from '../../../../lib/prisma.js'
 
 export async function GET() {
   try {
@@ -10,20 +10,20 @@ export async function GET() {
         email: true,
         role: true,
         createdAt: true,
-        updatedAt: true
+        updatedAt: true,
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: 'desc',
+      },
     })
 
     return NextResponse.json(users)
   } catch (error) {
     console.error('Error fetching users:', error)
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch users',
-        message: error.message 
+        message: error.message,
       },
       { status: 500 }
     )
@@ -46,17 +46,17 @@ export async function POST(request) {
       data: {
         name,
         email,
-        role
-      }
+        role,
+      },
     })
 
     return NextResponse.json(user, { status: 201 })
   } catch (error) {
     console.error('Error creating user:', error)
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to create user',
-        message: error.message 
+        message: error.message,
       },
       { status: 500 }
     )

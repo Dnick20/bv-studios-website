@@ -7,7 +7,7 @@ import {
   WeddingQuoteManager,
   analytics,
   safeJson,
-} from '../../../lib/imports.js'
+} from '../../../lib/client-imports.js'
 import {
   DocumentIcon,
   CreditCardIcon,

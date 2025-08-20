@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { AdminLayout, safeJson } from '../../../lib/imports.js'
+import { AdminLayout, safeJson } from '../../../lib/client-imports.js'
 
 export default function BotsPage() {
   const [health, setHealth] = useState(null)

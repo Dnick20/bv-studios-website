@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { AdminLayout, safeJson } from '../../../lib/imports.js'
+import { AdminLayout, safeJson } from '../../../lib/client-imports.js'
 import {
   RocketLaunchIcon,
   PlayIcon,
