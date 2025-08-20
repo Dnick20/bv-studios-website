@@ -27,7 +27,7 @@ export async function GET() {
       },
     }
 
-    return NextResponse.json(stats)
+    return NextResponse.json({ stats })
   } catch (error) {
     console.error('Error fetching admin stats:', error)
     return NextResponse.json(
