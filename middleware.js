@@ -3,6 +3,12 @@ import { NextResponse } from 'next/server'
 export async function middleware(request) {
   const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
   const isAdminLoginPage = request.nextUrl.pathname === '/admin'
+  const isAdminAPI = request.nextUrl.pathname.startsWith('/api/admin')
+
+  // Skip middleware for admin API routes
+  if (isAdminAPI) {
+    return NextResponse.next()
+  }
 
   // Use presence of admin token cookie as a simple check (optional)
   const hasAdminToken = Boolean(request.cookies.get('adminToken')?.value)
