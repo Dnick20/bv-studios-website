@@ -478,7 +478,8 @@ export default function Dashboard() {
                         Continue for $10/month after trial
                       </p>
                     </div>
-                  )}\n                  {subscriptionStatus.status === 'expired' && (
+                  )}
+                  {subscriptionStatus.status === 'expired' && (
                     <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                       Renew Access - $10/month
                     </button>
@@ -509,7 +510,8 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        )}\n\n        {/* Contracts Tab */}
+
+        {/* Contracts Tab */}
         {activeTab === 'contracts' && (
           <div className="space-y-6">
             <div className="bg-black/20 rounded-lg p-6 border border-gray-800">
